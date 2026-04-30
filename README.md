@@ -22,6 +22,7 @@ Arkn is built on three principles:
 |---|---|---|
 | `Arkn.Core` | Interfaces and base primitives (Entity, ValueObject, AggregateRoot) | ✅ v0.1.0 |
 | `Arkn.Results` | Result Pattern — explicit success/failure without exceptions | ✅ v0.1.0 |
+| `Arkn.Http` | Fluent typed HTTP client — returns `Result<T>` natively, retry built-in | ✅ v0.1.0 |
 | `Arkn.CQRS` | Commands, Queries, and dispatcher abstractions | 🔜 Planned |
 | `Arkn.Repository` | Repository + Unit of Work abstractions | 🔜 Planned |
 | `Arkn.Extensions.EfCore` | EF Core implementations of Arkn.Repository | 🔜 Planned |
@@ -122,6 +123,70 @@ public sealed class Money : ValueObject
 }
 ```
 
+### HTTP Client (Arkn.Http)
+
+```csharp
+using Arkn.Http.Abstractions;
+using Arkn.Http.Client;
+using Arkn.Results;
+
+// 1. Fluent — direct usage
+var result = await http
+    .Request("/users/{id}", id)
+    .WithHeader("Authorization", $"Bearer {token}")
+    .WithTimeout(TimeSpan.FromSeconds(10))
+    .Get()
+    .As<User>(); // → Result<User>
+
+// 2. POST with body
+var result = await http
+    .Request("/users")
+    .WithBody(new CreateUserRequest("John"))
+    .Post()
+    .As<User>(); // → Result<User>
+
+// 3. No value (DELETE)
+var result = await http
+    .Request("/users/{id}", id)
+    .Delete()
+    .AsResult(); // → Result
+
+// 4. Typed client — inherit ArknHttpClient
+public class UserClient : ArknHttpClient
+{
+    public UserClient(IArknHttp http) : base(http, "https://api.example.com") { }
+
+    public Task<Result<User>> GetAsync(int id) =>
+        Request("/users/{id}", id).Get().As<User>();
+
+    public Task<Result<IReadOnlyList<User>>> ListAsync() =>
+        Request("/users").Get().As<IReadOnlyList<User>>();
+
+    public Task<Result<User>> CreateAsync(CreateUserRequest req) =>
+        Request("/users").WithBody(req).Post().As<User>();
+
+    public Task<Result> DeleteAsync(int id) =>
+        Request("/users/{id}", id).Delete().AsResult();
+}
+
+// 5. DI registration
+services.AddArknHttp<UserClient>("https://api.example.com")
+        .WithRetry(maxAttempts: 3, baseDelay: TimeSpan.FromMilliseconds(200))
+        .WithTimeout(TimeSpan.FromSeconds(30));
+```
+
+#### HTTP → Error mapping
+
+| Status | Error type |
+|--------|------------|
+| 400 | `Error.Validation("Http.BadRequest", ...)` |
+| 401 | `Error.Unauthorized("Http.Unauthorized", ...)` |
+| 403 | `Error.Unauthorized("Http.Forbidden", ...)` |
+| 404 | `Error.NotFound("Http.NotFound", ...)` |
+| 409 | `Error.Conflict("Http.Conflict", ...)` |
+| 5xx | `Error.Failure("Http.ServerError.NNN", ...)` |
+| timeout | `Error.Failure("Http.Timeout", ...)` |
+
 ## Running the Sample
 
 ```bash
@@ -138,6 +203,7 @@ dotnet test
 
 ## Roadmap
 
+- [x] `Arkn.Http` — fluent typed HTTP client with `Result<T>`, retry, typed clients
 - [ ] `Arkn.CQRS` — command/query dispatcher
 - [ ] `Arkn.Repository` — generic repository + unit of work
 - [ ] `Arkn.Extensions.EfCore` — EF Core integration

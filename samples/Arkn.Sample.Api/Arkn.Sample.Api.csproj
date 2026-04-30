@@ -6,5 +6,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Arkn.Results\Arkn.Results.csproj" />
+    <ProjectReference Include="..\..\src\Arkn.Http\Arkn.Http.csproj" />
   </ItemGroup>
 </Project>
