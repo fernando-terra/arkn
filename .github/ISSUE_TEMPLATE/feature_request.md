@@ -1,26 +1,23 @@
 ---
 name: Feature request
-about: Propose a new feature or improvement
+about: Suggest a new feature or improvement
+title: '[Feature] '
 labels: enhancement
+assignees: ''
 ---
 
-## Problem / Motivation
+## Problem / motivation
+What problem does this feature solve? What use case drives it?
 
-<!-- What problem does this solve? What is the use case? -->
-
-## Proposed Solution
-
-<!-- Describe the feature. Include API sketches if applicable. -->
+## Proposed solution
+Describe the feature you'd like. Include API design if possible:
 
 ```csharp
-// e.g.
-var result = Result<Order>.Ok(order).MapAsync(async o => await enrichAsync(o));
+// Example usage
 ```
 
-## Alternatives Considered
+## Alternatives considered
+Any alternative approaches you've thought about.
 
-<!-- What other approaches did you consider, and why did you discard them? -->
-
-## Additional Context
-
-<!-- Any other relevant context, references, or links. -->
+## Additional context
+Anything else that would help evaluate this request.

@@ -1,114 +1,65 @@
 # Contributing to Arkn
 
-Thank you for your interest in contributing! This document outlines everything
-you need to get started.
+Thank you for your interest in contributing! This document covers everything you need to get started.
 
----
+## Getting Started
 
-## Code of Conduct
+### Prerequisites
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
+- Git
 
-This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md).
-By participating, you agree to abide by its terms.
-
----
-
-## Branches
-
-| Branch pattern      | Purpose                              |
-|---------------------|--------------------------------------|
-| `main`              | Always releasable. Protected.        |
-| `feat/<name>`       | New features                         |
-| `fix/<name>`        | Bug fixes                            |
-| `docs/<name>`       | Documentation changes only           |
-| `chore/<name>`      | Tooling, CI, dependency updates      |
-| `refactor/<name>`   | Internal restructuring, no behavior change |
-
-Always branch from `main` and open a PR back to `main`.
-
----
-
-## Commit Messages — Conventional Commits
-
-All commits must follow [Conventional Commits](https://www.conventionalcommits.org/):
-
-```
-<type>(<scope>): <short description>
-
-[optional body]
-
-[optional footer: BREAKING CHANGE or issue refs]
-```
-
-### Types
-
-| Type       | When to use                                          |
-|------------|------------------------------------------------------|
-| `feat`     | A new feature visible to consumers                   |
-| `fix`      | A bug fix                                            |
-| `docs`     | Documentation only                                   |
-| `test`     | Adding or fixing tests                               |
-| `refactor` | Code restructuring without behavior change           |
-| `chore`    | Build, CI, dependency, or tooling changes            |
-| `perf`     | Performance improvements                             |
-
-### Examples
-
-```
-feat(results): add MapAsync / BindAsync overloads
-fix(results): throw on null value in Result<T>.Ok
-docs(results): document Bind chain short-circuit behavior
-chore(ci): upgrade to actions/setup-dotnet@v4
-```
-
----
-
-## Development Setup
-
+### Setup
 ```bash
-# Requires .NET 10 SDK
-dotnet --version   # should be 10.x.x
-
-# Clone
 git clone https://github.com/fernando-terra/arkn.git
 cd arkn
-
-# Restore & build
-dotnet restore Arkn.sln
-dotnet build Arkn.sln
-
-# Run all tests
-dotnet test Arkn.sln
+dotnet restore
+dotnet build
+dotnet test
 ```
 
----
+## Branch Conventions
 
-## Pull Request Requirements
+| Prefix | Purpose |
+|---|---|
+| `feat/` | New feature |
+| `fix/` | Bug fix |
+| `docs/` | Documentation changes |
+| `refactor/` | Code restructuring |
+| `chore/` | Tooling, build, deps |
+| `test/` | Test additions only |
 
-Every PR **must**:
+Example: `feat/result-tap-async`
 
-1. **Include tests** — new behavior = new tests; changed behavior = updated tests.
-   CI will fail if test coverage drops on changed code paths.
-2. **Pass CI** — both Ubuntu and Windows builds must be green.
-3. **Follow commit conventions** — squash or rebase before requesting review.
-4. **Not add external NuGet dependencies** to `Arkn.Core` or `Arkn.Results`.
-   These packages are dependency-free by design.
-5. **Include XML doc comments** for any new public API.
+## Commit Messages
 
-### Code Review
+We follow [Conventional Commits](https://www.conventionalcommits.org/):
 
-- At least **one approval** is required before merging.
-- Reviewer may request changes; address them with new commits (do not force-push
-  after review has started).
-- Use **Squash and Merge** for feature branches to keep `main` history clean.
+```
+<type>(<scope>): <subject>
 
----
+[optional body]
+[optional footer]
+```
 
-## Reporting Issues
+Examples:
+```
+feat(results): add TapAsync extension method
+fix(core): entity equality when Id is Guid.Empty
+docs(results): add railway-oriented programming example
+```
 
-Use the GitHub issue templates:
+## Pull Request Process
 
-- [Bug report](.github/ISSUE_TEMPLATE/bug_report.md)
-- [Feature request](.github/ISSUE_TEMPLATE/feature_request.md)
+1. **Open an issue first** for non-trivial changes — discuss before implementing.
+2. Fork the repo and create your branch from `main`.
+3. Write or update tests for every change.
+4. Ensure `dotnet test` passes locally.
+5. Update `CHANGELOG.md` under `[Unreleased]`.
+6. Submit the PR — fill in the PR template.
+7. At least **one code review approval** is required before merging.
 
-For security vulnerabilities, **do not** open a public issue.
-Email `security@bluezee.io` instead.
+## Key Rules
+
+- `Arkn.Core` and `Arkn.Results` must have **zero external NuGet dependencies**.
+- Every public API needs XML doc comments.
+- No breaking changes without a major version bump and migration guide.

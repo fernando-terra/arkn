@@ -1,35 +1,32 @@
 ---
 name: Bug report
-about: Report unexpected behavior or regressions
+about: Report a reproducible bug
+title: '[Bug] '
 labels: bug
+assignees: ''
 ---
 
 ## Describe the bug
-
-<!-- A clear and concise description of what the bug is. -->
+A clear and concise description of what the bug is.
 
 ## To Reproduce
-
-<!-- Minimal reproduction steps or code snippet. -->
-
-```csharp
-// paste here
-```
+Steps to reproduce:
+1. ...
+2. ...
+3. ...
 
 ## Expected behavior
-
-<!-- What you expected to happen. -->
+What you expected to happen.
 
 ## Actual behavior
+What actually happened.
 
-<!-- What actually happened. Include exception messages and stack traces if applicable. -->
+## Minimal reproduction
+```csharp
+// paste your code here
+```
 
 ## Environment
-
-- Arkn version: <!-- e.g. 0.1.0 -->
-- .NET version: <!-- e.g. net10.0 -->
-- OS: <!-- e.g. Ubuntu 24.04 / Windows 11 -->
-
-## Additional context
-
-<!-- Any other context, logs, or screenshots. -->
+- Arkn version:
+- .NET version:
+- OS:

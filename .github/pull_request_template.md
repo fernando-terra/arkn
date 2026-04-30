@@ -1,21 +1,20 @@
-## What
+## Description
+<!-- What does this PR do? Why? -->
 
-<!-- Short summary of what this PR does. -->
-
-## Why
-
-<!-- Context: the problem this solves or the feature it adds. Link relevant issues. -->
-
-Closes #
+## Type of change
+- [ ] feat — new feature
+- [ ] fix — bug fix
+- [ ] docs — documentation only
+- [ ] refactor — code change that neither fixes a bug nor adds a feature
+- [ ] test — adding or updating tests
+- [ ] chore — build, tooling, dependencies
 
 ## Checklist
+- [ ] Tests added / updated
+- [ ] Docs updated (if applicable)
+- [ ] No new external dependencies introduced in `Arkn.Core` or `Arkn.Results`
+- [ ] Breaking changes documented (if any)
+- [ ] `CHANGELOG.md` updated
 
-- [ ] Tests added / updated for every changed behavior
-- [ ] All tests pass locally (`dotnet test`)
-- [ ] Public API changes are documented (XML docs + `docs/`)
-- [ ] Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/)
-- [ ] No new external NuGet dependencies introduced in `Arkn.Core` or `Arkn.Results`
-
-## Notes for reviewers
-
-<!-- Anything the reviewer should pay special attention to. -->
+## Breaking changes
+<!-- Describe any breaking changes and migration path, or write "None" -->

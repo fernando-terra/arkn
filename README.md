@@ -1,142 +1,154 @@
 # Arkn
 
 [![CI](https://github.com/fernando-terra/arkn/actions/workflows/ci.yml/badge.svg)](https://github.com/fernando-terra/arkn/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![.NET 10](https://img.shields.io/badge/.NET-10-512BD4)](https://dotnet.microsoft.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![.NET](https://img.shields.io/badge/.NET-10.0-blue.svg)](https://dotnet.microsoft.com/)
 
-> **Architecture Kernel for modern .NET** — design patterns as composable packages.
-
-Arkn is a collection of lightweight, zero-dependency packages that bring
-well-known software architecture patterns to .NET 10 projects. Each pattern
-lives in its own NuGet package so you only pull in what you actually need.
-
----
+**Architecture Kernel for modern .NET** — design patterns as composable, dependency-free packages.
 
 ## Philosophy
 
-| Principle         | What it means for Arkn                                              |
-|-------------------|----------------------------------------------------------------------|
-| **Zero lock-in**  | `Arkn.Core` and `Arkn.Results` depend solely on the .NET BCL.      |
-| **Composable**    | Every pattern is an independent package — mix and match.            |
-| **Interface-first** | Consumers code against `Arkn.Core` interfaces, not concrete types.|
-| **Test-friendly** | Immutable value types and pure functions make mocking trivial.      |
+> *Stop pulling in entire frameworks to get one pattern. Use only what you need.*
 
----
+Arkn is built on three principles:
+
+- **Zero lock-in** — `Arkn.Core` and `Arkn.Results` have no external NuGet dependencies. No MediatR. No FluentValidation. No EF Core. Just .NET.
+- **Composability** — each pattern lives in its own package. Take one, take all.
+- **Explicitness** — no magic. Every behavior is visible, testable, and overridable.
 
 ## Packages
 
-| Package          | Description                                      | Status |
-|------------------|--------------------------------------------------|--------|
-| `Arkn.Core`      | Base interfaces and abstractions                 | ✅ v0.1.0 |
-| `Arkn.Results`   | Result<T> pattern with full functional API       | ✅ v0.1.0 |
-| `Arkn.CQRS`      | ICommand / IQuery / IHandler                     | 🗺️ Roadmap |
-| `Arkn.Events`    | Domain events and IEventBus                      | 🗺️ Roadmap |
-| `Arkn.Persistence` | IRepository / IUnitOfWork                     | 🗺️ Roadmap |
-| `Arkn.Http`      | Result → IActionResult / IResult helpers         | 🗺️ Roadmap |
-
----
+| Package | Description | Status |
+|---|---|---|
+| `Arkn.Core` | Interfaces and base primitives (Entity, ValueObject, AggregateRoot) | ✅ v0.1.0 |
+| `Arkn.Results` | Result Pattern — explicit success/failure without exceptions | ✅ v0.1.0 |
+| `Arkn.CQRS` | Commands, Queries, and dispatcher abstractions | 🔜 Planned |
+| `Arkn.Repository` | Repository + Unit of Work abstractions | 🔜 Planned |
+| `Arkn.Extensions.EfCore` | EF Core implementations of Arkn.Repository | 🔜 Planned |
+| `Arkn.Extensions.MediatR` | MediatR adapter for Arkn.CQRS | 🔜 Planned |
 
 ## Quick Start
 
-### Install
-
+### Installation
 ```bash
 dotnet add package Arkn.Results
 ```
 
-### Create errors
+### Result Pattern
 
 ```csharp
 using Arkn.Results;
 
-var notFound     = Error.NotFound    ("USER.NOT_FOUND",   "User with id 42 was not found.");
-var invalid      = Error.Validation  ("USER.EMAIL_INVALID","Email format is invalid.");
-var conflict     = Error.Conflict    ("USER.EMAIL_TAKEN", "Email already registered.");
-var unauthorized = Error.Unauthorized("AUTH.TOKEN_EXPIRED","Token has expired.");
-var failure      = Error.Failure     ("SVC.TIMEOUT",      "Downstream timeout.");
+// ── Creating results ───────────────────────────────────────────────────────
+
+Result<User> success = Result.Success(user);
+Result<User> success = user;                    // implicit conversion
+
+Result<User> failure = Result.Failure<User>(Error.NotFound("User.NotFound", "User not found"));
+Result<User> failure = Error.NotFound("User.NotFound", "User not found"); // implicit
+
+// ── Error types ────────────────────────────────────────────────────────────
+
+Error.Failure("Order.Failed",         "Order processing failed");
+Error.NotFound("Product.NotFound",    "Product not found");
+Error.Validation("Email.Invalid",     "Email is not valid");
+Error.Conflict("User.Exists",         "User already exists");
+Error.Unauthorized("Auth.Required",   "Authentication required");
+Error.Forbidden("User.Forbidden",     "Access denied");
+
+// ── Functional chaining ────────────────────────────────────────────────────
+
+Result<string> name = await GetUserAsync(id)          // Task<Result<User>>
+    .MapAsync(u => u.Name)                             // Task<Result<string>>
+    .BindAsync(name => ValidateNameAsync(name));        // Task<Result<string>>
+
+// ── Match — branch on outcome ──────────────────────────────────────────────
+
+IResult response = result.Match(
+    onSuccess: user  => Results.Ok(user),
+    onFailure: error => error.Type switch
+    {
+        ErrorType.NotFound     => Results.NotFound(new { error.Code, error.Message }),
+        ErrorType.Validation   => Results.BadRequest(new { error.Code, error.Message }),
+        ErrorType.Unauthorized => Results.Unauthorized(),
+        _                      => Results.Problem(error.Message)
+    });
+
+// ── Ensure — validate inline ───────────────────────────────────────────────
+
+result
+    .Ensure(u => u.IsActive, Error.Validation("User.Inactive", "User must be active"))
+    .Tap(u => logger.LogInformation("Processing user {Id}", u.Id))
+    .Match(onSuccess: ..., onFailure: ...);
+
+// ── Multiple errors ────────────────────────────────────────────────────────
+
+var errors = validationErrors.Select(e => Error.Validation(e.Field, e.Message));
+return Result.Failure<CreateOrderResponse>(errors);
+// result.Errors → IReadOnlyList<Error>
 ```
 
-### Return results
+### Domain Primitives (Arkn.Core)
 
 ```csharp
-// Success
-Result<User> ok = Result<User>.Ok(user);
-// or via implicit conversion
-Result<User> ok2 = user;
+using Arkn.Core.Primitives;
 
-// Failure — single error
-Result<User> fail = Result<User>.Fail(Error.NotFound("USER.NF", "Not found."));
-// or via implicit conversion
-Result<User> fail2 = Error.NotFound("USER.NF", "Not found.");
-
-// Failure — multiple validation errors
-var errors = new List<IError>
+public sealed class Order : AggregateRoot
 {
-    Error.Validation("VAL.NAME",  "Name is required."),
-    Error.Validation("VAL.EMAIL", "Email is invalid."),
-};
-Result<User> multiError = Result<User>.Fail(errors);
+    public string CustomerId { get; private set; }
+
+    private Order() { }
+
+    public static Order Create(string customerId)
+    {
+        var order = new Order { CustomerId = customerId };
+        order.Raise(new OrderCreatedEvent(order.Id, customerId));
+        return order;
+    }
+}
+
+public sealed class Money : ValueObject
+{
+    public decimal Amount { get; }
+    public string Currency { get; }
+
+    public Money(decimal amount, string currency) { Amount = amount; Currency = currency; }
+
+    protected override IEnumerable<object?> GetEqualityComponents()
+    {
+        yield return Amount;
+        yield return Currency;
+    }
+}
 ```
 
-### Chain operations (railway-oriented)
+## Running the Sample
 
-```csharp
-public Result<OrderDto> PlaceOrder(PlaceOrderRequest req) =>
-    ValidateRequest(req)
-        .Bind(_ => ReserveInventory(req.ProductId, req.Quantity))
-        .Bind(reservation => CreateOrder(req, reservation))
-        .Map(order => OrderDto.From(order));
+```bash
+cd samples/Arkn.Sample.Api
+dotnet run
+# → http://localhost:5000/users
 ```
 
-### Unwrap at the boundary
+## Running Tests
 
-```csharp
-// In a minimal API handler:
-return result.Match<IResult>(
-    user   => Results.Ok(user),
-    errors => MapErrors(errors));
+```bash
+dotnet test
 ```
-
----
-
-## Project Structure
-
-```
-src/
-  Arkn.Core/          ← Interfaces: IResult, IResult<T>, IError, ErrorType
-  Arkn.Results/       ← Result<T>, Result, Error — full implementation
-
-tests/
-  Arkn.Core.Tests/
-  Arkn.Results.Tests/
-
-samples/
-  Arkn.Sample.Api/    ← Minimal API demonstrating end-to-end usage
-
-docs/
-  architecture.md     ← Design decisions and package layout
-  results.md          ← Arkn.Results API reference
-```
-
----
 
 ## Roadmap
 
-- [x] `Arkn.Core` — base abstractions
-- [x] `Arkn.Results` — Result pattern with functional API
-- [ ] `Arkn.CQRS` — command/query pipeline
-- [ ] `Arkn.Events` — domain events
-- [ ] `Arkn.Persistence` — repository pattern
-- [ ] `Arkn.Http` — HTTP adapter helpers
-- [ ] Async variants (`MapAsync`, `BindAsync`)
-- [ ] Source generator for exhaustive Match
-
----
+- [ ] `Arkn.CQRS` — command/query dispatcher
+- [ ] `Arkn.Repository` — generic repository + unit of work
+- [ ] `Arkn.Extensions.EfCore` — EF Core integration
+- [ ] `Arkn.Extensions.MediatR` — MediatR adapter
+- [ ] `Arkn.Pagination` — cursor + offset pagination primitives
+- [ ] NuGet publishing automation (tag → release)
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). All PRs must include tests.
+See [CONTRIBUTING.md](CONTRIBUTING.md). PRs are welcome — open an issue first for non-trivial changes.
 
 ## License
 
-MIT © [Bluezee](https://github.com/fernando-terra)
+MIT © [Fernando Terra](https://github.com/fernando-terra)
