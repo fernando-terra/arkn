@@ -1,0 +1,41 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    name: Pack & Publish GitHub Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore Arkn.sln
+
+      - name: Build (Release)
+        run: dotnet build Arkn.sln --no-restore --configuration Release
+
+      - name: Test
+        run: dotnet test Arkn.sln --no-build --configuration Release
+
+      - name: Pack Arkn.Core
+        run: dotnet pack src/Arkn.Core/Arkn.Core.csproj --no-build --configuration Release --output ./artifacts
+
+      - name: Pack Arkn.Results
+        run: dotnet pack src/Arkn.Results/Arkn.Results.csproj --no-build --configuration Release --output ./artifacts
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./artifacts/*.nupkg
+          generate_release_notes: true
