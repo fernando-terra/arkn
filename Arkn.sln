@@ -17,6 +17,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkn.Http", "src\Arkn.Http\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkn.Http.Tests", "tests\Arkn.Http.Tests\Arkn.Http.Tests.csproj", "{77777777-7777-7777-7777-777777777777}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkn.Logging", "src\Arkn.Logging\Arkn.Logging.csproj", "{F6F6F6F6-F6F6-F6F6-F6F6-F6F6F6F6F6F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkn.Logging.Tests", "tests\Arkn.Logging.Tests\Arkn.Logging.Tests.csproj", "{G7G7G7G7-G7G7-G7G7-G7G7-G7G7G7G7G7G7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,5 +55,13 @@ Global
 		{77777777-7777-7777-7777-777777777777}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77777777-7777-7777-7777-777777777777}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77777777-7777-7777-7777-777777777777}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6F6F6F6-F6F6-F6F6-F6F6-F6F6F6F6F6F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6F6F6F6-F6F6-F6F6-F6F6-F6F6F6F6F6F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6F6F6F6-F6F6-F6F6-F6F6-F6F6F6F6F6F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6F6F6F6-F6F6-F6F6-F6F6-F6F6F6F6F6F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{G7G7G7G7-G7G7-G7G7-G7G7-G7G7G7G7G7G7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{G7G7G7G7-G7G7-G7G7-G7G7-G7G7G7G7G7G7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{G7G7G7G7-G7G7-G7G7-G7G7-G7G7G7G7G7G7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{G7G7G7G7-G7G7-G7G7-G7G7-G7G7G7G7G7G7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
