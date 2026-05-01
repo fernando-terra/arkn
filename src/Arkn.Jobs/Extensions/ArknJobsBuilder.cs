@@ -1,0 +1,72 @@
+using Arkn.Jobs.Core;
+using Arkn.Jobs.Models;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Arkn.Jobs.Extensions;
+
+/// <summary>Per-job fluent configuration builder.</summary>
+public sealed class ArknJobBuilder<TJob>
+{
+    private readonly ArknJobOptions _options;
+    private readonly IServiceCollection _services;
+
+    internal ArknJobBuilder(ArknJobOptions options, IServiceCollection services)
+    {
+        _options  = options;
+        _services = services;
+        _services.AddScoped(typeof(TJob));
+    }
+
+    public ArknJobBuilder<TJob> WithName(string name)
+    {
+        _options.JobName = name;
+        return this;
+    }
+
+    public ArknJobBuilder<TJob> WithDescription(string description)
+    {
+        _options.Description = description;
+        return this;
+    }
+
+    public ArknJobBuilder<TJob> WithTimeout(TimeSpan timeout)
+    {
+        _options.Timeout = timeout;
+        return this;
+    }
+
+    public ArknJobBuilder<TJob> WithRetry(int maxAttempts, TimeSpan? retryDelay = null)
+    {
+        _options.MaxAttempts = maxAttempts;
+        if (retryDelay.HasValue) _options.RetryDelay = retryDelay.Value;
+        return this;
+    }
+}
+
+/// <summary>Top-level fluent builder for registering multiple jobs.</summary>
+public sealed class ArknJobsBuilder
+{
+    private readonly ArknJobRegistry _registry;
+    private readonly IServiceCollection _services;
+
+    internal ArknJobsBuilder(ArknJobRegistry registry, IServiceCollection services)
+    {
+        _registry = registry;
+        _services = services;
+    }
+
+    /// <summary>Registers a job with the given cron expression.</summary>
+    public ArknJobBuilder<TJob> Add<TJob>(string cronExpression)
+        where TJob : class, Arkn.Jobs.Abstractions.IArknJob
+    {
+        var options = new ArknJobOptions
+        {
+            JobName        = typeof(TJob).Name,
+            CronExpression = cronExpression,
+            JobType        = typeof(TJob),
+        };
+
+        _registry.Register(options);
+        return new ArknJobBuilder<TJob>(options, _services);
+    }
+}

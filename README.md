@@ -24,6 +24,7 @@ Arkn is built on three principles:
 | `Arkn.Results` | Result Pattern — explicit success/failure without exceptions | ✅ v0.1.0 |
 | `Arkn.Http` | Fluent typed HTTP client — returns `Result<T>` natively, retry built-in | ✅ v0.1.0 |
 | `Arkn.Logging` | Structured, sink-pluggable logging (Console, File, InMemory + MEL bridge) | ✅ v0.1.0 |
+| `Arkn.Jobs` | Zero-dependency cron scheduler — IHostedService, retry, timeout, scoped logs per run | ✅ v0.1.0 |
 | `Arkn.CQRS` | Commands, Queries, and dispatcher abstractions | 🔜 Planned |
 | `Arkn.Repository` | Repository + Unit of Work abstractions | 🔜 Planned |
 | `Arkn.Extensions.EfCore` | EF Core implementations of Arkn.Repository | 🔜 Planned |

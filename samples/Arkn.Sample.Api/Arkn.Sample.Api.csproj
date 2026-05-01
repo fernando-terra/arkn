@@ -7,5 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Arkn.Results\Arkn.Results.csproj" />
     <ProjectReference Include="..\..\src\Arkn.Http\Arkn.Http.csproj" />
+    <ProjectReference Include="..\..\src\Arkn.Logging\Arkn.Logging.csproj" />
+    <ProjectReference Include="..\..\src\Arkn.Jobs\Arkn.Jobs.csproj" />
   </ItemGroup>
 </Project>
