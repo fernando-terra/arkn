@@ -1,0 +1,67 @@
+---
+description: Arkn framework conventions — apply when working in this repository
+globs: ["**/*.cs"]
+alwaysApply: true
+---
+
+# Arkn Framework Rules
+
+## Result<T> — never throw
+
+All domain/service/application methods **must** return `Result` or `Result<T>`.
+
+```csharp
+// ✅
+public Result<User> GetUser(Guid id)
+{
+    var user = _repo.Find(id);
+    return user is null
+        ? Error.NotFound("User.NotFound", $"User {id} not found.")
+        : Result.Success(user);
+}
+
+// ❌ never do this
+public User GetUser(Guid id) => _repo.Find(id) ?? throw new Exception("not found");
+```
+
+## Error codes — Namespace.Reason
+
+```csharp
+Error.NotFound("User.NotFound", "...")       // ✅
+Error.Validation("Order.QuantityInvalid", "...") // ✅
+Error.NotFound("user_not_found", "...")      // ❌
+```
+
+## Consuming Result
+
+```csharp
+// ✅ in endpoints
+return result.Match(
+    onSuccess: dto  => Ok(dto),
+    onFailure: err  => err.Type switch
+    {
+        ErrorType.NotFound   => NotFound(),
+        ErrorType.Validation => BadRequest(err.Message),
+        _                    => Problem(err.Message)
+    });
+
+// ✅ chaining
+var result = GetOrder(id).Map(o => o.ToDto());
+
+// ❌ never access .Value without checking .IsSuccess
+```
+
+## Jobs
+
+```csharp
+// ✅
+public class MyJob : IArknJob
+{
+    public async Task<Result> ExecuteAsync(CancellationToken ct) { ... }
+}
+// ❌ Task without Result is invalid
+```
+
+## Analyzers (compile-time enforcement)
+
+ARK001 — methods must return Result | ARK002 — error code format | ARK003 — no silent discard | ARK004 — job return type
