@@ -1,63 +1,90 @@
 using Arkn.Analyzers.Analyzers;
-using Arkn.Analyzers.Resources;
-using Microsoft.CodeAnalysis.Testing;
-using Xunit;
-using VerifyCS = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.AnalyzerVerifier<
-    Arkn.Analyzers.Analyzers.ErrorCodeNamingAnalyzer>;
 
 namespace Arkn.Analyzers.Tests;
 
 public class ErrorCodeNamingAnalyzerTests
 {
     [Fact]
-    public async Task ValidCode_NoDiagnostic()
+    public void ValidCode_NoDiagnostic()
     {
-        const string source = """
-            using Arkn.Results;
-            class C {
-                void M() { var e = Error.NotFound("User.NotFound", "msg"); }
+        var source = """
+            public class MyService
+            {
+                public void Do()
+                {
+                    var e = Error.NotFound("User.NotFound", "msg");
+                }
+            }
+            public static class Error
+            {
+                public static object NotFound(string code, string msg) => null!;
             }
             """;
 
-        await VerifyCS.VerifyAnalyzerAsync(source);
+        var diagnostics = AnalyzerTestHelper.GetDiagnostics<ErrorCodeNamingAnalyzer>(source);
+        AnalyzerTestHelper.AssertNoDiagnostic(diagnostics, "ARK002");
     }
 
     [Fact]
-    public async Task InvalidCode_SingleSegment_ReportsDiagnostic()
+    public void ValidCode_MultipleSegments_NoDiagnostic()
     {
-        const string source = """
-            using Arkn.Results;
-            class C {
-                void M() { var e = Error.NotFound({|ARK002:"UserNotFound"|}, "msg"); }
+        var source = """
+            public class MyService
+            {
+                public void Do()
+                {
+                    var e = Error.Validation("Order.Item.QuantityInvalid", "msg");
+                }
+            }
+            public static class Error
+            {
+                public static object Validation(string code, string msg) => null!;
             }
             """;
 
-        await VerifyCS.VerifyAnalyzerAsync(source);
+        var diagnostics = AnalyzerTestHelper.GetDiagnostics<ErrorCodeNamingAnalyzer>(source);
+        AnalyzerTestHelper.AssertNoDiagnostic(diagnostics, "ARK002");
     }
 
     [Fact]
-    public async Task InvalidCode_LowercaseStart_ReportsDiagnostic()
+    public void InvalidCode_SingleSegment_ReportsDiagnostic()
     {
-        const string source = """
-            using Arkn.Results;
-            class C {
-                void M() { var e = Error.Validation({|ARK002:"user.notFound"|}, "msg"); }
+        var source = """
+            public class MyService
+            {
+                public void Do()
+                {
+                    var e = Error.NotFound("usernotfound", "msg");
+                }
+            }
+            public static class Error
+            {
+                public static object NotFound(string code, string msg) => null!;
             }
             """;
 
-        await VerifyCS.VerifyAnalyzerAsync(source);
+        var diagnostics = AnalyzerTestHelper.GetDiagnostics<ErrorCodeNamingAnalyzer>(source);
+        AnalyzerTestHelper.AssertDiagnostic(diagnostics, "ARK002");
     }
 
     [Fact]
-    public async Task ValidCode_MultipleSegments_NoDiagnostic()
+    public void InvalidCode_LowercaseStart_ReportsDiagnostic()
     {
-        const string source = """
-            using Arkn.Results;
-            class C {
-                void M() { var e = Error.Conflict("Order.Payment.Duplicate", "msg"); }
+        var source = """
+            public class MyService
+            {
+                public void Do()
+                {
+                    var e = Error.Failure("user.notFound", "msg");
+                }
+            }
+            public static class Error
+            {
+                public static object Failure(string code, string msg) => null!;
             }
             """;
 
-        await VerifyCS.VerifyAnalyzerAsync(source);
+        var diagnostics = AnalyzerTestHelper.GetDiagnostics<ErrorCodeNamingAnalyzer>(source);
+        AnalyzerTestHelper.AssertDiagnostic(diagnostics, "ARK002");
     }
 }

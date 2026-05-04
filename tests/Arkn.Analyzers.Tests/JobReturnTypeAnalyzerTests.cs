@@ -1,40 +1,51 @@
 using Arkn.Analyzers.Analyzers;
-using Xunit;
-using VerifyCS = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.AnalyzerVerifier<
-    Arkn.Analyzers.Analyzers.JobReturnTypeAnalyzer>;
 
 namespace Arkn.Analyzers.Tests;
 
 public class JobReturnTypeAnalyzerTests
 {
-    [Fact]
-    public async Task CorrectReturnType_NoDiagnostic()
-    {
-        const string source = """
-            using System.Threading.Tasks;
-            using Arkn.Jobs.Abstractions;
-            using Arkn.Jobs.Models;
-            using Arkn.Results;
-            class MyJob : IArknJob {
-                public Task<Result> ExecuteAsync(ArknJobContext ctx) => Task.FromResult(Result.Success());
-            }
-            """;
+    private const string IArknJobBoilerplate = """
 
-        await VerifyCS.VerifyAnalyzerAsync(source);
+        public interface IArknJob { }
+        public class Result { }
+        """;
+
+    [Fact]
+    public void CorrectReturnType_NoDiagnostic()
+    {
+        var source = """
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            public class MyJob : IArknJob
+            {
+                public async Task<Result> ExecuteAsync(CancellationToken ct)
+                {
+                    return new Result();
+                }
+            }
+            """ + IArknJobBoilerplate;
+
+        var diagnostics = AnalyzerTestHelper.GetDiagnostics<JobReturnTypeAnalyzer>(source);
+        AnalyzerTestHelper.AssertNoDiagnostic(diagnostics, "ARK004");
     }
 
     [Fact]
-    public async Task WrongReturnType_ReportsDiagnostic()
+    public void WrongReturnType_ReportsDiagnostic()
     {
-        const string source = """
+        var source = """
+            using System.Threading;
             using System.Threading.Tasks;
-            using Arkn.Jobs.Abstractions;
-            using Arkn.Jobs.Models;
-            class MyJob : IArknJob {
-                public {|ARK004:Task<bool>|} ExecuteAsync(ArknJobContext ctx) => Task.FromResult(true);
-            }
-            """;
 
-        await VerifyCS.VerifyAnalyzerAsync(source);
+            public class BadJob : IArknJob
+            {
+                public async Task ExecuteAsync(CancellationToken ct)
+                {
+                }
+            }
+            """ + IArknJobBoilerplate;
+
+        var diagnostics = AnalyzerTestHelper.GetDiagnostics<JobReturnTypeAnalyzer>(source);
+        AnalyzerTestHelper.AssertDiagnostic(diagnostics, "ARK004");
     }
 }

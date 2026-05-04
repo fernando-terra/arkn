@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Immutable;
 using Arkn.Analyzers.Resources;
 using Microsoft.CodeAnalysis;
