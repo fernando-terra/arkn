@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![.NET](https://img.shields.io/badge/.NET-10.0-blue.svg)](https://dotnet.microsoft.com/)
 
-**Architecture Kernel for modern .NET** — design patterns as composable, dependency-free packages.
+**Conventions you can read. Patterns you can enforce.** — composable, zero-dependency packages for clean software design.
 
 ## Philosophy
 
