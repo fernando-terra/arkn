@@ -27,6 +27,8 @@ Arkn is built on three principles:
 | `Arkn.Jobs` | Zero-dependency cron scheduler — IHostedService, retry, timeout, scoped logs per run | ✅ v0.1.0 |
 | `Arkn.Notifications` | Pluggable notification abstractions — fan-out to N notifiers, zero deps | ✅ v0.1.0 |
 | `Arkn.Extensions.Notifications.Slack` | Slack notifier via Incoming Webhook + Block Kit | ✅ v0.1.0 |
+| `Arkn.Analyzers` | Roslyn analyzers enforcing Arkn patterns at compile time (ARK001–ARK004) | ✅ v0.1.0 |
+| `Arkn.Templates` | `dotnet new` templates: `arkn-api`, `arkn-job`, `arkn-lib` | ✅ v0.1.0 |
 | `Arkn.CQRS` | Commands, Queries, and dispatcher abstractions | 🔜 Planned |
 | `Arkn.Repository` | Repository + Unit of Work abstractions | 🔜 Planned |
 | `Arkn.Extensions.EfCore` | EF Core implementations of Arkn.Repository | 🔜 Planned |

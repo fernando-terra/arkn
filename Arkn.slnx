@@ -3,6 +3,7 @@
     <Project Path="samples/Arkn.Sample.Api/Arkn.Sample.Api.csproj" />
   </Folder>
   <Folder Name="/src/">
+    <Project Path="src/Arkn.Analyzers/Arkn.Analyzers.csproj" />
     <Project Path="src/Arkn.Core/Arkn.Core.csproj" />
     <Project Path="src/Arkn.Extensions.Notifications.Slack/Arkn.Extensions.Notifications.Slack.csproj" />
     <Project Path="src/Arkn.Http/Arkn.Http.csproj" />
@@ -12,11 +13,15 @@
     <Project Path="src/Arkn.Results/Arkn.Results.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Arkn.Analyzers.Tests/Arkn.Analyzers.Tests.csproj" />
     <Project Path="tests/Arkn.Core.Tests/Arkn.Core.Tests.csproj" />
     <Project Path="tests/Arkn.Http.Tests/Arkn.Http.Tests.csproj" />
     <Project Path="tests/Arkn.Jobs.Tests/Arkn.Jobs.Tests.csproj" />
     <Project Path="tests/Arkn.Logging.Tests/Arkn.Logging.Tests.csproj" />
     <Project Path="tests/Arkn.Notifications.Tests/Arkn.Notifications.Tests.csproj" />
     <Project Path="tests/Arkn.Results.Tests/Arkn.Results.Tests.csproj" />
+  </Folder>
+  <Folder Name="/templates/">
+    <Project Path="templates/Arkn.Templates.csproj" />
   </Folder>
 </Solution>

@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Fernando Terra",
+  "classifications": ["Worker", "Jobs", "Arkn"],
+  "identity": "Arkn.Templates.Job",
+  "name": "Arkn Worker with Jobs",
+  "shortName": "arkn-job",
+  "description": "A Worker Service starter with Arkn.Jobs — includes a sample cron job with logging and Result handling.",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sourceName": "ArknJob",
+  "preferNameDirectory": true
+}

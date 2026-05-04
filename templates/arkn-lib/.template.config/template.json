@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Fernando Terra",
+  "classifications": ["Library", "Arkn"],
+  "identity": "Arkn.Templates.Lib",
+  "name": "Arkn Class Library",
+  "shortName": "arkn-lib",
+  "description": "A class library starter with Arkn.Core primitives, Arkn.Analyzers and a README template.",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sourceName": "ArknLib",
+  "preferNameDirectory": true
+}
