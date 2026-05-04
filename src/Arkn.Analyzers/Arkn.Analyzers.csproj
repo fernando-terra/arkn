@@ -8,7 +8,7 @@
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <RootNamespace>Arkn.Analyzers</RootNamespace>
     <AssemblyName>Arkn.Analyzers</AssemblyName>
-    <Version>0.1.4</Version>
+    <Version>0.1.5</Version>
     <Authors>Fernando Terra</Authors>
     <Description>Roslyn analyzers that enforce Arkn patterns at compile time — Result returns, error code naming, and more.</Description>
     <PackageTags>dotnet;csharp;roslyn;analyzer;arkn;architecture</PackageTags>

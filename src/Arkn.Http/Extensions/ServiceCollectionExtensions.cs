@@ -1,7 +1,9 @@
 using Arkn.Http.Abstractions;
 using Arkn.Http.Auth;
+using Arkn.Http.Cache;
 using Arkn.Http.Client;
 using Arkn.Http.Configuration;
+using Arkn.Http.Resilience;
 using Arkn.Logging.Models;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -141,6 +143,32 @@ public static class ServiceCollectionExtensions
         public IArknHttpBuilder WithDebugLogging(DebugLoggingOptions options)
         {
             _options.DebugOptions = options;
+            return this;
+        }
+
+        public IArknHttpBuilder WithApiKey(string name, string value)
+            => WithApiKey(name, value, ApiKeyInterceptor.Placement.Header);
+
+        public IArknHttpBuilder WithApiKey(string name, string value, ApiKeyInterceptor.Placement placement)
+        {
+            _options.Interceptors.Add(new ApiKeyInterceptor(name, value, placement));
+            return this;
+        }
+
+        public IArknHttpBuilder WithRateLimitHandling(Action<RateLimitOptions>? configure = null)
+        {
+            var opts = new RateLimitOptions();
+            configure?.Invoke(opts);
+            _options.RateLimitOptions = opts;
+            return this;
+        }
+
+        public IArknHttpBuilder WithResponseCaching(Action<ResponseCacheOptions>? configure = null)
+        {
+            var opts = new ResponseCacheOptions();
+            configure?.Invoke(opts);
+            _options.ResponseCacheOptions = opts;
+            _options.ResponseCache = new InMemoryResponseCache();
             return this;
         }
 

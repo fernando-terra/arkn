@@ -87,10 +87,13 @@ builder.Services.AddArknHttp<PaymentsClient>("https://api.payments.example.com")
         opts.ClientId     = "my-client";
         opts.ClientSecret = config["Auth:Secret"];
     })
-    .WithRetry(maxAttempts: 3)
+    .WithRetry(maxAttempts: 3, baseDelay: TimeSpan.FromMilliseconds(200))
+    .WithApiKey("X-Api-Version", "2024-01")       // static header on every request
+    .WithRateLimitHandling()                       // auto-handles 429 + Retry-After
+    .WithResponseCaching()                         // in-memory GET cache, 5 min TTL
     .WithDebugLogging(env.IsDevelopment()
-        ? DebugLoggingOptions.Development   // all at Debug → console
-        : DebugLoggingOptions.Production);  // 2xx at Info → AppInsights
+        ? DebugLoggingOptions.Development          // all at Debug → console
+        : DebugLoggingOptions.Production);         // 2xx at Info → AppInsights
 ```
 
 ### Arkn.Logging — structured, sink-pluggable

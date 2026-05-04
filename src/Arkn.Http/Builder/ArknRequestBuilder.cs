@@ -1,9 +1,13 @@
 using System.Diagnostics;
+using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Arkn.Http.Auth;
+using Arkn.Http.Cache;
 using Arkn.Http.Configuration;
+using Arkn.Http.Resilience;
 using Arkn.Logging.Models;
 using static Arkn.Logging.Models.ArknLogLevel;
 
@@ -71,24 +75,74 @@ public sealed class ArknRequestBuilder : IArknRequestBuilder
     private ArknHttpResponseHandler CreateHandler(HttpMethod method)
     {
         // Capture mutable state at builder time so the lambda is self-contained
-        var path         = _path;
-        var headers      = new Dictionary<string, string>(_headers, StringComparer.OrdinalIgnoreCase);
-        var body         = _body;
-        var timeout      = _timeout ?? _options.Timeout;
-        var jsonOptions  = _options.JsonOptions;
-        var maxRetries   = _options.MaxRetryAttempts;
-        var retryDelay   = _options.BaseRetryDelay;
-        var httpClient   = _httpClient;
-        var interceptors = _options.Interceptors.ToList();
-        var debugLogger  = _options.DebugLogger;
-        var debugOptions = _options.DebugOptions;
+        var path          = _path;
+        var headers       = new Dictionary<string, string>(_headers, StringComparer.OrdinalIgnoreCase);
+        var body          = _body;
+        var timeout       = _timeout ?? _options.Timeout;
+        var jsonOptions   = _options.JsonOptions;
+        var maxRetries    = _options.MaxRetryAttempts;
+        var retryDelay    = _options.BaseRetryDelay;
+        var httpClient    = _httpClient;
+        var interceptors  = _options.Interceptors.ToList();
+        var debugLogger   = _options.DebugLogger;
+        var debugOptions  = _options.DebugOptions;
+        var rateLimitOpts = _options.RateLimitOptions;
+        var cacheOpts     = _options.ResponseCacheOptions;
+        var cache         = _options.ResponseCache;
 
         return new ArknHttpResponseHandler(
-            execute: () => ArknRetryPolicy.ExecuteAsync(
-                sendAsync: BuildAndSend,
-                maxAttempts: maxRetries,
-                baseDelay: retryDelay),
+            execute: ExecuteWithCacheAndRateLimit,
             jsonOptions: jsonOptions);
+
+        async Task<HttpResponseMessage> ExecuteWithCacheAndRateLimit()
+        {
+            // ── Response caching (check before sending) ────────────────────────
+            if (cacheOpts is not null && cache is not null && cacheOpts.CacheMethods.Contains(method.Method))
+            {
+                var cacheKey = InMemoryResponseCache.BuildKey(
+                    method,
+                    new Uri(httpClient.BaseAddress ?? new Uri("http://localhost"), path));
+
+                if (cache.TryGet(cacheKey, out var cached))
+                    return BuildCachedResponse(cached.Body, cached.ContentType);
+
+                // Cache miss — send and potentially store result
+                var response = await SendWithRateLimitAsync().ConfigureAwait(false);
+
+                if (cacheOpts.CacheStatusCodes.Contains((int)response.StatusCode))
+                {
+                    var bytes       = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+                    var contentType = response.Content.Headers.ContentType?.MediaType;
+                    cache.Set(cacheKey, bytes, contentType, cacheOpts.DefaultTtl);
+                    response.Dispose();
+                    return BuildCachedResponse(bytes, contentType);
+                }
+
+                return response;
+            }
+
+            return await SendWithRateLimitAsync().ConfigureAwait(false);
+        }
+
+        Task<HttpResponseMessage> SendWithRateLimitAsync()
+        {
+            Task<HttpResponseMessage> inner() =>
+                ArknRetryPolicy.ExecuteAsync(BuildAndSend, maxRetries, retryDelay);
+
+            return rateLimitOpts is not null
+                ? RateLimitHandler.ExecuteWithRateLimitAsync(inner, rateLimitOpts)
+                : inner();
+        }
+
+        static HttpResponseMessage BuildCachedResponse(byte[] body, string? contentType)
+        {
+            var resp    = new HttpResponseMessage(HttpStatusCode.OK);
+            var content = new ByteArrayContent(body);
+            if (!string.IsNullOrEmpty(contentType))
+                content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+            resp.Content = content;
+            return resp;
+        }
 
         async Task<HttpResponseMessage> BuildAndSend()
         {

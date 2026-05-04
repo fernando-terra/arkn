@@ -7,7 +7,7 @@
     <LangVersion>preview</LangVersion>
     <RootNamespace>Arkn.Core</RootNamespace>
     <AssemblyName>Arkn.Core</AssemblyName>
-    <Version>0.1.4</Version>
+    <Version>0.1.5</Version>
     <Authors>Fernando Terra</Authors>
     <Description>Architecture Kernel for modern .NET — core abstractions and primitives. Zero external dependencies.</Description>
     <PackageTags>dotnet;csharp;architecture;ddd;patterns</PackageTags>

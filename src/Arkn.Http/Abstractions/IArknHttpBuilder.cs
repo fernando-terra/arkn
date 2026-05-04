@@ -1,5 +1,7 @@
 using Arkn.Http.Auth;
+using Arkn.Http.Cache;
 using Arkn.Http.Configuration;
+using Arkn.Http.Resilience;
 
 namespace Arkn.Http.Abstractions;
 
@@ -70,4 +72,18 @@ public interface IArknHttpBuilder
 
     /// <summary>Enables debug logging with a pre-built <see cref="DebugLoggingOptions"/> instance.</summary>
     IArknHttpBuilder WithDebugLogging(DebugLoggingOptions options);
+
+    /// <summary>Adds a static API key to every request via header (default) or query param.</summary>
+    IArknHttpBuilder WithApiKey(string headerName, string value);
+
+    /// <summary>Adds an API key using the specified placement strategy.</summary>
+    IArknHttpBuilder WithApiKey(string name, string value, ApiKeyInterceptor.Placement placement);
+
+    /// <summary>
+    /// Handles 429 Too Many Requests automatically by reading Retry-After and waiting.
+    /// </summary>
+    IArknHttpBuilder WithRateLimitHandling(Action<RateLimitOptions>? configure = null);
+
+    /// <summary>Enables in-memory response caching for GET requests.</summary>
+    IArknHttpBuilder WithResponseCaching(Action<ResponseCacheOptions>? configure = null);
 }

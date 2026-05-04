@@ -1,6 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Arkn.Http.Auth;
+using Arkn.Http.Cache;
+using Arkn.Http.Resilience;
 using Arkn.Logging.Abstractions;
 using Arkn.Logging.Models;
 
@@ -64,4 +66,13 @@ public sealed class ArknHttpOptions
     /// Headers with sensitive content (Authorization, Cookie) are sanitized automatically.
     /// </summary>
     public IArknLogger? DebugLogger { get; set; }
+
+    /// <summary>When set, handles 429 responses by waiting and retrying automatically.</summary>
+    public RateLimitOptions? RateLimitOptions { get; set; }
+
+    /// <summary>When set, caches responses in memory according to these options.</summary>
+    public ResponseCacheOptions? ResponseCacheOptions { get; set; }
+
+    /// <summary>The in-memory cache instance created alongside <see cref="ResponseCacheOptions"/>.</summary>
+    internal InMemoryResponseCache? ResponseCache { get; set; }
 }
