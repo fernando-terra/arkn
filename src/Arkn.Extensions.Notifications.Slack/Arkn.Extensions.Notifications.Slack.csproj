@@ -7,7 +7,7 @@
     <LangVersion>preview</LangVersion>
     <RootNamespace>Arkn.Extensions.Notifications.Slack</RootNamespace>
     <AssemblyName>Arkn.Extensions.Notifications.Slack</AssemblyName>
-    <Version>0.1.5</Version>
+    <Version>0.1.6</Version>
     <Authors>Fernando Terra</Authors>
     <Description>Slack notifier for Arkn via Incoming Webhook and Block Kit — zero external dependencies.</Description>
     <PackageTags>dotnet;csharp;slack;notifications;webhook;arkn</PackageTags>

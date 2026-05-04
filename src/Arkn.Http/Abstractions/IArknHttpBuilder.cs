@@ -1,3 +1,4 @@
+using System.Security.Cryptography.X509Certificates;
 using Arkn.Http.Auth;
 using Arkn.Http.Cache;
 using Arkn.Http.Configuration;
@@ -86,4 +87,23 @@ public interface IArknHttpBuilder
 
     /// <summary>Enables in-memory response caching for GET requests.</summary>
     IArknHttpBuilder WithResponseCaching(Action<ResponseCacheOptions>? configure = null);
+
+    // ── mTLS ─────────────────────────────────────────────────────────────────
+
+    /// <summary>Attaches an already-loaded certificate to every TLS handshake (mTLS).</summary>
+    IArknHttpBuilder WithClientCertificate(X509Certificate2 certificate);
+
+    /// <summary>Loads a client certificate from a PFX/PKCS#12 file.</summary>
+    /// <param name="pfxPath">Path to the .pfx or .p12 file.</param>
+    /// <param name="password">Password protecting the file, or <c>null</c> if unprotected.</param>
+    IArknHttpBuilder WithClientCertificate(string pfxPath, string? password = null);
+
+    /// <summary>
+    /// Loads a client certificate from PEM-encoded certificate and private key files (.pem / .crt / .key).
+    /// Use this overload to distinguish from the PFX overload when both paths are provided.
+    /// </summary>
+    IArknHttpBuilder WithClientCertificatePem(string certPemPath, string keyPemPath);
+
+    /// <summary>Loads a client certificate from the OS certificate store by thumbprint.</summary>
+    IArknHttpBuilder WithClientCertificate(StoreName storeName, StoreLocation location, string thumbprint);
 }

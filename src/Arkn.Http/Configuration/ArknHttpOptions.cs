@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Arkn.Http.Auth;
 using Arkn.Http.Cache;
+using Arkn.Http.Mtls;
 using Arkn.Http.Resilience;
 using Arkn.Logging.Abstractions;
 using Arkn.Logging.Models;
@@ -66,6 +67,12 @@ public sealed class ArknHttpOptions
     /// Headers with sensitive content (Authorization, Cookie) are sanitized automatically.
     /// </summary>
     public IArknLogger? DebugLogger { get; set; }
+
+    /// <summary>
+    /// When set, attaches a client certificate to every TLS handshake (mTLS).
+    /// Configure via <c>.WithClientCertificate()</c> on the builder.
+    /// </summary>
+    public ClientCertificateOptions? ClientCertificate { get; set; }
 
     /// <summary>When set, handles 429 responses by waiting and retrying automatically.</summary>
     public RateLimitOptions? RateLimitOptions { get; set; }

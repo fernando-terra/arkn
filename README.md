@@ -91,6 +91,7 @@ builder.Services.AddArknHttp<PaymentsClient>("https://api.payments.example.com")
     .WithApiKey("X-Api-Version", "2024-01")       // static header on every request
     .WithRateLimitHandling()                       // auto-handles 429 + Retry-After
     .WithResponseCaching()                         // in-memory GET cache, 5 min TTL
+    .WithClientCertificate("/certs/client.pfx")     // mTLS — PFX, PEM ou certificate store
     .WithDebugLogging(env.IsDevelopment()
         ? DebugLoggingOptions.Development          // all at Debug → console
         : DebugLoggingOptions.Production);         // 2xx at Info → AppInsights

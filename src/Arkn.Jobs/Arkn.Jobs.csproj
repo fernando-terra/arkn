@@ -7,7 +7,7 @@
     <LangVersion>preview</LangVersion>
     <RootNamespace>Arkn.Jobs</RootNamespace>
     <AssemblyName>Arkn.Jobs</AssemblyName>
-    <Version>0.1.5</Version>
+    <Version>0.1.6</Version>
     <Authors>Fernando Terra</Authors>
     <Description>Zero-dependency job scheduling for .NET 10 — cron, retry, timeout and structured logs per run.</Description>
     <PackageTags>dotnet;csharp;jobs;scheduling;cron;background-jobs</PackageTags>

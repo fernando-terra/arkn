@@ -1,8 +1,12 @@
+using System.Net;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using Arkn.Http.Abstractions;
 using Arkn.Http.Auth;
 using Arkn.Http.Cache;
 using Arkn.Http.Client;
 using Arkn.Http.Configuration;
+using Arkn.Http.Mtls;
 using Arkn.Http.Resilience;
 using Arkn.Logging.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,8 +55,29 @@ public static class ServiceCollectionExtensions
         // so additional constructor parameters (beyond IArknHttp) are resolved from DI.
         services.AddTransient<TClient>(sp =>
         {
-            var factory    = sp.GetRequiredService<IHttpClientFactory>();
-            var httpClient = factory.CreateClient(clientName);
+            HttpClient httpClient;
+
+            if (options.ClientCertificate is { } certOpts)
+            {
+                // mTLS: create a dedicated SocketsHttpHandler with the client certificate.
+                // Cannot use IHttpClientFactory here because the handler must be configured
+                // with the certificate at construction time.
+                var handler = new SocketsHttpHandler
+                {
+                    SslOptions = new SslClientAuthenticationOptions
+                    {
+                        ClientCertificates = new X509CertificateCollection { certOpts.Certificate }
+                    }
+                };
+                httpClient = new HttpClient(handler);
+                if (!string.IsNullOrEmpty(options.BaseUrl))
+                    httpClient.BaseAddress = new Uri(options.BaseUrl);
+            }
+            else
+            {
+                var factory = sp.GetRequiredService<IHttpClientFactory>();
+                httpClient  = factory.CreateClient(clientName);
+            }
 
             // Resolve IArknLogger for debug logging if enabled
             if (options.DebugOptions is not null)
@@ -169,6 +194,32 @@ public static class ServiceCollectionExtensions
             configure?.Invoke(opts);
             _options.ResponseCacheOptions = opts;
             _options.ResponseCache = new InMemoryResponseCache();
+            return this;
+        }
+
+        // ── mTLS ──────────────────────────────────────────────────────────
+
+        public IArknHttpBuilder WithClientCertificate(X509Certificate2 certificate)
+        {
+            _options.ClientCertificate = ClientCertificateOptions.FromCertificate(certificate);
+            return this;
+        }
+
+        public IArknHttpBuilder WithClientCertificate(string pfxPath, string? password = null)
+        {
+            _options.ClientCertificate = ClientCertificateOptions.FromPfx(pfxPath, password);
+            return this;
+        }
+
+        public IArknHttpBuilder WithClientCertificatePem(string certPemPath, string keyPemPath)
+        {
+            _options.ClientCertificate = ClientCertificateOptions.FromPem(certPemPath, keyPemPath);
+            return this;
+        }
+
+        public IArknHttpBuilder WithClientCertificate(StoreName storeName, StoreLocation location, string thumbprint)
+        {
+            _options.ClientCertificate = ClientCertificateOptions.FromStore(storeName, location, thumbprint);
             return this;
         }
 
