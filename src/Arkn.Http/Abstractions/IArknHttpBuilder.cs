@@ -1,3 +1,5 @@
+using Arkn.Http.Auth;
+
 namespace Arkn.Http.Abstractions;
 
 /// <summary>
@@ -20,4 +22,24 @@ public interface IArknHttpBuilder
     /// Can be overridden per-request with <c>.WithTimeout()</c>.
     /// </summary>
     IArknHttpBuilder WithTimeout(TimeSpan timeout);
+
+    /// <summary>Adds a custom auth interceptor that runs before every request.</summary>
+    IArknHttpBuilder WithInterceptor(IArknAuthInterceptor interceptor);
+
+    /// <summary>
+    /// Adds a bearer-token interceptor backed by <paramref name="tokenFactory"/>.
+    /// Tokens are cached in an <see cref="InMemoryTokenStore"/> for 55 minutes.
+    /// </summary>
+    IArknHttpBuilder WithBearerAuth(Func<Task<string>> tokenFactory);
+
+    /// <summary>
+    /// Adds a bearer-token interceptor backed by a service-provider-aware <paramref name="tokenFactory"/>.
+    /// Tokens are cached in an <see cref="InMemoryTokenStore"/> for 55 minutes.
+    /// </summary>
+    IArknHttpBuilder WithBearerAuth(Func<IServiceProvider, Task<string>> tokenFactory);
+
+    /// <summary>
+    /// Adds an OAuth2 Client Credentials interceptor. Fetches and caches tokens automatically.
+    /// </summary>
+    IArknHttpBuilder WithClientCredentials(Action<ClientCredentialsOptions> configure);
 }

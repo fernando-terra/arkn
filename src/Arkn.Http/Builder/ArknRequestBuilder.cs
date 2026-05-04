@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using Arkn.Http.Auth;
 using Arkn.Http.Configuration;
 
 namespace Arkn.Http.Builder;
@@ -67,14 +68,15 @@ public sealed class ArknRequestBuilder : IArknRequestBuilder
     private ArknHttpResponseHandler CreateHandler(HttpMethod method)
     {
         // Capture mutable state at builder time so the lambda is self-contained
-        var path       = _path;
-        var headers    = new Dictionary<string, string>(_headers, StringComparer.OrdinalIgnoreCase);
-        var body       = _body;
-        var timeout    = _timeout ?? _options.Timeout;
-        var jsonOptions = _options.JsonOptions;
-        var maxRetries  = _options.MaxRetryAttempts;
-        var retryDelay  = _options.BaseRetryDelay;
-        var httpClient  = _httpClient;
+        var path         = _path;
+        var headers      = new Dictionary<string, string>(_headers, StringComparer.OrdinalIgnoreCase);
+        var body         = _body;
+        var timeout      = _timeout ?? _options.Timeout;
+        var jsonOptions  = _options.JsonOptions;
+        var maxRetries   = _options.MaxRetryAttempts;
+        var retryDelay   = _options.BaseRetryDelay;
+        var httpClient   = _httpClient;
+        var interceptors = _options.Interceptors.ToList(); // snapshot at builder time
 
         return new ArknHttpResponseHandler(
             execute: () => ArknRetryPolicy.ExecuteAsync(
@@ -87,6 +89,10 @@ public sealed class ArknRequestBuilder : IArknRequestBuilder
         {
             using var cts = new CancellationTokenSource(timeout);
             var request   = BuildRequest(method, path, headers, body, jsonOptions);
+
+            foreach (var interceptor in interceptors)
+                await interceptor.ApplyAsync(request, cts.Token).ConfigureAwait(false);
+
             return await httpClient.SendAsync(request, cts.Token).ConfigureAwait(false);
         }
     }

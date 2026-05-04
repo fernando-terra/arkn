@@ -5,6 +5,7 @@
   <Folder Name="/src/">
     <Project Path="src/Arkn.Analyzers/Arkn.Analyzers.csproj" />
     <Project Path="src/Arkn.Core/Arkn.Core.csproj" />
+    <Project Path="src/Arkn.Extensions.Logging.ApplicationInsights/Arkn.Extensions.Logging.ApplicationInsights.csproj" />
     <Project Path="src/Arkn.Extensions.Notifications.Slack/Arkn.Extensions.Notifications.Slack.csproj" />
     <Project Path="src/Arkn.Http/Arkn.Http.csproj" />
     <Project Path="src/Arkn.Jobs/Arkn.Jobs.csproj" />

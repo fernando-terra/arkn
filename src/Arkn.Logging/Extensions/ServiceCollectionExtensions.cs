@@ -41,6 +41,13 @@ public sealed class ArknLoggingBuilder
         return this;
     }
 
+    /// <summary>Adds a file sink with daily rotation and optional JSON format.</summary>
+    public ArknLoggingBuilder AddFileSink(FileSinkOptions options)
+    {
+        _sinks.Add(new FileSink(options));
+        return this;
+    }
+
     /// <summary>
     /// Adds an <see cref="InMemoryLogSink"/> and registers it as a singleton so it can be
     /// injected directly for log inspection (e.g., by Arkn.Jobs).

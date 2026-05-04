@@ -2,7 +2,7 @@
 
 > **Conventions you can read. Patterns you can enforce.**
 
-Fluent typed HTTP client where every call returns `Result<T>`. Built-in retry. No raw `HttpClient`.
+Fluent typed HTTP client where every call returns `Result<T>`. Built-in retry, timeout, and pluggable auth interceptors. No raw `HttpClient`.
 
 ## Install
 
@@ -13,27 +13,91 @@ dotnet add package Arkn.Http
 ## Quick example
 
 ```csharp
-// Define your client
-public class UserApiClient : ArknHttpClient
+// Define your typed client — minimal boilerplate
+public class UserApiClient(IArknHttp http) : ArknHttpClient(http, "https://api.example.com")
 {
-    public UserApiClient(HttpClient http) : base(http) { }
-
-    public Task<Result<User>> GetUserAsync(Guid id, CancellationToken ct = default) =>
-        GetAsync<User>($"/users/{id}", ct);
-
-    public Task<Result<User>> CreateUserAsync(CreateUserRequest req, CancellationToken ct = default) =>
-        PostAsync<CreateUserRequest, User>("/users", req, ct);
+    public Task<Result<User>>   GetAsync(Guid id)                => GetAs<User>("/users/{id}", id);
+    public Task<Result<User>>   CreateAsync(CreateUserRequest r) => PostAs<User>("/users", r);
+    public Task<Result<User>>   UpdateAsync(Guid id, UpdateUserRequest r) => PutAs<User>("/users/{id}", r, id);
+    public Task<Result>         DeleteAsync(Guid id)             => Delete("/users/{id}", id);
 }
 
 // Register
-builder.Services.AddArknHttpClient<UserApiClient>(options =>
-{
-    options.BaseUrl    = "https://api.example.com";
-    options.MaxRetries = 3;
-});
+builder.Services.AddArknHttp<UserApiClient>("https://api.example.com")
+    .WithRetry(maxAttempts: 3)
+    .WithTimeout(TimeSpan.FromSeconds(15));
+```
 
-// Use — every call returns Result<T>
-Result<User> result = await client.GetUserAsync(id);
+## Shorthand methods
+
+`ArknHttpClient` exposes concise protected methods — no more `.Request().Verb().As<T>()` chains:
+
+```csharp
+GetAs<T>(path, args)          // GET → Result<T>
+PostAs<T>(path, body)         // POST → Result<T>
+PutAs<T>(path, body, args)    // PUT → Result<T>
+PatchAs<T>(path, body, args)  // PATCH → Result<T>
+Delete(path, args)            // DELETE → Result
+
+Get(path, args)               // GET → Result (no body)
+Post(path, body)              // POST → Result (no body)
+Put(path, body, args)         // PUT → Result (no body)
+```
+
+## Auth interceptors
+
+### Bearer token (custom factory)
+
+```csharp
+builder.Services.AddArknHttp<UserApiClient>("https://api.example.com")
+    .WithBearerAuth(async () =>
+    {
+        // Called once; token cached in InMemoryTokenStore for 55 min
+        return await myAuthService.GetAccessTokenAsync();
+    });
+```
+
+### OAuth2 Client Credentials (built-in, zero external deps)
+
+```csharp
+builder.Services.AddArknHttp<UserApiClient>("https://api.example.com")
+    .WithClientCredentials(opts =>
+    {
+        opts.TokenUrl     = "https://auth.example.com/oauth/token";
+        opts.ClientId     = "my-client";
+        opts.ClientSecret = config["Auth:Secret"];
+        opts.Scope        = "api.read api.write";
+    });
+```
+
+The `ClientCredentialsInterceptor` fetches a token via `POST` to `TokenUrl`, caches it using `InMemoryTokenStore` (with buffer of 30s before expiry), and attaches it as `Authorization: Bearer <token>` on every request.
+
+### Custom interceptor
+
+```csharp
+public sealed class ApiKeyInterceptor : IArknAuthInterceptor
+{
+    private readonly string _key;
+    public ApiKeyInterceptor(string key) => _key = key;
+
+    public Task ApplyAsync(HttpRequestMessage req, CancellationToken ct = default)
+    {
+        req.Headers.Add("X-Api-Key", _key);
+        return Task.CompletedTask;
+    }
+}
+
+builder.Services.AddArknHttp<UserApiClient>("https://api.example.com")
+    .WithInterceptor(new ApiKeyInterceptor(config["ApiKey"]));
+```
+
+## Token store
+
+`InMemoryTokenStore` is registered as a singleton automatically when any auth method is configured. Tokens are cached with a 30-second expiry buffer and can be invalidated manually:
+
+```csharp
+var store = serviceProvider.GetRequiredService<IArknTokenStore>();
+await store.InvalidateAsync("my-client_credentials");
 ```
 
 ## Part of the Arkn ecosystem

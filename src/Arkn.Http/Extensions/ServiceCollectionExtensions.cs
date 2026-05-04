@@ -1,4 +1,5 @@
 using Arkn.Http.Abstractions;
+using Arkn.Http.Auth;
 using Arkn.Http.Client;
 using Arkn.Http.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,13 +22,15 @@ public static class ServiceCollectionExtensions
     /// <param name="services">The service collection.</param>
     /// <param name="baseUrl">Base URL for all requests made by this client.</param>
     /// <returns>
-    /// An <see cref="IArknHttpBuilder"/> for chaining <c>.WithRetry()</c> and <c>.WithTimeout()</c>.
+    /// An <see cref="IArknHttpBuilder"/> for chaining <c>.WithRetry()</c>, <c>.WithTimeout()</c>,
+    /// and auth methods.
     /// </returns>
     /// <example>
     /// <code>
     /// services.AddArknHttp&lt;UserClient&gt;("https://api.example.com")
     ///         .WithRetry(maxAttempts: 3, baseDelay: TimeSpan.FromMilliseconds(200))
-    ///         .WithTimeout(TimeSpan.FromSeconds(30));
+    ///         .WithTimeout(TimeSpan.FromSeconds(30))
+    ///         .WithBearerAuth(() => tokenProvider.GetTokenAsync());
     /// </code>
     /// </example>
     public static IArknHttpBuilder AddArknHttp<TClient>(
@@ -53,18 +56,23 @@ public static class ServiceCollectionExtensions
                 .CreateInstance<TClient>(sp, http);
         });
 
-        return new ArknHttpBuilder(services, options);
+        return new ArknHttpBuilder(services, options, clientName);
     }
 
     // ── Internal builder ───────────────────────────────────────────────────────
 
     private sealed class ArknHttpBuilder : IArknHttpBuilder
     {
+        private readonly IServiceCollection _services;
         private readonly ArknHttpOptions _options;
+        private readonly string _clientName;
+        private bool _tokenStoreRegistered;
 
-        internal ArknHttpBuilder(IServiceCollection _, ArknHttpOptions options)
+        internal ArknHttpBuilder(IServiceCollection services, ArknHttpOptions options, string clientName)
         {
-            _options = options;
+            _services   = services;
+            _options    = options;
+            _clientName = clientName;
         }
 
         public IArknHttpBuilder WithRetry(int maxAttempts, TimeSpan baseDelay)
@@ -78,6 +86,85 @@ public static class ServiceCollectionExtensions
         {
             _options.Timeout = timeout;
             return this;
+        }
+
+        public IArknHttpBuilder WithInterceptor(IArknAuthInterceptor interceptor)
+        {
+            _options.Interceptors.Add(interceptor);
+            return this;
+        }
+
+        public IArknHttpBuilder WithBearerAuth(Func<Task<string>> tokenFactory)
+        {
+            EnsureTokenStore();
+            var store    = new InMemoryTokenStore();
+            var storeKey = _clientName;
+            _options.Interceptors.Add(new BearerTokenInterceptor(tokenFactory, storeKey, store));
+            return this;
+        }
+
+        public IArknHttpBuilder WithBearerAuth(Func<IServiceProvider, Task<string>> tokenFactory)
+        {
+            EnsureTokenStore();
+            var store    = new InMemoryTokenStore();
+            var storeKey = _clientName;
+            _options.Interceptors.Add(new SpBearerTokenInterceptor(tokenFactory, storeKey, store, _services));
+            return this;
+        }
+
+        public IArknHttpBuilder WithClientCredentials(Action<ClientCredentialsOptions> configure)
+        {
+            EnsureTokenStore();
+            var ccOptions = new ClientCredentialsOptions();
+            configure(ccOptions);
+            var store = new InMemoryTokenStore();
+            _options.Interceptors.Add(new ClientCredentialsInterceptor(ccOptions, store));
+            return this;
+        }
+
+        private void EnsureTokenStore()
+        {
+            if (_tokenStoreRegistered) return;
+            _services.AddSingleton<IArknTokenStore, InMemoryTokenStore>();
+            _tokenStoreRegistered = true;
+        }
+    }
+
+    // SP-aware bearer interceptor: resolves service provider lazily per-request
+    private sealed class SpBearerTokenInterceptor : IArknAuthInterceptor
+    {
+        private readonly Func<IServiceProvider, Task<string>> _factory;
+        private readonly string _storeKey;
+        private readonly IArknTokenStore _store;
+        private readonly IServiceCollection _services;
+        private IServiceProvider? _sp;
+
+        public SpBearerTokenInterceptor(
+            Func<IServiceProvider, Task<string>> factory,
+            string storeKey,
+            IArknTokenStore store,
+            IServiceCollection services)
+        {
+            _factory  = factory;
+            _storeKey = storeKey;
+            _store    = store;
+            _services = services;
+        }
+
+        public async Task ApplyAsync(HttpRequestMessage request, CancellationToken ct = default)
+        {
+            var token = await _store.GetAsync(_storeKey).ConfigureAwait(false);
+
+            if (token is null)
+            {
+                _sp ??= _services.BuildServiceProvider();
+                token = await _factory(_sp).ConfigureAwait(false);
+                await _store.SetAsync(_storeKey, token, DateTimeOffset.UtcNow.AddMinutes(55))
+                            .ConfigureAwait(false);
+            }
+
+            request.Headers.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
         }
     }
 }

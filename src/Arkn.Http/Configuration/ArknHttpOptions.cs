@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Arkn.Http.Auth;
 
 namespace Arkn.Http.Configuration;
 
@@ -43,4 +44,10 @@ public sealed class ArknHttpOptions
         PropertyNameCaseInsensitive = true,
         DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
     };
+
+    /// <summary>
+    /// Auth interceptors applied before every request. Add via <c>.WithInterceptor()</c>,
+    /// <c>.WithBearerAuth()</c>, or <c>.WithClientCredentials()</c> on the builder.
+    /// </summary>
+    public List<IArknAuthInterceptor> Interceptors { get; } = new();
 }

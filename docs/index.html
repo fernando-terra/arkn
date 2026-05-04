@@ -357,7 +357,7 @@
           <div class="pkg-version">v0.1.4</div>
         </div>
       </div>
-      <div class="pkg-desc">Fluent typed HTTP client. Every call returns Result&lt;T&gt;. Built-in retry. No raw HttpClient.</div>
+      <div class="pkg-desc">Fluent typed HTTP client. Every call returns Result&lt;T&gt;. Built-in retry, auth interceptors and OAuth2 Client Credentials. No raw HttpClient.</div>
       <div class="pkg-tags"><span class="tag">http</span><span class="tag">typed-client</span><span class="tag">retry</span></div>
     </div>
 
@@ -614,8 +614,26 @@ result
   </div>
 
   <div style="margin-top:2rem;padding:1.4rem 1.6rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;">
-    <div style="font-size:.8rem;color:var(--muted);margin-bottom:.6rem;font-family:var(--mono)">Program.cs — Minimal API with Arkn.Jobs</div>
-    <pre><span class="n">builder.Services.</span><span class="m">AddArknJobs</span>(<span class="n">jobs =>
+    <div style="font-size:.8rem;color:var(--muted);margin-bottom:.6rem;font-family:var(--mono)">Program.cs — HTTP client with OAuth2 + Jobs with Slack</div>
+    <pre><span class="c">// Typed HTTP client with OAuth2 Client Credentials — zero external deps</span>
+<span class="n">builder.Services.</span><span class="m">AddArknHttp</span>&lt;<span class="t">PaymentApiClient</span>&gt;(<span class="s">"https://api.payments.com"</span>)
+    .<span class="m">WithClientCredentials</span>(<span class="n">opts =>
+    {
+        opts.TokenUrl     = </span><span class="s">"https://auth.payments.com/token"</span><span class="n">;
+        opts.ClientId     = </span><span class="s">"my-client"</span><span class="n">;
+        opts.ClientSecret = config[</span><span class="s">"Auth:Secret"</span><span class="n">];
+    })</span>
+    .<span class="m">WithRetry</span>(<span class="n">maxAttempts: 3</span>);
+
+<span class="c">// Typed client — shorthand methods, no boilerplate</span>
+<span class="k">public class</span> <span class="t">PaymentApiClient</span>(<span class="t">IArknHttp</span> http) : <span class="t">ArknHttpClient</span>(http, <span class="s">""</span>)
+{
+    <span class="k">public</span> <span class="t">Task</span>&lt;<span class="t">Result</span>&lt;<span class="t">Payment</span>&gt;&gt; <span class="m">GetAsync</span>(<span class="t">Guid</span> id) =&gt; <span class="m">GetAs</span>&lt;<span class="t">Payment</span>&gt;(<span class="s">"/payments/{id}"</span>, id);
+    <span class="k">public</span> <span class="t">Task</span>&lt;<span class="t">Result</span>&lt;<span class="t">Payment</span>&gt;&gt; <span class="m">CreateAsync</span>(<span class="t">CreatePaymentRequest</span> r) =&gt; <span class="m">PostAs</span>&lt;<span class="t">Payment</span>&gt;(<span class="s">"/payments"</span>, r);
+}
+
+<span class="c">// Jobs with retry + Slack on failure</span>
+<span class="n">builder.Services.</span><span class="m">AddArknJobs</span>(<span class="n">jobs =>
 {
     jobs.</span><span class="m">Add</span>&lt;<span class="t">InvoiceProcessorJob</span>&gt;(<span class="s">"0 2 * * *"</span>)
         .<span class="m">WithRetry</span>(<span class="n">maxAttempts: 3</span>)

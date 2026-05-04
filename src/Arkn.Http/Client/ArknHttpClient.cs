@@ -1,5 +1,6 @@
 using Arkn.Http.Abstractions;
 using Arkn.Http.Builder;
+using Arkn.Results;
 
 namespace Arkn.Http.Client;
 
@@ -54,4 +55,46 @@ public abstract class ArknHttpClient
         var rel = path.TrimStart('/');
         return $"{_baseUrl}/{rel}";
     }
+
+    // ── Shorthand GET ──────────────────────────────────────────────────────────
+
+    /// <summary>GET request — deserializes the response to <typeparamref name="T"/>.</summary>
+    protected Task<Result<T>> GetAs<T>(string path, params object[] args)
+        => Request(path, args).Get().As<T>();
+
+    /// <summary>GET request — returns a void <see cref="Result"/>.</summary>
+    protected Task<Result> Get(string path, params object[] args)
+        => Request(path, args).Get().AsResult();
+
+    // ── Shorthand POST ─────────────────────────────────────────────────────────
+
+    /// <summary>POST request with body — deserializes the response to <typeparamref name="T"/>.</summary>
+    protected Task<Result<T>> PostAs<T>(string path, object body)
+        => Request(path).WithBody(body).Post().As<T>();
+
+    /// <summary>POST request with body — returns a void <see cref="Result"/>.</summary>
+    protected Task<Result> Post(string path, object body)
+        => Request(path).WithBody(body).Post().AsResult();
+
+    // ── Shorthand PUT ──────────────────────────────────────────────────────────
+
+    /// <summary>PUT request with body — deserializes the response to <typeparamref name="T"/>.</summary>
+    protected Task<Result<T>> PutAs<T>(string path, object body, params object[] args)
+        => Request(path, args).WithBody(body).Put().As<T>();
+
+    /// <summary>PUT request with body — returns a void <see cref="Result"/>.</summary>
+    protected Task<Result> Put(string path, object body, params object[] args)
+        => Request(path, args).WithBody(body).Put().AsResult();
+
+    // ── Shorthand PATCH ────────────────────────────────────────────────────────
+
+    /// <summary>PATCH request with body — deserializes the response to <typeparamref name="T"/>.</summary>
+    protected Task<Result<T>> PatchAs<T>(string path, object body, params object[] args)
+        => Request(path, args).WithBody(body).Patch().As<T>();
+
+    // ── Shorthand DELETE ───────────────────────────────────────────────────────
+
+    /// <summary>DELETE request — returns a void <see cref="Result"/>.</summary>
+    protected Task<Result> Delete(string path, params object[] args)
+        => Request(path, args).Delete().AsResult();
 }
