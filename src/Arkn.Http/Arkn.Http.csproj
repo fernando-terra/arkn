@@ -14,7 +14,7 @@
   </PropertyGroup>
   <!-- Microsoft.Extensions.Http is part of the .NET platform ecosystem (not a third-party dep) -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.7" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Arkn.Core\Arkn.Core.csproj" />
