@@ -2,6 +2,7 @@ using Arkn.Http.Abstractions;
 using Arkn.Http.Auth;
 using Arkn.Http.Client;
 using Arkn.Http.Configuration;
+using Arkn.Logging.Models;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Arkn.Http.Extensions;
@@ -50,6 +51,11 @@ public static class ServiceCollectionExtensions
         {
             var factory    = sp.GetRequiredService<IHttpClientFactory>();
             var httpClient = factory.CreateClient(clientName);
+
+            // Resolve IArknLogger for debug logging if enabled
+            if (options.DebugLoggingEnabled)
+                options.DebugLogger = sp.GetService<Arkn.Logging.Abstractions.IArknLogger>();
+
             IArknHttp http = new ArknHttp(httpClient, options);
 
             return Microsoft.Extensions.DependencyInjection.ActivatorUtilities
@@ -119,6 +125,13 @@ public static class ServiceCollectionExtensions
             configure(ccOptions);
             var store = new InMemoryTokenStore();
             _options.Interceptors.Add(new ClientCredentialsInterceptor(ccOptions, store));
+            return this;
+        }
+
+        public IArknHttpBuilder WithDebugLogging(ArknLogLevel level = ArknLogLevel.Debug)
+        {
+            _options.DebugLogLevel   = level;
+            _options.DebugLoggingEnabled = true;
             return this;
         }
 

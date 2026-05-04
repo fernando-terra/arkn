@@ -22,6 +22,9 @@
     <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.7" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Arkn.Logging\Arkn.Logging.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Arkn.Core\Arkn.Core.csproj" />
     <ProjectReference Include="..\Arkn.Results\Arkn.Results.csproj" />
   </ItemGroup>

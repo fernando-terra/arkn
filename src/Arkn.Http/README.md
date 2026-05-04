@@ -91,6 +91,37 @@ builder.Services.AddArknHttp<UserApiClient>("https://api.example.com")
     .WithInterceptor(new ApiKeyInterceptor(config["ApiKey"]));
 ```
 
+## Debug logging
+
+Habilite para logar request e response completos via `IArknLogger`:
+
+```csharp
+builder.Services.AddArknHttp<UserApiClient>("https://api.example.com")
+    .WithDebugLogging()                        // usa ArknLogLevel.Debug
+    .WithDebugLogging(ArknLogLevel.Info);      // ou nível customizado
+```
+
+O que é logado em cada chamada:
+
+```
+→ GET https://api.example.com/users/123
+  Accept: application/json
+  Authorization: Bearer eyJhbGc***   ← sanitizado automaticamente
+  Body: (none)
+
+← 200 OK (87ms)
+  Content-Type: application/json
+  Body: {
+    "id": "123",
+    "name": "Alice"
+  }
+```
+
+- Respostas 4xx → `Warning`, respostas 5xx → `Error`, demais → `Debug`
+- Headers sensíveis (`Authorization`, `Cookie`, `X-Api-Key`) são sanitizados automaticamente
+- Body de resposta é formatado como JSON indentado quando possível
+- Requer `IArknLogger` registrado no DI (`AddArknLogging()`)
+
 ## Token store
 
 `InMemoryTokenStore` is registered as a singleton automatically when any auth method is configured. Tokens are cached with a 30-second expiry buffer and can be invalidated manually:

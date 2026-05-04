@@ -1,4 +1,5 @@
 using Arkn.Http.Auth;
+using Arkn.Logging.Models;
 
 namespace Arkn.Http.Abstractions;
 
@@ -42,4 +43,12 @@ public interface IArknHttpBuilder
     /// Adds an OAuth2 Client Credentials interceptor. Fetches and caches tokens automatically.
     /// </summary>
     IArknHttpBuilder WithClientCredentials(Action<ClientCredentialsOptions> configure);
+
+    /// <summary>
+    /// Enables debug logging for every request and response using the <c>IArknLogger</c>
+    /// registered in the DI container. Logs method, URL, headers (sanitized), payload,
+    /// status code, response body and elapsed time.
+    /// </summary>
+    /// <param name="level">Log level for debug entries. Defaults to <see cref="ArknLogLevel.Debug"/>.</param>
+    IArknHttpBuilder WithDebugLogging(ArknLogLevel level = ArknLogLevel.Debug);
 }

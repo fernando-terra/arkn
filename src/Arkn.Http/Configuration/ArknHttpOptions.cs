@@ -1,6 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Arkn.Http.Auth;
+using Arkn.Logging.Abstractions;
+using Arkn.Logging.Models;
 
 namespace Arkn.Http.Configuration;
 
@@ -50,4 +52,21 @@ public sealed class ArknHttpOptions
     /// <c>.WithBearerAuth()</c>, or <c>.WithClientCredentials()</c> on the builder.
     /// </summary>
     public List<IArknAuthInterceptor> Interceptors { get; } = new();
+
+    /// <summary>
+    /// When <c>true</c>, logs full request and response (including payloads) for every call.
+    /// Enable via <c>.WithDebugLogging()</c> on the builder.
+    /// </summary>
+    public bool DebugLoggingEnabled { get; set; }
+
+    /// <summary>
+    /// Severity level used for debug log entries. Default: <see cref="ArknLogLevel.Debug"/>.
+    /// </summary>
+    public ArknLogLevel DebugLogLevel { get; set; } = ArknLogLevel.Debug;
+
+    /// <summary>
+    /// Logger instance used for debug output. Resolved from DI when <see cref="DebugLoggingEnabled"/> is <c>true</c>.
+    /// Headers with sensitive content (Authorization, Cookie) are automatically sanitized.
+    /// </summary>
+    public IArknLogger? DebugLogger { get; set; }
 }
