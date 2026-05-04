@@ -13,30 +13,32 @@ public sealed record Error(string Code, string Message, ErrorType Type)
     public static readonly Error None = new(string.Empty, string.Empty, ErrorType.Failure);
 
     // ── Factories ──────────────────────────────────────────────────────────────
+    // message is optional — when omitted it defaults to the code value.
+    // Use a custom message for user-facing contexts; omit for internal/logging.
 
     /// <summary>Creates a generic failure error.</summary>
-    public static Error Failure(string code, string message) =>
-        new(code, message, ErrorType.Failure);
+    public static Error Failure(string code, string? message = null) =>
+        new(code, message ?? code, ErrorType.Failure);
 
     /// <summary>Creates a not-found error.</summary>
-    public static Error NotFound(string code, string message) =>
-        new(code, message, ErrorType.NotFound);
+    public static Error NotFound(string code, string? message = null) =>
+        new(code, message ?? code, ErrorType.NotFound);
 
     /// <summary>Creates a validation error.</summary>
-    public static Error Validation(string code, string message) =>
-        new(code, message, ErrorType.Validation);
+    public static Error Validation(string code, string? message = null) =>
+        new(code, message ?? code, ErrorType.Validation);
 
     /// <summary>Creates a conflict error.</summary>
-    public static Error Conflict(string code, string message) =>
-        new(code, message, ErrorType.Conflict);
+    public static Error Conflict(string code, string? message = null) =>
+        new(code, message ?? code, ErrorType.Conflict);
 
     /// <summary>Creates an unauthorized error.</summary>
-    public static Error Unauthorized(string code, string message) =>
-        new(code, message, ErrorType.Unauthorized);
+    public static Error Unauthorized(string code, string? message = null) =>
+        new(code, message ?? code, ErrorType.Unauthorized);
 
     /// <summary>Creates a forbidden error.</summary>
-    public static Error Forbidden(string code, string message) =>
-        new(code, message, ErrorType.Forbidden);
+    public static Error Forbidden(string code, string? message = null) =>
+        new(code, message ?? code, ErrorType.Forbidden);
 
     public override string ToString() => $"[{Type}] {Code}: {Message}";
 }

@@ -27,6 +27,42 @@ public Order PlaceOrder(PlaceOrderRequest request)
 }
 ```
 
+## ErrorGroup pattern — define errors in one place
+
+Never scatter `Error.*` calls across services. Group them in a static class per domain:
+
+```csharp
+public static class UserErrors
+{
+    public static Error NotFound(Guid id) =>
+        Error.NotFound("User.NotFound", $"User '{id}' was not found.");
+
+    public static readonly Error InvalidEmail =
+        Error.Validation("User.InvalidEmail", "Email format is invalid.");
+
+    public static readonly Error EmailAlreadyRegistered =
+        Error.Conflict("User.EmailAlreadyRegistered", "This email is already in use.");
+}
+
+// Usage — no inline Error.* in services
+public Result<User> GetById(Guid id)
+{
+    var user = _repo.Find(id);
+    return user is null ? UserErrors.NotFound(id) : Result.Success(user);
+}
+```
+
+## Error factories — message is optional
+
+```csharp
+// Concise — message defaults to code
+Error.NotFound("User.NotFound")
+Error.Validation("Order.QuantityInvalid")
+
+// Explicit — when a custom user-facing message is needed
+Error.NotFound("User.NotFound", $"User '{id}' was not found.")
+```
+
 ## Error codes — always Namespace.Reason
 
 Error codes must follow the `Namespace.Reason` pattern. Both segments start with uppercase.

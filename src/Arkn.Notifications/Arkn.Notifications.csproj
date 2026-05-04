@@ -6,7 +6,7 @@
     <LangVersion>preview</LangVersion>
     <RootNamespace>Arkn.Notifications</RootNamespace>
     <AssemblyName>Arkn.Notifications</AssemblyName>
-    <Version>0.1.1</Version>
+    <Version>0.1.2</Version>
     <Authors>Fernando Terra</Authors>
     <Description>Notification abstractions for Arkn — pluggable notifiers, zero external dependencies.</Description>
     <PackageTags>dotnet;csharp;notifications;alerts;architecture</PackageTags>

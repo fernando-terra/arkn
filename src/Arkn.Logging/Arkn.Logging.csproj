@@ -6,7 +6,7 @@
     <LangVersion>preview</LangVersion>
     <RootNamespace>Arkn.Logging</RootNamespace>
     <AssemblyName>Arkn.Logging</AssemblyName>
-    <Version>0.1.1</Version>
+    <Version>0.1.2</Version>
     <Authors>Fernando Terra</Authors>
     <Description>Structured, sink-pluggable logging for Arkn — zero external dependencies.</Description>
     <PackageTags>dotnet;csharp;logging;structured-logging;architecture</PackageTags>

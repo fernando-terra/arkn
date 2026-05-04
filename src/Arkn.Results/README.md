@@ -44,18 +44,39 @@ Result.Failure(error)               // void failure
 Result<T>.Fail(error)               // typed failure
 Result<T>.Fail(errors)              // multiple errors
 
-// Error factories
-Error.Failure("Order.Failed", "msg")
-Error.NotFound("User.NotFound", "msg")
-Error.Validation("Email.Invalid", "msg")
-Error.Conflict("Email.Taken", "msg")
-Error.Unauthorized("Auth.Expired", "msg")
+// Error factories — message is optional (defaults to code)
+Error.NotFound("User.NotFound")                          // concise
+Error.NotFound("User.NotFound", $"User '{id}' not found.") // explicit
+Error.Validation("Order.QuantityInvalid")
+Error.Conflict("Email.AlreadyRegistered")
+Error.Unauthorized("Auth.TokenExpired")
 
 // Chaining
 result.Map(v => transform(v))
       .Bind(v => nextOperation(v))
       .Tap(v => sideEffect(v))
       .Match(onSuccess, onFailure);
+```
+
+## ErrorGroup pattern
+
+Group all errors for a domain in one static class:
+
+```csharp
+public static class UserErrors
+{
+    public static Error NotFound(Guid id) =>
+        Error.NotFound("User.NotFound", $"User '{id}' not found.");
+
+    public static readonly Error InvalidEmail =
+        Error.Validation("User.InvalidEmail", "Email is invalid.");
+
+    public static readonly Error EmailAlreadyRegistered =
+        Error.Conflict("User.EmailAlreadyRegistered", "Already in use.");
+}
+
+// Usage
+return user is null ? UserErrors.NotFound(id) : Result.Success(user);
 ```
 
 ## Part of the Arkn ecosystem

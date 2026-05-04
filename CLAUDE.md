@@ -26,6 +26,46 @@ Error.Unauthorized("Auth.TokenExpired", "message")
 
 **Error code format: always `Namespace.Reason`** — both segments PascalCase.
 
+## Error factories — message is optional
+
+All `Error.*` factories accept an optional `message`. When omitted, it defaults to the code.
+
+```csharp
+// Concise — message defaults to code
+Error.NotFound("User.NotFound")
+Error.Validation("Order.QuantityInvalid")
+
+// Explicit — custom user-facing message
+Error.NotFound("User.NotFound", $"User '{id}' was not found.")
+```
+
+## ErrorGroup pattern — define errors in one place
+
+Never scatter `Error.*` calls across services. Group them in a static class per domain:
+
+```csharp
+public static class UserErrors
+{
+    // Dynamic — takes runtime context
+    public static Error NotFound(Guid id) =>
+        Error.NotFound("User.NotFound", $"User '{id}' was not found.");
+
+    // Static — no runtime context needed
+    public static readonly Error InvalidEmail =
+        Error.Validation("User.InvalidEmail", "Email format is invalid.");
+
+    public static readonly Error EmailAlreadyRegistered =
+        Error.Conflict("User.EmailAlreadyRegistered", "This email is already in use.");
+}
+
+// Usage — clean, no inline Error.* calls
+public Result<User> GetById(Guid id)
+{
+    var user = _repo.Find(id);
+    return user is null ? UserErrors.NotFound(id) : Result.Success(user);
+}
+```
+
 ## Consuming results
 
 ```csharp
