@@ -6,13 +6,17 @@
     <LangVersion>preview</LangVersion>
     <RootNamespace>Arkn.Results</RootNamespace>
     <AssemblyName>Arkn.Results</AssemblyName>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <Authors>Fernando Terra</Authors>
     <Description>Result Pattern for modern .NET — explicit success/failure without exceptions. Zero external dependencies.</Description>
     <PackageTags>dotnet;csharp;result-pattern;railway-oriented;functional</PackageTags>
     <RepositoryUrl>https://github.com/fernando-terra/arkn</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Arkn.Core\Arkn.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>

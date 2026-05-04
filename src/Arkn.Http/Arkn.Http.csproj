@@ -6,11 +6,12 @@
     <LangVersion>preview</LangVersion>
     <RootNamespace>Arkn.Http</RootNamespace>
     <AssemblyName>Arkn.Http</AssemblyName>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <Authors>Fernando Terra</Authors>
     <Description>Fluent, typed HTTP client for modern .NET — returns Result&lt;T&gt; natively. Zero external dependencies.</Description>
     <PackageTags>dotnet;csharp;http-client;result-pattern;fluent;fintech</PackageTags>
     <RepositoryUrl>https://github.com/fernando-terra/arkn</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   <!-- Microsoft.Extensions.Http is part of the .NET platform ecosystem (not a third-party dep) -->
   <ItemGroup>
@@ -22,5 +23,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Arkn.Core\Arkn.Core.csproj" />
     <ProjectReference Include="..\Arkn.Results\Arkn.Results.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>

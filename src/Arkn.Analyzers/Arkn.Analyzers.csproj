@@ -7,18 +7,22 @@
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <RootNamespace>Arkn.Analyzers</RootNamespace>
     <AssemblyName>Arkn.Analyzers</AssemblyName>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <Authors>Fernando Terra</Authors>
     <Description>Roslyn analyzers that enforce Arkn patterns at compile time — Result returns, error code naming, and more.</Description>
     <PackageTags>dotnet;csharp;roslyn;analyzer;arkn;architecture</PackageTags>
     <RepositoryUrl>https://github.com/fernando-terra/arkn</RepositoryUrl>
     <DevelopmentDependency>true</DevelopmentDependency>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.8.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
   <!-- Include compiled analyzer DLL in the correct NuGet analyzer path -->
   <ItemGroup>
