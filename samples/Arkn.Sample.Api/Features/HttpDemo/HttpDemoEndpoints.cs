@@ -26,7 +26,7 @@ public static class HttpDemoEndpoints
         Result<IReadOnlyList<ExternalUser>> result = await client.ListAsync();
 
         return result.Match(
-            onSuccess: users => Results.Ok(users),
+            onSuccess: users => Ok(users),
             onFailure: ToHttpResult);
     }
 
@@ -36,7 +36,7 @@ public static class HttpDemoEndpoints
         Result<ExternalUser> result = await client.GetAsync(id);
 
         return result.Match(
-            onSuccess: user  => Results.Ok(user),
+            onSuccess: user  => Ok(user),
             onFailure: ToHttpResult);
     }
 
@@ -46,7 +46,7 @@ public static class HttpDemoEndpoints
         Result<ExternalUser> result = await client.CreateAsync(req);
 
         return result.Match(
-            onSuccess: created => Results.Created($"/external/users/{created.Id}", created),
+            onSuccess: created => Created($"/external/users/{created.Id}", created),
             onFailure: ToHttpResult);
     }
 
@@ -56,7 +56,7 @@ public static class HttpDemoEndpoints
         Result result = await client.DeleteAsync(id);
 
         return result.Match(
-            onSuccess: () => Results.NoContent(),
+            onSuccess: () => NoContent(),
             onFailure: ToHttpResult);
     }
 
@@ -64,10 +64,10 @@ public static class HttpDemoEndpoints
 
     private static IResult ToHttpResult(Error error) => error.Type switch
     {
-        ErrorType.NotFound     => Results.NotFound(new { error.Code, error.Message }),
-        ErrorType.Validation   => Results.BadRequest(new { error.Code, error.Message }),
-        ErrorType.Unauthorized => Results.Unauthorized(),
-        ErrorType.Conflict     => Results.Conflict(new { error.Code, error.Message }),
-        _                      => Results.Problem(detail: error.Message, title: error.Code)
+        ErrorType.NotFound     => NotFound(new { error.Code, error.Message }),
+        ErrorType.Validation   => BadRequest(new { error.Code, error.Message }),
+        ErrorType.Unauthorized => Unauthorized(),
+        ErrorType.Conflict     => Conflict(new { error.Code, error.Message }),
+        _                      => Problem(detail: error.Message, title: error.Code)
     };
 }

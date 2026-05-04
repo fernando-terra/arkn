@@ -1,4 +1,5 @@
 using Arkn.Notifications.Models;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 
 namespace Arkn.Extensions.Notifications.Slack;
@@ -14,7 +15,7 @@ public static class SlackBlockBuilder
         [NotificationLevel.Info]     = "ℹ️",
         [NotificationLevel.Warning]  = "⚠️",
         [NotificationLevel.Error]    = "❌",
-        [NotificationLevel.Critical] = "🚨",
+        [NotificationLevel.Critical] = "⛔",
     };
 
     private static readonly Dictionary<NotificationLevel, string> LevelColor = new()
@@ -115,6 +116,7 @@ public static class SlackBlockBuilder
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             WriteIndented        = false,
+            Encoder              = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         });
     }
 }

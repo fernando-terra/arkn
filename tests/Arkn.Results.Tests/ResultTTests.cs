@@ -1,4 +1,3 @@
-using Arkn.Core.Abstractions;
 using Arkn.Results;
 
 namespace Arkn.Results.Tests;
@@ -215,7 +214,7 @@ public class ResultTTests
     [Fact]
     public void ResultT_MultipleValidationErrors_AllPreserved()
     {
-        var errors = new IError[]
+        var errors = new Error[]
         {
             Error.Validation("VAL.NAME", "Name is required."),
             Error.Validation("VAL.EMAIL", "Invalid email format."),

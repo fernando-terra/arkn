@@ -24,7 +24,7 @@ public static class UsersEndpoints
 
     // GET /users
     private static IResult GetAll() =>
-        Results.Ok(_users);
+        Ok(_users);
 
     // GET /users/{id}
     private static IResult GetById(Guid id)
@@ -34,11 +34,11 @@ public static class UsersEndpoints
             : Error.NotFound("User.NotFound", $"User with id '{id}' was not found.");
 
         return result.Match(
-            onSuccess: dto => Results.Ok(dto),
+            onSuccess: dto => Ok(dto),
             onFailure: error => error.Type switch
             {
-                ErrorType.NotFound => Results.NotFound(new { error.Code, error.Message }),
-                _ => Results.Problem(error.Message)
+                ErrorType.NotFound => NotFound(new { error.Code, error.Message }),
+                _ => Problem(error.Message)
             });
     }
 
@@ -48,8 +48,8 @@ public static class UsersEndpoints
         Result<UserDto> result = ValidateAndCreate(dto);
 
         return result.Match(
-            onSuccess: created => Results.Created($"/users/{created.Id}", created),
-            onFailure: error => Results.BadRequest(new { error.Code, error.Message, error.Type }));
+            onSuccess: created => Created($"/users/{created.Id}", created),
+            onFailure: error => BadRequest(new { error.Code, error.Message, error.Type }));
     }
 
     private static Result<UserDto> ValidateAndCreate(UserDto dto)

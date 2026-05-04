@@ -49,7 +49,7 @@ public class SlackBlockBuilderTests
         var notification = ArknNotification.Critical("Critical", "body", "source");
         var json = SlackBlockBuilder.Build(notification, DefaultOptions());
 
-        Assert.Contains("🚨", json);
+        Assert.Contains("⛔", json);
     }
 
     [Fact]

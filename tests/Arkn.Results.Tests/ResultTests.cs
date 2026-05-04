@@ -28,12 +28,15 @@ public class ResultTests
     [Fact]
     public void Result_Success_WithError_ShouldThrow()
     {
-        Assert.Throws<InvalidOperationException>(() =>
+        var ex = Assert.ThrowsAny<Exception>(() =>
         {
             _ = typeof(Result)
                 .GetConstructors(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)[0]
                 .Invoke([true, Error.NotFound("X", "Y")]);
         });
+        // Reflection wraps exceptions in TargetInvocationException
+        var inner = ex.InnerException ?? ex;
+        Assert.IsType<InvalidOperationException>(inner);
     }
 
     // ── Result<T> ─────────────────────────────────────────────────────────────

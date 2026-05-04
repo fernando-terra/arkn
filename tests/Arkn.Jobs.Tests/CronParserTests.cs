@@ -62,7 +62,7 @@ public class CronParserTests
         var next = CronParser.GetNextOccurrence(cron, after);
 
         Assert.NotNull(next);
-        Assert.Equal(10, next!.Value.Minute % 5); // should be 10:10
+        Assert.Equal(0, next!.Value.Minute % 5); // should be a multiple of 5 (10:10)
         Assert.Equal(10, next.Value.Minute);
     }
 

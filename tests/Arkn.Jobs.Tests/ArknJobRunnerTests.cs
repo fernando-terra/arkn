@@ -21,7 +21,8 @@ public class ArknJobRunnerTests
         services.AddScoped<SlowJob>();
         var sp = services.BuildServiceProvider();
 
-        var runner = new ArknJobRunner(sp, history, logger, sink);
+        var registry = new ArknJobRegistry();
+        var runner = new ArknJobRunner(sp, history, logger, registry, sink);
         return (runner, history, sink);
     }
 

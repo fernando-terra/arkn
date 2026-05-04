@@ -34,6 +34,9 @@ public class Result
     /// <summary>Creates a successful result.</summary>
     public static Result Success() => new(true, Error.None);
 
+    /// <summary>Shorthand for <see cref="Success()"/>.</summary>
+    public static Result Ok() => Success();
+
     /// <summary>Creates a failed result.</summary>
     public static Result Failure(Error error) => new(false, error);
 
@@ -62,6 +65,9 @@ public class Result
     /// </summary>
     public TOut Match<TOut>(Func<TOut> onSuccess, Func<Error, TOut> onFailure) =>
         IsSuccess ? onSuccess() : onFailure(Error);
+
+    public override string ToString() =>
+        IsSuccess ? "Success" : $"Failure({Error})";
 }
 
 /// <summary>
@@ -95,16 +101,22 @@ public sealed class Result<T> : Result
     public IReadOnlyList<Error> Errors =>
         _errors ?? (IsFailure ? [Error] : []);
 
+    /// <summary>The first error. Equivalent to <see cref="Result.Error"/> for single-error results.</summary>
+    public Error FirstError => IsFailure
+        ? (_errors?[0] ?? Error)
+        : throw new InvalidOperationException("Cannot access error of a successful result.");
+
     // ── Functional operations ──────────────────────────────────────────────────
 
     /// <summary>
     /// Projects the value using <paramref name="mapper"/> if successful;
     /// propagates the error otherwise.
     /// </summary>
-    public Result<TOut> Map<TOut>(Func<T, TOut> mapper) =>
-        IsSuccess
-            ? Result.Success(mapper(Value))
-            : Result.Failure<TOut>(Error);
+    public Result<TOut> Map<TOut>(Func<T, TOut> mapper)
+    {
+        ArgumentNullException.ThrowIfNull(mapper);
+        return IsSuccess ? Result.Success(mapper(Value)) : Result.Failure<TOut>(Error);
+    }
 
     /// <summary>
     /// Chains into another result-returning operation if successful;
@@ -112,6 +124,13 @@ public sealed class Result<T> : Result
     /// </summary>
     public Result<TOut> Bind<TOut>(Func<T, Result<TOut>> binder) =>
         IsSuccess ? binder(Value) : Result.Failure<TOut>(Error);
+
+    /// <summary>
+    /// Chains into a non-value result-returning operation if successful;
+    /// propagates the error otherwise.
+    /// </summary>
+    public Result Bind(Func<T, Result> binder) =>
+        IsSuccess ? binder(Value) : Result.Failure(Error);
 
     /// <summary>
     /// Async version of <see cref="Bind{TOut}"/>.
@@ -135,8 +154,26 @@ public sealed class Result<T> : Result
         return this;
     }
 
+    // ── Convenience factories ─────────────────────────────────────────────────
+
+    /// <summary>Shorthand for <see cref="Result.Success{T}(T)"/>.</summary>
+    public static Result<T> Ok(T value)
+    {
+        ArgumentNullException.ThrowIfNull(value);
+        return Result.Success(value);
+    }
+
+    /// <summary>Shorthand for <see cref="Result.Failure{T}(Error)"/>.</summary>
+    public static Result<T> Fail(Error error) => Result.Failure<T>(error);
+
+    /// <summary>Shorthand for <see cref="Result.Failure{T}(IEnumerable{Error})"/>.</summary>
+    public static Result<T> Fail(IEnumerable<Error> errors) => Result.Failure<T>(errors);
+
     // ── Implicit conversions ───────────────────────────────────────────────────
 
     public static implicit operator Result<T>(T value) => Result.Success(value);
     public static implicit operator Result<T>(Error error) => Result.Failure<T>(error);
+
+    public override string ToString() =>
+        IsSuccess ? $"Success({_value})" : $"Failure({Error})";
 }
