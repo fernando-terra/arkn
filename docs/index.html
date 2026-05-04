@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arkn — Zero-Dependency .NET Framework</title>
+  <meta name="description" content="A composable, zero-dependency .NET 10 framework built for clarity. Result&lt;T&gt;, clean domain models, typed HTTP, cron jobs, structured logging and more." />
+  <meta property="og:title" content="Arkn — Zero-Dependency .NET Framework" />
+  <meta property="og:description" content="A composable, zero-dependency .NET 10 framework built for clarity." />
+  <meta property="og:url" content="https://fernando-terra.github.io/arkn" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d0d0f;
+      --surface:   #131316;
+      --border:    #1e1e24;
+      --border2:   #2a2a33;
+      --text:      #e8e8f0;
+      --muted:     #6b6b80;
+      --accent:    #7c6af7;
+      --accent2:   #a78bfa;
+      --green:     #34d399;
+      --red:       #f87171;
+      --yellow:    #fbbf24;
+      --blue:      #60a5fa;
+      --pink:      #f472b6;
+      --radius:    10px;
+      --font:      'Inter', system-ui, sans-serif;
+      --mono:      'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--accent2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(13,13,15,.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 58px;
+    }
+    .nav-logo { font-weight: 700; font-size: 1.1rem; letter-spacing: -.02em; color: var(--text); }
+    .nav-logo span { color: var(--accent2); }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-links a { color: var(--muted); font-size: .9rem; transition: color .15s; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .nav-gh {
+      background: var(--border2); border: 1px solid var(--border2);
+      color: var(--text) !important; padding: .35rem .8rem;
+      border-radius: 6px; font-size: .85rem; font-weight: 500;
+      transition: background .15s;
+    }
+    .nav-gh:hover { background: var(--border); text-decoration: none !important; }
+
+    /* ── HERO ── */
+    .hero {
+      max-width: 860px; margin: 0 auto;
+      padding: 7rem 2rem 5rem;
+      text-align: center;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: rgba(124,106,247,.12); border: 1px solid rgba(124,106,247,.25);
+      color: var(--accent2); border-radius: 100px;
+      padding: .3rem .9rem; font-size: .8rem; font-weight: 500;
+      margin-bottom: 1.8rem;
+    }
+    .badge svg { width: 14px; height: 14px; }
+    h1 {
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 700; line-height: 1.15;
+      letter-spacing: -.03em; margin-bottom: 1.2rem;
+    }
+    h1 em { font-style: normal; color: var(--accent2); }
+    .hero-sub {
+      font-size: 1.15rem; color: var(--muted);
+      max-width: 560px; margin: 0 auto 2.4rem;
+    }
+    .cta-group { display: flex; gap: .8rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .65rem 1.4rem; border-radius: 8px;
+      font-size: .9rem; font-weight: 600; cursor: pointer;
+      transition: all .15s; border: none;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #6b59e8; text-decoration: none; }
+    .btn-outline {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border2);
+    }
+    .btn-outline:hover { background: var(--surface); text-decoration: none; }
+
+    /* ── CODE HERO ── */
+    .code-hero {
+      max-width: 720px; margin: 4rem auto 0;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden; text-align: left;
+    }
+    .code-bar {
+      display: flex; align-items: center; gap: .5rem;
+      padding: .7rem 1rem; border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,.02);
+    }
+    .dot { width: 11px; height: 11px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #febc2e; }
+    .dot-g { background: #28c840; }
+    .code-label { margin-left: auto; font-size: .75rem; color: var(--muted); font-family: var(--mono); }
+    pre {
+      padding: 1.4rem 1.6rem;
+      font-family: var(--mono);
+      font-size: .82rem; line-height: 1.75;
+      overflow-x: auto;
+    }
+    .k { color: #c792ea; }   /* keyword */
+    .t { color: var(--blue); } /* type */
+    .s { color: var(--green); } /* string */
+    .c { color: var(--muted); } /* comment */
+    .m { color: var(--yellow); } /* method */
+    .p { color: var(--pink); }  /* property/error */
+    .n { color: var(--text); }  /* normal */
+
+    /* ── SECTION ── */
+    section { max-width: 1000px; margin: 0 auto; padding: 5rem 2rem; }
+    .section-label {
+      font-size: .75rem; font-weight: 600; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--accent2);
+      margin-bottom: .8rem;
+    }
+    h2 {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 700; letter-spacing: -.02em;
+      margin-bottom: 1rem;
+    }
+    .section-sub { color: var(--muted); max-width: 520px; margin-bottom: 3rem; }
+
+    /* ── PACKAGES ── */
+    .packages {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 1px; background: var(--border);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .pkg {
+      background: var(--surface); padding: 1.5rem;
+      transition: background .15s;
+    }
+    .pkg:hover { background: #17171c; }
+    .pkg-top { display: flex; align-items: center; gap: .7rem; margin-bottom: .6rem; }
+    .pkg-icon {
+      width: 32px; height: 32px; border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+    }
+    .pkg-name { font-family: var(--mono); font-size: .85rem; font-weight: 500; color: var(--text); }
+    .pkg-version { font-family: var(--mono); font-size: .72rem; color: var(--muted); }
+    .pkg-desc { font-size: .85rem; color: var(--muted); line-height: 1.55; }
+    .pkg-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .9rem; }
+    .tag {
+      font-size: .7rem; padding: .2rem .55rem; border-radius: 4px;
+      background: rgba(255,255,255,.05); color: var(--muted);
+    }
+
+    /* ── FEATURES ── */
+    .features { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+    @media (max-width: 700px) { .features { grid-template-columns: 1fr; } }
+    .feature-list { list-style: none; display: flex; flex-direction: column; gap: .9rem; }
+    .feature-list li { display: flex; gap: .8rem; align-items: flex-start; }
+    .check { color: var(--green); margin-top: .15rem; flex-shrink: 0; }
+    .feature-title { font-weight: 600; font-size: .95rem; margin-bottom: .2rem; }
+    .feature-desc { font-size: .85rem; color: var(--muted); }
+
+    /* ── ANALYZERS ── */
+    .analyzers { display: flex; flex-direction: column; gap: .7rem; }
+    .rule {
+      display: flex; gap: 1rem; align-items: flex-start;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 1rem 1.2rem;
+    }
+    .rule-id {
+      font-family: var(--mono); font-size: .8rem; font-weight: 600;
+      color: var(--accent2); background: rgba(124,106,247,.1);
+      border: 1px solid rgba(124,106,247,.2); border-radius: 5px;
+      padding: .2rem .55rem; white-space: nowrap; align-self: flex-start;
+    }
+    .rule-title { font-size: .9rem; font-weight: 500; margin-bottom: .25rem; }
+    .rule-desc { font-size: .82rem; color: var(--muted); }
+    .severity { font-size: .72rem; padding: .15rem .5rem; border-radius: 4px; }
+    .sev-warn { background: rgba(251,191,36,.1); color: var(--yellow); border: 1px solid rgba(251,191,36,.2); }
+    .sev-err  { background: rgba(248,113,113,.1); color: var(--red);    border: 1px solid rgba(248,113,113,.2); }
+
+    /* ── INSTALL ── */
+    .install-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 600px) { .install-grid { grid-template-columns: 1fr; } }
+    .install-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; overflow: hidden;
+    }
+    .install-card-header {
+      padding: .6rem 1rem; border-bottom: 1px solid var(--border);
+      font-size: .75rem; color: var(--muted); font-family: var(--mono);
+    }
+    .install-card pre { padding: .9rem 1rem; font-size: .8rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 2rem;
+      text-align: center; color: var(--muted); font-size: .85rem;
+    }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--text); }
+
+    /* ── DIVIDER ── */
+    .divider { border: none; border-top: 1px solid var(--border); }
+
+    @media (max-width: 600px) {
+      nav { padding: 0 1rem; }
+      .nav-links a:not(.nav-gh) { display: none; }
+      section { padding: 3.5rem 1.2rem; }
+      .hero { padding: 4rem 1.2rem 3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">ark<span>n</span></span>
+  <div class="nav-links">
+    <a href="#packages">Packages</a>
+    <a href="#features">Features</a>
+    <a href="#analyzers">Analyzers</a>
+    <a href="#install">Install</a>
+    <a class="nav-gh" href="https://github.com/fernando-terra/arkn" target="_blank">
+      ★ GitHub
+    </a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="badge">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    .NET 10 · Zero External Dependencies
+  </div>
+  <h1>A framework that gets<br/><em>out of your way</em></h1>
+  <p class="hero-sub">
+    Arkn is a composable, zero-lock-in .NET 10 framework built for clarity.
+    Explicit by design. Predictable by convention. Ready for AI-assisted development.
+  </p>
+  <div class="cta-group">
+    <a class="btn btn-primary" href="#install">Get Started</a>
+    <a class="btn btn-outline" href="https://github.com/fernando-terra/arkn" target="_blank">View on GitHub</a>
+  </div>
+
+  <!-- Code sample -->
+  <div class="code-hero">
+    <div class="code-bar">
+      <span class="dot dot-r"></span>
+      <span class="dot dot-y"></span>
+      <span class="dot dot-g"></span>
+      <span class="code-label">UserService.cs</span>
+    </div>
+    <pre><span class="k">public</span> <span class="k">async</span> <span class="t">Task</span>&lt;<span class="t">Result</span>&lt;<span class="t">User</span>&gt;&gt; <span class="m">GetByIdAsync</span>(<span class="t">Guid</span> id, <span class="t">CancellationToken</span> ct)
+{
+    <span class="k">var</span> user = <span class="k">await</span> _repo.<span class="m">FindAsync</span>(id, ct);
+
+    <span class="k">return</span> user <span class="k">is null</span>
+        ? <span class="t">Error</span>.<span class="m">NotFound</span>(<span class="s">"User.NotFound"</span>, <span class="s">$"User {id} not found."</span>)
+        : <span class="t">Result</span>.<span class="m">Success</span>(user);
+}
+
+<span class="c">// In your endpoint — no try/catch, no null checks</span>
+<span class="k">return</span> result.<span class="m">Match</span>(
+    onSuccess: user  =&gt; <span class="m">Ok</span>(user),
+    onFailure: error =&gt; error.Type <span class="k">switch</span>
+    {
+        <span class="t">ErrorType</span>.<span class="p">NotFound</span>   =&gt; <span class="m">NotFound</span>(),
+        <span class="t">ErrorType</span>.<span class="p">Validation</span> =&gt; <span class="m">BadRequest</span>(error.Message),
+        _                    =&gt; <span class="m">Problem</span>(error.Message)
+    });</pre>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- PACKAGES -->
+<section id="packages">
+  <div class="section-label">Packages</div>
+  <h2>Everything you need. Nothing you don't.</h2>
+  <p class="section-sub">Each package is independent. Use only what your project actually needs.</p>
+
+  <div class="packages">
+
+    <div class="pkg">
+      <div class="pkg-top">
+        <div class="pkg-icon" style="background:rgba(124,106,247,.15)">🧱</div>
+        <div>
+          <div class="pkg-name">Arkn.Core</div>
+          <div class="pkg-version">v0.1.0</div>
+        </div>
+      </div>
+      <div class="pkg-desc">Domain primitives — IEntity, IValueObject, IAggregateRoot, IError, ErrorType.</div>
+      <div class="pkg-tags"><span class="tag">domain</span><span class="tag">ddd</span><span class="tag">zero-deps</span></div>
+    </div>
+
+    <div class="pkg">
+      <div class="pkg-top">
+        <div class="pkg-icon" style="background:rgba(52,211,153,.15)">✅</div>
+        <div>
+          <div class="pkg-name">Arkn.Results</div>
+          <div class="pkg-version">v0.1.0</div>
+        </div>
+      </div>
+      <div class="pkg-desc">Result&lt;T&gt;, Error, ErrorType. Match, Map, Bind, Tap. No exceptions for domain failures.</div>
+      <div class="pkg-tags"><span class="tag">result</span><span class="tag">error-handling</span><span class="tag">zero-deps</span></div>
+    </div>
+
+    <div class="pkg">
+      <div class="pkg-top">
+        <div class="pkg-icon" style="background:rgba(96,165,250,.15)">🌐</div>
+        <div>
+          <div class="pkg-name">Arkn.Http</div>
+          <div class="pkg-version">v0.1.0</div>
+        </div>
+      </div>
+      <div class="pkg-desc">Fluent typed HTTP client. Every call returns Result&lt;T&gt;. Built-in retry. No raw HttpClient.</div>
+      <div class="pkg-tags"><span class="tag">http</span><span class="tag">typed-client</span><span class="tag">retry</span></div>
+    </div>
+
+    <div class="pkg">
+      <div class="pkg-top">
+        <div class="pkg-icon" style="background:rgba(251,191,36,.15)">📋</div>
+        <div>
+          <div class="pkg-name">Arkn.Logging</div>
+          <div class="pkg-version">v0.1.0</div>
+        </div>
+      </div>
+      <div class="pkg-desc">Structured logging with pluggable sinks, log context, and MEL bridge.</div>
+      <div class="pkg-tags"><span class="tag">logging</span><span class="tag">structured</span><span class="tag">sinks</span></div>
+    </div>
+
+    <div class="pkg">
+      <div class="pkg-top">
+        <div class="pkg-icon" style="background:rgba(244,114,182,.15)">⚙️</div>
+        <div>
+          <div class="pkg-name">Arkn.Jobs</div>
+          <div class="pkg-version">v0.1.0</div>
+        </div>
+      </div>
+      <div class="pkg-desc">Cron scheduler, retry, timeout, scoped DI per run. Result&lt;T&gt; enforced. No Hangfire needed.</div>
+      <div class="pkg-tags"><span class="tag">jobs</span><span class="tag">cron</span><span class="tag">retry</span><span class="tag">background</span></div>
+    </div>
+
+    <div class="pkg">
+      <div class="pkg-top">
+        <div class="pkg-icon" style="background:rgba(52,211,153,.12)">🔔</div>
+        <div>
+          <div class="pkg-name">Arkn.Notifications</div>
+          <div class="pkg-version">v0.1.0</div>
+        </div>
+      </div>
+      <div class="pkg-desc">Pluggable notifier abstraction. IArknNotifier, NotificationLevel, fan-out registry.</div>
+      <div class="pkg-tags"><span class="tag">notifications</span><span class="tag">alerts</span><span class="tag">zero-deps</span></div>
+    </div>
+
+    <div class="pkg">
+      <div class="pkg-top">
+        <div class="pkg-icon" style="background:rgba(96,165,250,.12)">💬</div>
+        <div>
+          <div class="pkg-name">Arkn.Extensions.Notifications.Slack</div>
+          <div class="pkg-version">v0.1.0</div>
+        </div>
+      </div>
+      <div class="pkg-desc">Slack notifier via Incoming Webhook. Block Kit formatting. Zero external SDKs.</div>
+      <div class="pkg-tags"><span class="tag">slack</span><span class="tag">webhook</span><span class="tag">block-kit</span></div>
+    </div>
+
+    <div class="pkg">
+      <div class="pkg-top">
+        <div class="pkg-icon" style="background:rgba(124,106,247,.12)">🤖</div>
+        <div>
+          <div class="pkg-name">Arkn.Analyzers</div>
+          <div class="pkg-version">v0.1.0</div>
+        </div>
+      </div>
+      <div class="pkg-desc">Roslyn analyzers that enforce Arkn patterns at compile time. ARK001–ARK004.</div>
+      <div class="pkg-tags"><span class="tag">roslyn</span><span class="tag">analyzers</span><span class="tag">copilot-ready</span></div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-label">Philosophy</div>
+  <h2>Built on three principles.</h2>
+  <p class="section-sub">Every decision in Arkn follows the same north star.</p>
+
+  <div class="features">
+    <ul class="feature-list">
+      <li>
+        <span class="check">✦</span>
+        <div>
+          <div class="feature-title">Zero lock-in</div>
+          <div class="feature-desc">Every package is independent. No package forces you to use another. Swap or remove anything at any time.</div>
+        </div>
+      </li>
+      <li>
+        <span class="check">✦</span>
+        <div>
+          <div class="feature-title">Explicit over magic</div>
+          <div class="feature-desc">No hidden behaviors, no ambient context, no conventions that only work if you read the docs. What you write is what runs.</div>
+        </div>
+      </li>
+      <li>
+        <span class="check">✦</span>
+        <div>
+          <div class="feature-title">Failures are first-class</div>
+          <div class="feature-desc">Result&lt;T&gt; makes every failure explicit at the type level. No more unexpected exceptions, no more null reference surprises.</div>
+        </div>
+      </li>
+      <li>
+        <span class="check">✦</span>
+        <div>
+          <div class="feature-title">Copilot-ready</div>
+          <div class="feature-desc">APIs are consistent enough that LLMs generate correct Arkn code on the first attempt. Ships with instructions for Copilot, Cursor and Claude.</div>
+        </div>
+      </li>
+      <li>
+        <span class="check">✦</span>
+        <div>
+          <div class="feature-title">Zero external dependencies in core</div>
+          <div class="feature-desc">Arkn.Core and Arkn.Results have zero dependencies. Infrastructure packages use only Microsoft.Extensions.*</div>
+        </div>
+      </li>
+      <li>
+        <span class="check">✦</span>
+        <div>
+          <div class="feature-title">152 tests, always green</div>
+          <div class="feature-desc">Every package is covered by unit tests. CI runs on ubuntu-latest and windows-latest on every push.</div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="install-card" style="align-self:start">
+      <div class="install-card-header">Result&lt;T&gt; at a glance</div>
+      <pre><span class="c">// Factories</span>
+<span class="t">Result</span>.<span class="m">Success</span>()
+<span class="t">Result</span>.<span class="m">Success</span>(value)
+<span class="t">Result</span>&lt;<span class="t">T</span>&gt;.<span class="m">Ok</span>(value)
+<span class="t">Result</span>.<span class="m">Failure</span>(<span class="t">Error</span>.<span class="m">NotFound</span>(...))
+<span class="t">Result</span>&lt;<span class="t">T</span>&gt;.<span class="m">Fail</span>(error)
+
+<span class="c">// Chaining</span>
+result
+  .<span class="m">Map</span>(v => transform(v))
+  .<span class="m">Bind</span>(v => next(v))
+  .<span class="m">Tap</span>(v => sideEffect(v))
+  .<span class="m">Match</span>(
+    v => <span class="m">Ok</span>(v),
+    e => <span class="m">Problem</span>(e.Message));</pre>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ANALYZERS -->
+<section id="analyzers">
+  <div class="section-label">Arkn.Copilot</div>
+  <h2>Patterns enforced at compile time.</h2>
+  <p class="section-sub">Arkn.Analyzers ships with four Roslyn rules that catch violations before they reach code review — or production.</p>
+
+  <div class="analyzers">
+    <div class="rule">
+      <span class="rule-id">ARK001</span>
+      <div>
+        <div class="rule-title" style="display:flex;align-items:center;gap:.5rem">
+          Domain methods must return Result&lt;T&gt;
+          <span class="severity sev-warn">warning</span>
+        </div>
+        <div class="rule-desc">Detects public domain/service methods that throw exceptions instead of returning Result or Result&lt;T&gt;. Includes a code fix that wraps the return type automatically.</div>
+      </div>
+    </div>
+    <div class="rule">
+      <span class="rule-id">ARK002</span>
+      <div>
+        <div class="rule-title" style="display:flex;align-items:center;gap:.5rem">
+          Error codes must follow Namespace.Reason
+          <span class="severity sev-warn">warning</span>
+        </div>
+        <div class="rule-desc">Validates that every Error.* call uses a code in the format <code style="font-family:var(--mono);font-size:.8em;color:var(--accent2)">Namespace.Reason</code> (e.g. User.NotFound). Catches typos like "usernotfound" or "ERROR_404".</div>
+      </div>
+    </div>
+    <div class="rule">
+      <span class="rule-id">ARK003</span>
+      <div>
+        <div class="rule-title" style="display:flex;align-items:center;gap:.5rem">
+          Result must not be silently discarded
+          <span class="severity sev-warn">warning</span>
+        </div>
+        <div class="rule-desc">Warns when a Result or Result&lt;T&gt; value is discarded without consuming .IsSuccess, .Match(), .Bind() or .Map().</div>
+      </div>
+    </div>
+    <div class="rule">
+      <span class="rule-id">ARK004</span>
+      <div>
+        <div class="rule-title" style="display:flex;align-items:center;gap:.5rem">
+          IArknJob.ExecuteAsync must return Task&lt;Result&gt;
+          <span class="severity sev-err">error</span>
+        </div>
+        <div class="rule-desc">Enforces that every IArknJob implementation returns Task&lt;Result&gt; or Task&lt;Result&lt;T&gt;&gt;. Returning plain Task or void breaks the job runner contract.</div>
+      </div>
+    </div>
+  </div>
+
+  <p style="margin-top:1.5rem;font-size:.85rem;color:var(--muted)">
+    Also ships with <strong style="color:var(--text)">.github/copilot-instructions.md</strong>,
+    <strong style="color:var(--text)">.cursor/rules/arkn.mdc</strong> and
+    <strong style="color:var(--text)">CLAUDE.md</strong> — so your AI assistant always generates correct Arkn code.
+  </p>
+</section>
+
+<hr class="divider" />
+
+<!-- INSTALL -->
+<section id="install">
+  <div class="section-label">Get Started</div>
+  <h2>Up and running in minutes.</h2>
+  <p class="section-sub">Install individual packages or scaffold a full project with the templates.</p>
+
+  <div class="install-grid">
+    <div class="install-card">
+      <div class="install-card-header">dotnet CLI</div>
+      <pre><span class="c"># Core + Results</span>
+<span class="n">dotnet add package Arkn.Results</span>
+<span class="n">dotnet add package Arkn.Core</span>
+
+<span class="c"># Infrastructure</span>
+<span class="n">dotnet add package Arkn.Http</span>
+<span class="n">dotnet add package Arkn.Jobs</span>
+<span class="n">dotnet add package Arkn.Logging</span>
+<span class="n">dotnet add package Arkn.Notifications</span>
+
+<span class="c"># Analyzers (dev only)</span>
+<span class="n">dotnet add package Arkn.Analyzers</span></pre>
+    </div>
+
+    <div class="install-card">
+      <div class="install-card-header">Templates</div>
+      <pre><span class="c"># Install template pack</span>
+<span class="n">dotnet new install Arkn.Templates</span>
+
+<span class="c"># Scaffold a Minimal API</span>
+<span class="n">dotnet new arkn-api -n MyApi</span>
+
+<span class="c"># Scaffold a Worker with Jobs</span>
+<span class="n">dotnet new arkn-job -n MyWorker</span>
+
+<span class="c"># Scaffold a Class Library</span>
+<span class="n">dotnet new arkn-lib -n MyLibrary</span></pre>
+    </div>
+  </div>
+
+  <div style="margin-top:2rem;padding:1.4rem 1.6rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;">
+    <div style="font-size:.8rem;color:var(--muted);margin-bottom:.6rem;font-family:var(--mono)">Program.cs — Minimal API with Arkn.Jobs</div>
+    <pre><span class="n">builder.Services.</span><span class="m">AddArknJobs</span>(<span class="n">jobs =>
+{
+    jobs.</span><span class="m">Add</span>&lt;<span class="t">InvoiceProcessorJob</span>&gt;(<span class="s">"0 2 * * *"</span>)
+        .<span class="m">WithRetry</span>(<span class="n">maxAttempts: 3</span>)
+        .<span class="m">WithTimeout</span>(<span class="t">TimeSpan</span>.<span class="m">FromMinutes</span>(<span class="n">10</span>))
+        .<span class="m">NotifyOn</span>(<span class="t">JobEvent</span>.<span class="p">Failed</span> | <span class="t">JobEvent</span>.<span class="p">TimedOut</span>);
+
+    jobs.<span class="m">OnFailure</span>&lt;<span class="t">SlackNotifier</span>&gt;();
+});</pre>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>
+    Built by <a href="https://github.com/fernando-terra" target="_blank">Fernando Terra</a> ·
+    <a href="https://github.com/fernando-terra/arkn" target="_blank">GitHub</a> ·
+    MIT License
+  </p>
+  <p style="margin-top:.5rem;font-size:.8rem">
+    Arkn is open source and actively developed. Contributions welcome.
+  </p>
+</footer>
+
+</body>
+</html>
