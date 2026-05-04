@@ -6,7 +6,7 @@
   <title>Arkn — Conventions you can read. Patterns you can enforce.</title>
   <meta name="description" content="Conventions you can read. Patterns you can enforce. A composable, zero-dependency framework built for clarity." />
   <meta property="og:title" content="Arkn — Zero-Dependency .NET Framework" />
-  <meta property="og:description" content="A composable, zero-dependency .NET 10 framework built for clarity." />
+  <meta property="og:description" content="Conventions you can read. Patterns you can enforce. Targets .NET 9 and .NET 10." />
   <meta property="og:url" content="https://fernando-terra.github.io/arkn" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -261,7 +261,7 @@
 <div class="hero">
   <div class="badge">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-    .NET 10 · Zero External Dependencies
+    .NET 9 &amp; 10 · Zero External Dependencies
   </div>
   <h1>Conventions you can <em>read.</em><br/>Patterns you can <em>enforce.</em></h1>
   <p class="hero-sub">
@@ -279,18 +279,26 @@
       <span class="dot dot-r"></span>
       <span class="dot dot-y"></span>
       <span class="dot dot-g"></span>
-      <span class="code-label">UserService.cs</span>
+      <span class="code-label">UserErrors.cs + UserService.cs</span>
     </div>
-    <pre><span class="k">public</span> <span class="k">async</span> <span class="t">Task</span>&lt;<span class="t">Result</span>&lt;<span class="t">User</span>&gt;&gt; <span class="m">GetByIdAsync</span>(<span class="t">Guid</span> id, <span class="t">CancellationToken</span> ct)
+    <pre><span class="c">// Define errors once — your domain's single source of truth</span>
+<span class="k">public static class</span> <span class="t">UserErrors</span>
 {
-    <span class="k">var</span> user = <span class="k">await</span> _repo.<span class="m">FindAsync</span>(id, ct);
+    <span class="k">public static</span> <span class="t">Error</span> <span class="m">NotFound</span>(<span class="t">Guid</span> id) =&gt;
+        <span class="t">Error</span>.<span class="m">NotFound</span>(<span class="s">"User.NotFound"</span>, <span class="s">$"User '{id}' not found."</span>);
 
-    <span class="k">return</span> user <span class="k">is null</span>
-        ? <span class="t">Error</span>.<span class="m">NotFound</span>(<span class="s">"User.NotFound"</span>, <span class="s">$"User {id} not found."</span>)
-        : <span class="t">Result</span>.<span class="m">Success</span>(user);
+    <span class="k">public static readonly</span> <span class="t">Error</span> <span class="p">InvalidEmail</span> =
+        <span class="t">Error</span>.<span class="m">Validation</span>(<span class="s">"User.InvalidEmail"</span>); <span class="c">// message defaults to code</span>
 }
 
-<span class="c">// In your endpoint — no try/catch, no null checks</span>
+<span class="c">// Return results, never throw</span>
+<span class="k">public async</span> <span class="t">Task</span>&lt;<span class="t">Result</span>&lt;<span class="t">User</span>&gt;&gt; <span class="m">GetByIdAsync</span>(<span class="t">Guid</span> id)
+{
+    <span class="k">var</span> user = <span class="k">await</span> _repo.<span class="m">FindAsync</span>(id);
+    <span class="k">return</span> user <span class="k">is null</span> ? <span class="t">UserErrors</span>.<span class="m">NotFound</span>(id) : <span class="t">Result</span>.<span class="m">Success</span>(user);
+}
+
+<span class="c">// Consume with Match — no try/catch, no null checks</span>
 <span class="k">return</span> result.<span class="m">Match</span>(
     onSuccess: user  =&gt; <span class="m">Ok</span>(user),
     onFailure: error =&gt; error.Type <span class="k">switch</span>
@@ -317,7 +325,7 @@
         <div class="pkg-icon" style="background:rgba(124,106,247,.15)">🧱</div>
         <div>
           <div class="pkg-name">Arkn.Core</div>
-          <div class="pkg-version">v0.1.0</div>
+          <div class="pkg-version">v0.1.4</div>
         </div>
       </div>
       <div class="pkg-desc">Domain primitives — IEntity, IValueObject, IAggregateRoot, IError, ErrorType.</div>
@@ -329,7 +337,7 @@
         <div class="pkg-icon" style="background:rgba(52,211,153,.15)">✅</div>
         <div>
           <div class="pkg-name">Arkn.Results</div>
-          <div class="pkg-version">v0.1.0</div>
+          <div class="pkg-version">v0.1.4</div>
         </div>
       </div>
       <div class="pkg-desc">Result&lt;T&gt;, Error, ErrorType. Match, Map, Bind, Tap. No exceptions for domain failures.</div>
@@ -341,7 +349,7 @@
         <div class="pkg-icon" style="background:rgba(96,165,250,.15)">🌐</div>
         <div>
           <div class="pkg-name">Arkn.Http</div>
-          <div class="pkg-version">v0.1.0</div>
+          <div class="pkg-version">v0.1.4</div>
         </div>
       </div>
       <div class="pkg-desc">Fluent typed HTTP client. Every call returns Result&lt;T&gt;. Built-in retry. No raw HttpClient.</div>
@@ -353,7 +361,7 @@
         <div class="pkg-icon" style="background:rgba(251,191,36,.15)">📋</div>
         <div>
           <div class="pkg-name">Arkn.Logging</div>
-          <div class="pkg-version">v0.1.0</div>
+          <div class="pkg-version">v0.1.4</div>
         </div>
       </div>
       <div class="pkg-desc">Structured logging with pluggable sinks, log context, and MEL bridge.</div>
@@ -365,7 +373,7 @@
         <div class="pkg-icon" style="background:rgba(244,114,182,.15)">⚙️</div>
         <div>
           <div class="pkg-name">Arkn.Jobs</div>
-          <div class="pkg-version">v0.1.0</div>
+          <div class="pkg-version">v0.1.4</div>
         </div>
       </div>
       <div class="pkg-desc">Cron scheduler, retry, timeout, scoped DI per run. Result&lt;T&gt; enforced. No Hangfire needed.</div>
@@ -377,7 +385,7 @@
         <div class="pkg-icon" style="background:rgba(52,211,153,.12)">🔔</div>
         <div>
           <div class="pkg-name">Arkn.Notifications</div>
-          <div class="pkg-version">v0.1.0</div>
+          <div class="pkg-version">v0.1.4</div>
         </div>
       </div>
       <div class="pkg-desc">Pluggable notifier abstraction. IArknNotifier, NotificationLevel, fan-out registry.</div>
@@ -389,7 +397,7 @@
         <div class="pkg-icon" style="background:rgba(96,165,250,.12)">💬</div>
         <div>
           <div class="pkg-name">Arkn.Extensions.Notifications.Slack</div>
-          <div class="pkg-version">v0.1.0</div>
+          <div class="pkg-version">v0.1.4</div>
         </div>
       </div>
       <div class="pkg-desc">Slack notifier via Incoming Webhook. Block Kit formatting. Zero external SDKs.</div>
@@ -401,11 +409,23 @@
         <div class="pkg-icon" style="background:rgba(124,106,247,.12)">🤖</div>
         <div>
           <div class="pkg-name">Arkn.Analyzers</div>
-          <div class="pkg-version">v0.1.0</div>
+          <div class="pkg-version">v0.1.4</div>
         </div>
       </div>
       <div class="pkg-desc">Roslyn analyzers that enforce Arkn patterns at compile time. ARK001–ARK004.</div>
       <div class="pkg-tags"><span class="tag">roslyn</span><span class="tag">analyzers</span><span class="tag">copilot-ready</span></div>
+    </div>
+
+    <div class="pkg">
+      <div class="pkg-top">
+        <div class="pkg-icon" style="background:rgba(96,165,250,.12)">&#9729;</div>
+        <div>
+          <div class="pkg-name">Arkn.Extensions.Logging.ApplicationInsights</div>
+          <div class="pkg-version">v0.1.4</div>
+        </div>
+      </div>
+      <div class="pkg-desc">Application Insights sink for Arkn.Logging. Maps log entries to telemetry automatically. Zero boilerplate.</div>
+      <div class="pkg-tags"><span class="tag">logging</span><span class="tag">azure</span><span class="tag">application-insights</span><span class="tag">telemetry</span></div>
     </div>
 
   </div>
@@ -460,7 +480,7 @@
         <span class="check">✦</span>
         <div>
           <div class="feature-title">152 tests, always green</div>
-          <div class="feature-desc">Every package is covered by unit tests. CI runs on ubuntu-latest and windows-latest on every push.</div>
+          <div class="feature-desc">Targets .NET 9 and .NET 10. Every package is covered by unit tests. CI runs on ubuntu-latest and windows-latest on every push.</div>
         </div>
       </li>
     </ul>
@@ -566,7 +586,10 @@ result
 <span class="n">dotnet add package Arkn.Notifications</span>
 
 <span class="c"># Analyzers (dev only)</span>
-<span class="n">dotnet add package Arkn.Analyzers</span></pre>
+<span class="n">dotnet add package Arkn.Analyzers</span>
+
+<span class="c"># Application Insights sink</span>
+<span class="n">dotnet add package Arkn.Extensions.Logging.ApplicationInsights</span></pre>
     </div>
 
     <div class="install-card">
