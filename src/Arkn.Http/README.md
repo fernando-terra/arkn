@@ -93,34 +93,72 @@ builder.Services.AddArknHttp<UserApiClient>("https://api.example.com")
 
 ## Debug logging
 
-Habilite para logar request e response completos via `IArknLogger`:
+Loga request e response completos via `IArknLogger` — flui para todos os sinks configurados (console, arquivo, **Application Insights**).
 
 ```csharp
-builder.Services.AddArknHttp<UserApiClient>("https://api.example.com")
-    .WithDebugLogging()                        // usa ArknLogLevel.Debug
-    .WithDebugLogging(ArknLogLevel.Info);      // ou nível customizado
+// Dev — tudo em Debug
+.WithDebugLogging()
+
+// Preset de produção — 2xx em Info (chega no AppInsights), 4xx Warning, 5xx Error
+.WithDebugLogging(DebugLoggingOptions.Production)
+
+// Só falhas — 2xx são silenciosas
+.WithDebugLogging(DebugLoggingOptions.FailuresOnly)
+
+// Customizado
+.WithDebugLogging(opts =>
+{
+    opts.SuccessLevel     = ArknLogLevel.Info;
+    opts.LogResponseBody  = false;
+    opts.LogHeaders       = false;
+})
 ```
 
-O que é logado em cada chamada:
+### Presets
+
+| Preset | 2xx | 4xx | 5xx | Caso de uso |
+|--------|-----|-----|-----|-------------|
+| `Development` (default) | Debug | Warning | Error | Dev local |
+| `Production` | Info | Warning | Error | Tracing completo no AppInsights |
+| `FailuresOnly` | Trace (silencioso) | Warning | Error | Só erros em prod |
+
+### Output de exemplo
 
 ```
 → GET https://api.example.com/users/123
-  Accept: application/json
-  Authorization: Bearer eyJhbGc***   ← sanitizado automaticamente
-  Body: (none)
+  Authorization: Bearer eyJhbGc***    ← sanitizado
 
 ← 200 OK (87ms)
-  Content-Type: application/json
   Body: {
     "id": "123",
     "name": "Alice"
   }
 ```
 
-- Respostas 4xx → `Warning`, respostas 5xx → `Error`, demais → `Debug`
-- Headers sensíveis (`Authorization`, `Cookie`, `X-Api-Key`) são sanitizados automaticamente
-- Body de resposta é formatado como JSON indentado quando possível
-- Requer `IArknLogger` registrado no DI (`AddArknLogging()`)
+### Integração com Application Insights
+
+```csharp
+// Program.cs
+builder.Services.AddArknLogging(logging =>
+{
+    logging.AddConsoleSink();  // dev
+    if (!env.IsDevelopment())
+        logging.AddApplicationInsights(opts =>
+        {
+            opts.ConnectionString = config["AI:ConnectionString"];
+            opts.MinimumLevel     = ArknLogLevel.Info; // 2xx chegam se Production preset
+        });
+});
+
+builder.Services.AddArknHttp<UserApiClient>("https://api.example.com")
+    .WithDebugLogging(env.IsDevelopment()
+        ? DebugLoggingOptions.Development
+        : DebugLoggingOptions.Production);
+```
+
+- Headers sensíveis (`Authorization`, `Cookie`, `X-Api-Key`) sanitizados automaticamente
+- Body de resposta formatado como JSON indentado quando possível
+- Requer `IArknLogger` no DI via `AddArknLogging()`
 
 ## Token store
 

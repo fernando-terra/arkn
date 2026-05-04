@@ -1,5 +1,5 @@
 using Arkn.Http.Auth;
-using Arkn.Logging.Models;
+using Arkn.Http.Configuration;
 
 namespace Arkn.Http.Abstractions;
 
@@ -45,10 +45,29 @@ public interface IArknHttpBuilder
     IArknHttpBuilder WithClientCredentials(Action<ClientCredentialsOptions> configure);
 
     /// <summary>
-    /// Enables debug logging for every request and response using the <c>IArknLogger</c>
-    /// registered in the DI container. Logs method, URL, headers (sanitized), payload,
-    /// status code, response body and elapsed time.
+    /// Enables debug logging with default options (<see cref="DebugLoggingOptions.Development"/>).
+    /// Uses the <c>IArknLogger</c> registered in DI — flows to all configured sinks including AppInsights.
     /// </summary>
-    /// <param name="level">Log level for debug entries. Defaults to <see cref="ArknLogLevel.Debug"/>.</param>
-    IArknHttpBuilder WithDebugLogging(ArknLogLevel level = ArknLogLevel.Debug);
+    IArknHttpBuilder WithDebugLogging();
+
+    /// <summary>
+    /// Enables debug logging with fine-grained control over levels and body capture.
+    /// </summary>
+    /// <example>
+    /// // Production: full tracing in AppInsights
+    /// .WithDebugLogging(DebugLoggingOptions.Production)
+    ///
+    /// // Failures only — 2xx are silent
+    /// .WithDebugLogging(DebugLoggingOptions.FailuresOnly)
+    ///
+    /// // Custom
+    /// .WithDebugLogging(opts => {
+    ///     opts.SuccessLevel     = ArknLogLevel.Info;
+    ///     opts.LogResponseBody  = false;
+    /// })
+    /// </example>
+    IArknHttpBuilder WithDebugLogging(Action<DebugLoggingOptions> configure);
+
+    /// <summary>Enables debug logging with a pre-built <see cref="DebugLoggingOptions"/> instance.</summary>
+    IArknHttpBuilder WithDebugLogging(DebugLoggingOptions options);
 }

@@ -357,7 +357,7 @@
           <div class="pkg-version">v0.1.4</div>
         </div>
       </div>
-      <div class="pkg-desc">Fluent typed HTTP client. Every call returns Result&lt;T&gt;. Built-in retry, auth interceptors and OAuth2 Client Credentials. No raw HttpClient.</div>
+      <div class="pkg-desc">Fluent typed HTTP client. Every call returns Result&lt;T&gt;. Built-in retry, OAuth2 Client Credentials, and debug logging with AppInsights integration. No raw HttpClient.</div>
       <div class="pkg-tags"><span class="tag">http</span><span class="tag">typed-client</span><span class="tag">retry</span></div>
     </div>
 
@@ -631,6 +631,12 @@ result
     <span class="k">public</span> <span class="t">Task</span>&lt;<span class="t">Result</span>&lt;<span class="t">Payment</span>&gt;&gt; <span class="m">GetAsync</span>(<span class="t">Guid</span> id) =&gt; <span class="m">GetAs</span>&lt;<span class="t">Payment</span>&gt;(<span class="s">"/payments/{id}"</span>, id);
     <span class="k">public</span> <span class="t">Task</span>&lt;<span class="t">Result</span>&lt;<span class="t">Payment</span>&gt;&gt; <span class="m">CreateAsync</span>(<span class="t">CreatePaymentRequest</span> r) =&gt; <span class="m">PostAs</span>&lt;<span class="t">Payment</span>&gt;(<span class="s">"/payments"</span>, r);
 }
+
+<span class="c">// Debug logging — flui para todos os sinks (console, AppInsights)</span>
+<span class="n">builder.Services.</span><span class="m">AddArknHttp</span>&lt;<span class="t">PaymentApiClient</span>&gt;(<span class="s">""</span>)
+    .<span class="m">WithDebugLogging</span>(<span class="n">env.IsDevelopment()
+        ? </span><span class="t">DebugLoggingOptions</span>.<span class="p">Development</span>
+        <span class="n">: </span><span class="t">DebugLoggingOptions</span>.<span class="p">Production</span>);
 
 <span class="c">// Jobs with retry + Slack on failure</span>
 <span class="n">builder.Services.</span><span class="m">AddArknJobs</span>(<span class="n">jobs =>

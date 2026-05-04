@@ -53,7 +53,7 @@ public static class ServiceCollectionExtensions
             var httpClient = factory.CreateClient(clientName);
 
             // Resolve IArknLogger for debug logging if enabled
-            if (options.DebugLoggingEnabled)
+            if (options.DebugOptions is not null)
                 options.DebugLogger = sp.GetService<Arkn.Logging.Abstractions.IArknLogger>();
 
             IArknHttp http = new ArknHttp(httpClient, options);
@@ -128,10 +128,19 @@ public static class ServiceCollectionExtensions
             return this;
         }
 
-        public IArknHttpBuilder WithDebugLogging(ArknLogLevel level = ArknLogLevel.Debug)
+        public IArknHttpBuilder WithDebugLogging()
+            => WithDebugLogging(DebugLoggingOptions.Development);
+
+        public IArknHttpBuilder WithDebugLogging(Action<DebugLoggingOptions> configure)
         {
-            _options.DebugLogLevel   = level;
-            _options.DebugLoggingEnabled = true;
+            var opts = new DebugLoggingOptions();
+            configure(opts);
+            return WithDebugLogging(opts);
+        }
+
+        public IArknHttpBuilder WithDebugLogging(DebugLoggingOptions options)
+        {
+            _options.DebugOptions = options;
             return this;
         }
 

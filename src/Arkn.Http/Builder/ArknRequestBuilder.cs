@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using Arkn.Http.Auth;
 using Arkn.Http.Configuration;
 using Arkn.Logging.Models;
+using static Arkn.Logging.Models.ArknLogLevel;
 
 namespace Arkn.Http.Builder;
 
@@ -80,7 +81,7 @@ public sealed class ArknRequestBuilder : IArknRequestBuilder
         var httpClient   = _httpClient;
         var interceptors = _options.Interceptors.ToList();
         var debugLogger  = _options.DebugLogger;
-        var debugLevel   = _options.DebugLogLevel;
+        var debugOptions = _options.DebugOptions;
 
         return new ArknHttpResponseHandler(
             execute: () => ArknRetryPolicy.ExecuteAsync(
@@ -97,14 +98,14 @@ public sealed class ArknRequestBuilder : IArknRequestBuilder
             foreach (var interceptor in interceptors)
                 await interceptor.ApplyAsync(request, cts.Token).ConfigureAwait(false);
 
-            if (debugLogger is not null)
-                await LogRequestAsync(debugLogger, debugLevel, request, body, jsonOptions).ConfigureAwait(false);
+            if (debugLogger is not null && debugOptions is not null)
+                await LogRequestAsync(debugLogger, debugOptions, request, body, jsonOptions).ConfigureAwait(false);
 
             var sw       = debugLogger is not null ? Stopwatch.StartNew() : null;
             var response = await httpClient.SendAsync(request, cts.Token).ConfigureAwait(false);
 
-            if (debugLogger is not null)
-                await LogResponseAsync(debugLogger, debugLevel, response, sw!.ElapsedMilliseconds).ConfigureAwait(false);
+            if (debugLogger is not null && debugOptions is not null)
+                await LogResponseAsync(debugLogger, debugOptions, response, sw!.ElapsedMilliseconds).ConfigureAwait(false);
 
             return response;
         }
@@ -152,7 +153,7 @@ public sealed class ArknRequestBuilder : IArknRequestBuilder
 
     private static async Task LogRequestAsync(
         Arkn.Logging.Abstractions.IArknLogger logger,
-        ArknLogLevel level,
+        DebugLoggingOptions opts,
         HttpRequestMessage request,
         object? body,
         JsonSerializerOptions jsonOptions)
@@ -160,68 +161,84 @@ public sealed class ArknRequestBuilder : IArknRequestBuilder
         var sb = new StringBuilder();
         sb.AppendLine($"→ {request.Method.Method} {request.RequestUri}");
 
-        foreach (var (name, values) in request.Headers)
+        if (opts.LogHeaders)
         {
-            var value = _sensitiveHeaders.Contains(name)
-                ? Sanitize(string.Join(",", values))
-                : string.Join(",", values);
-            sb.AppendLine($"  {name}: {value}");
+            foreach (var (name, values) in request.Headers)
+            {
+                var value = _sensitiveHeaders.Contains(name)
+                    ? Sanitize(string.Join(",", values))
+                    : string.Join(",", values);
+                sb.AppendLine($"  {name}: {value}");
+            }
         }
 
-        if (body is not null)
+        if (opts.LogRequestBody)
         {
-            var json = JsonSerializer.Serialize(body, body.GetType(), jsonOptions);
-            sb.AppendLine($"  Body: {json}");
+            if (body is not null)
+            {
+                var json = JsonSerializer.Serialize(body, body.GetType(), jsonOptions);
+                sb.AppendLine($"  Body: {json}");
+            }
+            else if (request.Content is not null)
+            {
+                var raw = await request.Content.ReadAsStringAsync().ConfigureAwait(false);
+                if (!string.IsNullOrWhiteSpace(raw))
+                    sb.AppendLine($"  Body: {raw}");
+            }
         }
 
-        if (request.Content is not null && body is null)
-        {
-            var raw = await request.Content.ReadAsStringAsync().ConfigureAwait(false);
-            if (!string.IsNullOrWhiteSpace(raw))
-                sb.AppendLine($"  Body: {raw}");
-        }
-
-        logger.Debug(sb.ToString().TrimEnd());
+        LogAtLevel(logger, opts.SuccessLevel, sb.ToString().TrimEnd());
     }
 
     private static async Task LogResponseAsync(
         Arkn.Logging.Abstractions.IArknLogger logger,
-        ArknLogLevel level,
+        DebugLoggingOptions opts,
         HttpResponseMessage response,
         long elapsedMs)
     {
+        var statusCode = (int)response.StatusCode;
+        var level = statusCode >= 500 ? opts.ServerErrorLevel
+                  : statusCode >= 400 ? opts.ClientErrorLevel
+                  : opts.SuccessLevel;
+
         var sb = new StringBuilder();
-        sb.AppendLine($"← {(int)response.StatusCode} {response.ReasonPhrase} ({elapsedMs}ms)");
+        sb.AppendLine($"← {statusCode} {response.ReasonPhrase} ({elapsedMs}ms)");
 
-        foreach (var (name, values) in response.Headers)
-            sb.AppendLine($"  {name}: {string.Join(",", values)}");
+        if (opts.LogHeaders)
+        {
+            foreach (var (name, values) in response.Headers)
+                sb.AppendLine($"  {name}: {string.Join(",", values)}");
+        }
 
-        if (response.Content is not null)
+        if (opts.LogResponseBody && response.Content is not null)
         {
             var body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             if (!string.IsNullOrWhiteSpace(body))
             {
-                // Pretty-print JSON if possible
                 try
                 {
                     using var doc = JsonDocument.Parse(body);
                     var pretty   = JsonSerializer.Serialize(doc, new JsonSerializerOptions { WriteIndented = true });
                     sb.AppendLine($"  Body: {pretty}");
                 }
-                catch
-                {
-                    sb.AppendLine($"  Body: {body}");
-                }
+                catch { sb.AppendLine($"  Body: {body}"); }
             }
         }
 
-        // Use the right level based on status
-        if ((int)response.StatusCode >= 500)
-            logger.Error(sb.ToString().TrimEnd());
-        else if ((int)response.StatusCode >= 400)
-            logger.Warning(sb.ToString().TrimEnd());
-        else
-            logger.Debug(sb.ToString().TrimEnd());
+        LogAtLevel(logger, level, sb.ToString().TrimEnd());
+    }
+
+    private static void LogAtLevel(Arkn.Logging.Abstractions.IArknLogger logger, ArknLogLevel level, string message)
+    {
+        switch (level)
+        {
+            case ArknLogLevel.Trace:   logger.Trace(message);   break;
+            case ArknLogLevel.Debug:   logger.Debug(message);   break;
+            case ArknLogLevel.Info:    logger.Info(message);    break;
+            case ArknLogLevel.Warning: logger.Warning(message); break;
+            case ArknLogLevel.Error:   logger.Error(message);   break;
+            case ArknLogLevel.Fatal:   logger.Fatal(message);   break;
+        }
     }
 
     private static string Sanitize(string value)

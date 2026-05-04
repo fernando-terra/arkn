@@ -54,19 +54,14 @@ public sealed class ArknHttpOptions
     public List<IArknAuthInterceptor> Interceptors { get; } = new();
 
     /// <summary>
-    /// When <c>true</c>, logs full request and response (including payloads) for every call.
-    /// Enable via <c>.WithDebugLogging()</c> on the builder.
+    /// When non-null, debug logging is enabled with the specified options.
+    /// Set via <c>.WithDebugLogging()</c> on the builder.
     /// </summary>
-    public bool DebugLoggingEnabled { get; set; }
+    public DebugLoggingOptions? DebugOptions { get; set; }
 
     /// <summary>
-    /// Severity level used for debug log entries. Default: <see cref="ArknLogLevel.Debug"/>.
-    /// </summary>
-    public ArknLogLevel DebugLogLevel { get; set; } = ArknLogLevel.Debug;
-
-    /// <summary>
-    /// Logger instance used for debug output. Resolved from DI when <see cref="DebugLoggingEnabled"/> is <c>true</c>.
-    /// Headers with sensitive content (Authorization, Cookie) are automatically sanitized.
+    /// Logger resolved from DI when <see cref="DebugOptions"/> is set.
+    /// Headers with sensitive content (Authorization, Cookie) are sanitized automatically.
     /// </summary>
     public IArknLogger? DebugLogger { get; set; }
 }
