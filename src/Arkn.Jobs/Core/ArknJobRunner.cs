@@ -22,6 +22,7 @@ public sealed class ArknJobRunner
     private readonly InMemoryLogSink? _memorySink;
     private readonly ArknJobRegistry  _registry;
 
+    /// <summary>Initializes the runner with its required services and optional in-memory log sink.</summary>
     public ArknJobRunner(
         IServiceProvider services,
         ArknJobHistory   history,

@@ -20,11 +20,14 @@ namespace Arkn.Analyzers.CodeFixes;
 [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ResultReturnCodeFix)), Shared]
 public sealed class ResultReturnCodeFix : CodeFixProvider
 {
+    /// <inheritdoc />
     public override ImmutableArray<string> FixableDiagnosticIds =>
         ImmutableArray.Create(Descriptors.ARK001_DomainMethodShouldReturnResult.Id);
 
+    /// <inheritdoc />
     public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
+    /// <inheritdoc />
     public override async Task RegisterCodeFixesAsync(CodeFixContext context)
     {
         var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken);

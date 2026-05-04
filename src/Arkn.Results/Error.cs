@@ -40,5 +40,6 @@ public sealed record Error(string Code, string Message, ErrorType Type)
     public static Error Forbidden(string code, string? message = null) =>
         new(code, message ?? code, ErrorType.Forbidden);
 
+    /// <summary>Returns a human-readable representation of this error.</summary>
     public override string ToString() => $"[{Type}] {Code}: {Message}";
 }

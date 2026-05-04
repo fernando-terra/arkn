@@ -20,6 +20,7 @@ public sealed class ArknJobScheduler : BackgroundService, IArknJobScheduler
     // Tracks the last fire time per job to avoid double-firing within the same minute
     private readonly Dictionary<string, DateTimeOffset> _lastFired = new();
 
+    /// <summary>Initializes the scheduler with registry, runner, history and logger.</summary>
     public ArknJobScheduler(
         ArknJobRegistry registry,
         ArknJobRunner   runner,
@@ -32,6 +33,7 @@ public sealed class ArknJobScheduler : BackgroundService, IArknJobScheduler
         _logger   = logger;
     }
 
+    /// <inheritdoc />
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.Info($"[ArknJobScheduler] Started. {_registry.Jobs.Count} job(s) registered.");
@@ -84,9 +86,11 @@ public sealed class ArknJobScheduler : BackgroundService, IArknJobScheduler
 
     // ── IArknJobScheduler ─────────────────────────────────────────────────────
 
+    /// <summary>Returns execution history for the job with the given name.</summary>
     public IReadOnlyList<ArknJobExecution> GetHistory(string jobName) =>
         _history.GetHistory(jobName);
 
+    /// <summary>Returns execution history for all registered jobs.</summary>
     public IReadOnlyList<ArknJobExecution> GetAllHistory() =>
         _history.GetAllHistory();
 }

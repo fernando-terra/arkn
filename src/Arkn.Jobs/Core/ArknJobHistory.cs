@@ -14,6 +14,7 @@ public sealed class ArknJobHistory
     /// <summary>Maximum executions retained per job name.</summary>
     public int MaxRunsPerJob { get; }
 
+    /// <summary>Initializes the history store with an optional retention limit per job.</summary>
     public ArknJobHistory(int maxRunsPerJob = 100) => MaxRunsPerJob = maxRunsPerJob;
 
     /// <summary>Records a completed execution.</summary>

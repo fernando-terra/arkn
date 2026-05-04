@@ -26,6 +26,7 @@ public sealed class ArknJobContext
 
     private readonly IArknLogContext _logContext;
 
+    /// <summary>Initializes a new job execution context.</summary>
     public ArknJobContext(
         Guid runId,
         string jobName,

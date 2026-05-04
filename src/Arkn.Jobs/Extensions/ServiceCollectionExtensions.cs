@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Arkn.Jobs.Extensions;
 
+/// <summary>Extension methods for registering Arkn.Jobs infrastructure.</summary>
 public static class ServiceCollectionExtensions
 {
     /// <summary>

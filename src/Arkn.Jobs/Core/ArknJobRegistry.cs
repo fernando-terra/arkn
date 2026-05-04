@@ -8,6 +8,7 @@ public sealed class ArknJobRegistry : IArknJobRegistry
 {
     private readonly List<ArknJobOptions> _jobs = [];
 
+    /// <summary>Gets all registered job options.</summary>
     public IReadOnlyList<ArknJobOptions> Jobs => _jobs.AsReadOnly();
 
     /// <summary>CLR type of the global failure notifier (set via OnFailure&lt;T&gt;()).</summary>

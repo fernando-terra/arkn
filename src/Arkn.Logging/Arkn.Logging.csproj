@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFrameworks>net9.0;net10.0</TargetFrameworks>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>preview</LangVersion>
     <RootNamespace>Arkn.Logging</RootNamespace>
     <AssemblyName>Arkn.Logging</AssemblyName>
-    <Version>0.1.2</Version>
+    <Version>0.1.3</Version>
     <Authors>Fernando Terra</Authors>
     <Description>Structured, sink-pluggable logging for Arkn — zero external dependencies.</Description>
     <PackageTags>dotnet;csharp;logging;structured-logging;architecture</PackageTags>

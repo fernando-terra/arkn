@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Arkn.Notifications.Extensions;
 
+/// <summary>Extension methods for registering Arkn notification services.</summary>
 public static class ServiceCollectionExtensions
 {
     /// <summary>
@@ -29,6 +30,7 @@ public sealed class ArknNotificationsBuilder
     private readonly IServiceCollection _services;
     internal ArknNotificationsBuilder(IServiceCollection services) => _services = services;
 
+    /// <summary>Registers a notifier of the specified type as a singleton.</summary>
     public ArknNotificationsBuilder AddNotifier<TNotifier>()
         where TNotifier : class, IArknNotifier
     {
@@ -37,6 +39,7 @@ public sealed class ArknNotificationsBuilder
         return this;
     }
 
+    /// <summary>Registers a pre-existing notifier instance as a singleton.</summary>
     public ArknNotificationsBuilder AddNotifier(IArknNotifier instance)
     {
         _services.AddSingleton(instance);

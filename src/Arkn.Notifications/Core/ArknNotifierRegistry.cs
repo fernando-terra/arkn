@@ -11,9 +11,11 @@ public sealed class ArknNotifierRegistry : IArknNotifierRegistry
 {
     private readonly IReadOnlyList<IArknNotifier> _notifiers;
 
+    /// <summary>Initializes the registry with the provided notifiers.</summary>
     public ArknNotifierRegistry(IEnumerable<IArknNotifier> notifiers)
         => _notifiers = notifiers.ToList().AsReadOnly();
 
+    /// <inheritdoc />
     public async Task DispatchAsync(ArknNotification notification, CancellationToken cancellationToken = default)
     {
         var tasks = _notifiers.Select(n => SafeNotifyAsync(n, notification, cancellationToken));

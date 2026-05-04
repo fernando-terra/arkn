@@ -6,5 +6,6 @@ namespace Arkn.Core.Abstractions;
 /// </summary>
 public interface IUnitOfWork
 {
+    /// <summary>Persists all pending changes and returns the number of affected records.</summary>
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

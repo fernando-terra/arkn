@@ -17,8 +17,10 @@ public abstract class Entity : IEntity
     /// <summary>UTC timestamp of the last update, if any.</summary>
     public DateTime? UpdatedAt { get; protected set; }
 
+    /// <summary>Sets <see cref="UpdatedAt"/> to the current UTC time.</summary>
     protected void MarkUpdated() => UpdatedAt = DateTime.UtcNow;
 
+    /// <inheritdoc />
     public override bool Equals(object? obj)
     {
         if (obj is null || obj.GetType() != GetType()) return false;
@@ -26,10 +28,13 @@ public abstract class Entity : IEntity
         return obj is Entity entity && Id == entity.Id;
     }
 
+    /// <inheritdoc />
     public override int GetHashCode() => Id.GetHashCode();
 
+    /// <summary>Returns <c>true</c> when both entities share the same <see cref="Entity.Id"/>.</summary>
     public static bool operator ==(Entity? left, Entity? right) =>
         left?.Equals(right) ?? right is null;
 
+    /// <summary>Returns <c>true</c> when the two entities have different identities.</summary>
     public static bool operator !=(Entity? left, Entity? right) => !(left == right);
 }

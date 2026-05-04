@@ -20,18 +20,21 @@ public sealed class ArknLoggingBuilder
     internal IReadOnlyList<IArknLogSink> Sinks => _sinks;
     internal ArknLogLevel MinimumLevel => _minimumLevel;
 
+    /// <summary>Sets the minimum log level; entries below this level are discarded.</summary>
     public ArknLoggingBuilder SetMinimumLevel(ArknLogLevel level)
     {
         _minimumLevel = level;
         return this;
     }
 
+    /// <summary>Adds a console sink that writes log entries to standard output.</summary>
     public ArknLoggingBuilder AddConsoleSink()
     {
         _sinks.Add(new ConsoleLogSink());
         return this;
     }
 
+    /// <summary>Adds a file sink that appends log entries to the specified file path.</summary>
     public ArknLoggingBuilder AddFileSink(string filePath)
     {
         _sinks.Add(new FileSink(filePath));
@@ -48,6 +51,7 @@ public sealed class ArknLoggingBuilder
         return this;
     }
 
+    /// <summary>Adds a custom sink implementation to the logging pipeline.</summary>
     public ArknLoggingBuilder AddSink(IArknLogSink sink)
     {
         _sinks.Add(sink);
@@ -55,6 +59,7 @@ public sealed class ArknLoggingBuilder
     }
 }
 
+/// <summary>Extension methods for registering Arkn logging services.</summary>
 public static class ServiceCollectionExtensions
 {
     /// <summary>

@@ -7,6 +7,7 @@ public static class ResultExtensions
 {
     // ── Async Map ─────────────────────────────────────────────────────────────
 
+    /// <summary>Awaits the result task and projects the value using <paramref name="mapper"/> if successful.</summary>
     public static async Task<Result<TOut>> MapAsync<TIn, TOut>(
         this Task<Result<TIn>> resultTask,
         Func<TIn, TOut> mapper)
@@ -15,6 +16,7 @@ public static class ResultExtensions
         return result.Map(mapper);
     }
 
+    /// <summary>Awaits the result task and projects the value using an async <paramref name="mapper"/> if successful.</summary>
     public static async Task<Result<TOut>> MapAsync<TIn, TOut>(
         this Task<Result<TIn>> resultTask,
         Func<TIn, Task<TOut>> mapper)
@@ -27,6 +29,7 @@ public static class ResultExtensions
 
     // ── Async Bind ────────────────────────────────────────────────────────────
 
+    /// <summary>Awaits the result task and chains into <paramref name="binder"/> if successful.</summary>
     public static async Task<Result<TOut>> BindAsync<TIn, TOut>(
         this Task<Result<TIn>> resultTask,
         Func<TIn, Result<TOut>> binder)
@@ -35,6 +38,7 @@ public static class ResultExtensions
         return result.Bind(binder);
     }
 
+    /// <summary>Awaits the result task and chains into an async <paramref name="binder"/> if successful.</summary>
     public static async Task<Result<TOut>> BindAsync<TIn, TOut>(
         this Task<Result<TIn>> resultTask,
         Func<TIn, Task<Result<TOut>>> binder)
@@ -45,6 +49,7 @@ public static class ResultExtensions
 
     // ── Async Match ───────────────────────────────────────────────────────────
 
+    /// <summary>Awaits the result task and executes <paramref name="onSuccess"/> or <paramref name="onFailure"/> based on state.</summary>
     public static async Task<TOut> MatchAsync<TIn, TOut>(
         this Task<Result<TIn>> resultTask,
         Func<TIn, TOut> onSuccess,
@@ -54,6 +59,7 @@ public static class ResultExtensions
         return result.Match(onSuccess, onFailure);
     }
 
+    /// <summary>Awaits the result task and executes async <paramref name="onSuccess"/> or <paramref name="onFailure"/> based on state.</summary>
     public static async Task<TOut> MatchAsync<TIn, TOut>(
         this Task<Result<TIn>> resultTask,
         Func<TIn, Task<TOut>> onSuccess,

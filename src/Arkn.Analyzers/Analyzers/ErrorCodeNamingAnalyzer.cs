@@ -28,9 +28,11 @@ public sealed class ErrorCodeNamingAnalyzer : DiagnosticAnalyzer
         "Failure", "NotFound", "Validation", "Conflict", "Unauthorized", "Forbidden"
     };
 
+    /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
         ImmutableArray.Create(Descriptors.ARK002_ErrorCodeMustFollowNamingConvention);
 
+    /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
     {
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);

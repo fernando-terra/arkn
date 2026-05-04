@@ -6,6 +6,7 @@ namespace Arkn.Results;
 /// </summary>
 public class Result
 {
+    /// <summary>Initializes a result. Use the static factory methods instead.</summary>
     protected Result(bool isSuccess, Error error)
     {
         if (isSuccess && error != Error.None)
@@ -56,6 +57,7 @@ public class Result
 
     // ── Implicit conversions ───────────────────────────────────────────────────
 
+    /// <inheritdoc />
     public static implicit operator Result(Error error) => Failure(error);
 
     // ── Match ──────────────────────────────────────────────────────────────────
@@ -66,6 +68,7 @@ public class Result
     public TOut Match<TOut>(Func<TOut> onSuccess, Func<Error, TOut> onFailure) =>
         IsSuccess ? onSuccess() : onFailure(Error);
 
+    /// <summary>Returns a human-readable representation of this result.</summary>
     public override string ToString() =>
         IsSuccess ? "Success" : $"Failure({Error})";
 }
@@ -171,9 +174,12 @@ public sealed class Result<T> : Result
 
     // ── Implicit conversions ───────────────────────────────────────────────────
 
+    /// <summary>Implicitly creates a successful result from a value.</summary>
     public static implicit operator Result<T>(T value) => Result.Success(value);
+    /// <summary>Implicitly creates a failed result from an error.</summary>
     public static implicit operator Result<T>(Error error) => Result.Failure<T>(error);
 
+    /// <summary>Returns a human-readable representation of this result.</summary>
     public override string ToString() =>
         IsSuccess ? $"Success({_value})" : $"Failure({Error})";
 }

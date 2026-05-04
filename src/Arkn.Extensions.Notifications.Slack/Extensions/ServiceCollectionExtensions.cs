@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Arkn.Extensions.Notifications.Slack.Extensions;
 
+/// <summary>Extension methods for registering the Slack notifier.</summary>
 public static class ServiceCollectionExtensions
 {
     /// <summary>

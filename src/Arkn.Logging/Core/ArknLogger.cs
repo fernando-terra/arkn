@@ -14,6 +14,7 @@ public sealed class ArknLogger : IArknLogger
     private readonly ArknLogLevel _minimumLevel;
     private readonly object _lock = new();
 
+    /// <summary>Initializes the logger with a set of sinks and an optional minimum log level.</summary>
     public ArknLogger(IEnumerable<IArknLogSink> sinks, ArknLogLevel minimumLevel = ArknLogLevel.Trace)
     {
         _sinks = sinks.ToList().AsReadOnly();
@@ -43,21 +44,27 @@ public sealed class ArknLogger : IArknLogger
         }
     }
 
+    /// <summary>Logs a trace-level message.</summary>
     public void Trace(string message, IArknLogContext? context = null) =>
         Log(ArknLogLevel.Trace, message, context);
 
+    /// <summary>Logs a debug-level message.</summary>
     public void Debug(string message, IArknLogContext? context = null) =>
         Log(ArknLogLevel.Debug, message, context);
 
+    /// <summary>Logs an informational message.</summary>
     public void Info(string message, IArknLogContext? context = null) =>
         Log(ArknLogLevel.Info, message, context);
 
+    /// <summary>Logs a warning message.</summary>
     public void Warning(string message, IArknLogContext? context = null) =>
         Log(ArknLogLevel.Warning, message, context);
 
+    /// <summary>Logs an error message with an optional exception.</summary>
     public void Error(string message, Exception? exception = null, IArknLogContext? context = null) =>
         Log(ArknLogLevel.Error, message, context, exception);
 
+    /// <summary>Logs a fatal error message with an optional exception.</summary>
     public void Fatal(string message, Exception? exception = null, IArknLogContext? context = null) =>
         Log(ArknLogLevel.Fatal, message, context, exception);
 }

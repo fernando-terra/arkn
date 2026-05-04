@@ -18,24 +18,28 @@ public sealed class ArknJobBuilder<TJob>
         _services.AddScoped(typeof(TJob));
     }
 
+    /// <summary>Sets a human-readable name for this job.</summary>
     public ArknJobBuilder<TJob> WithName(string name)
     {
         _options.JobName = name;
         return this;
     }
 
+    /// <summary>Sets a description for this job.</summary>
     public ArknJobBuilder<TJob> WithDescription(string description)
     {
         _options.Description = description;
         return this;
     }
 
+    /// <summary>Sets the maximum execution time before the job is cancelled.</summary>
     public ArknJobBuilder<TJob> WithTimeout(TimeSpan timeout)
     {
         _options.Timeout = timeout;
         return this;
     }
 
+    /// <summary>Configures retry attempts and optional delay between attempts.</summary>
     public ArknJobBuilder<TJob> WithRetry(int maxAttempts, TimeSpan? retryDelay = null)
     {
         _options.MaxAttempts = maxAttempts;

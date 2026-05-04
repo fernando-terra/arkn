@@ -2,12 +2,13 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>latest</LangVersion>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <RootNamespace>Arkn.Analyzers</RootNamespace>
     <AssemblyName>Arkn.Analyzers</AssemblyName>
-    <Version>0.1.2</Version>
+    <Version>0.1.3</Version>
     <Authors>Fernando Terra</Authors>
     <Description>Roslyn analyzers that enforce Arkn patterns at compile time — Result returns, error code naming, and more.</Description>
     <PackageTags>dotnet;csharp;roslyn;analyzer;arkn;architecture</PackageTags>

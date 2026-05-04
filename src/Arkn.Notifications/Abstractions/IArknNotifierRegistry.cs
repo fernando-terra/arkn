@@ -7,5 +7,6 @@ namespace Arkn.Notifications.Abstractions;
 /// </summary>
 public interface IArknNotifierRegistry
 {
+    /// <summary>Dispatches the notification to all registered notifiers concurrently.</summary>
     Task DispatchAsync(ArknNotification notification, CancellationToken cancellationToken = default);
 }

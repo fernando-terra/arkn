@@ -13,12 +13,14 @@ public sealed class SlackNotifier : IArknNotifier
     private readonly HttpClient           _http;
     private readonly SlackNotifierOptions _options;
 
+    /// <summary>Initializes the notifier with an HttpClient and options.</summary>
     public SlackNotifier(HttpClient http, SlackNotifierOptions options)
     {
         _http    = http;
         _options = options;
     }
 
+    /// <inheritdoc />
     public async Task NotifyAsync(ArknNotification notification, CancellationToken cancellationToken = default)
     {
         if (notification.Level < _options.MinimumLevel) return;

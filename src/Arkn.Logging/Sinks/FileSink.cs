@@ -41,5 +41,6 @@ public sealed class FileSink : IArknLogSink, IDisposable
         }
     }
 
+    /// <inheritdoc />
     public void Dispose() => _writer.Dispose();
 }

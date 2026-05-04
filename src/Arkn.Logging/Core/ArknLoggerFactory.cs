@@ -12,6 +12,7 @@ public sealed class ArknLoggerFactory
 {
     private readonly ILoggerFactory? _melFactory;
 
+    /// <summary>Initializes the factory with an optional MEL factory for bridging log entries.</summary>
     public ArknLoggerFactory(ILoggerFactory? melFactory = null)
     {
         _melFactory = melFactory;
