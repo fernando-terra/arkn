@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*.*.*'
 
+env:
+  DOTNET_VERSION: '10.0.x'
+
 jobs:
   publish:
     name: Publish to NuGet
@@ -17,20 +20,35 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.0.x'
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --configuration Release
+        run: dotnet build --configuration Release --no-restore
 
-      - name: Pack Arkn.Core
-        run: dotnet pack src/Arkn.Core/Arkn.Core.csproj --configuration Release --no-build -o ./artifacts
+      - name: Test
+        run: dotnet test --configuration Release --no-build --verbosity normal
 
-      - name: Pack Arkn.Results
-        run: dotnet pack src/Arkn.Results/Arkn.Results.csproj --configuration Release --no-build -o ./artifacts
+      - name: Pack all packages
+        run: |
+          dotnet pack src/Arkn.Core/Arkn.Core.csproj                                                     --configuration Release --no-build -o ./artifacts
+          dotnet pack src/Arkn.Results/Arkn.Results.csproj                                               --configuration Release --no-build -o ./artifacts
+          dotnet pack src/Arkn.Http/Arkn.Http.csproj                                                     --configuration Release --no-build -o ./artifacts
+          dotnet pack src/Arkn.Logging/Arkn.Logging.csproj                                               --configuration Release --no-build -o ./artifacts
+          dotnet pack src/Arkn.Jobs/Arkn.Jobs.csproj                                                     --configuration Release --no-build -o ./artifacts
+          dotnet pack src/Arkn.Notifications/Arkn.Notifications.csproj                                   --configuration Release --no-build -o ./artifacts
+          dotnet pack src/Arkn.Extensions.Notifications.Slack/Arkn.Extensions.Notifications.Slack.csproj --configuration Release --no-build -o ./artifacts
+          dotnet pack src/Arkn.Analyzers/Arkn.Analyzers.csproj                                           --configuration Release --no-build -o ./artifacts
+          dotnet pack templates/Arkn.Templates.csproj                                                     --configuration Release -o ./artifacts
 
-      # Uncomment when ready to publish:
-      # - name: Push to NuGet
-      #   run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      - name: List artifacts
+        run: ls -lh ./artifacts/
+
+      - name: Push to NuGet
+        run: |
+          dotnet nuget push ./artifacts/*.nupkg \
+            --api-key ${{ secrets.NUGET_API_KEY }} \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
