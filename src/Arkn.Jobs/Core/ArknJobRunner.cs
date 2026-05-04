@@ -1,8 +1,10 @@
 using Arkn.Jobs.Abstractions;
 using Arkn.Jobs.Models;
 using Arkn.Logging.Abstractions;
-using Arkn.Logging.Core;
+using Arkn.Logging.Models;
 using Arkn.Logging.Sinks;
+using Arkn.Notifications.Abstractions;
+using Arkn.Notifications.Models;
 using Arkn.Results;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,24 +12,27 @@ namespace Arkn.Jobs.Core;
 
 /// <summary>
 /// Executes a single job with timeout, linear retry (no Polly), scoped logging,
-/// and records the result in <see cref="ArknJobHistory"/>.
+/// records the result in <see cref="ArknJobHistory"/>, and dispatches lifecycle notifications.
 /// </summary>
 public sealed class ArknJobRunner
 {
     private readonly IServiceProvider _services;
-    private readonly ArknJobHistory _history;
-    private readonly IArknLogger _logger;
+    private readonly ArknJobHistory   _history;
+    private readonly IArknLogger      _logger;
     private readonly InMemoryLogSink? _memorySink;
+    private readonly ArknJobRegistry  _registry;
 
     public ArknJobRunner(
         IServiceProvider services,
-        ArknJobHistory history,
-        IArknLogger logger,
+        ArknJobHistory   history,
+        IArknLogger      logger,
+        ArknJobRegistry  registry,
         InMemoryLogSink? memorySink = null)
     {
         _services   = services;
         _history    = history;
         _logger     = logger;
+        _registry   = registry;
         _memorySink = memorySink;
     }
 
@@ -35,22 +40,25 @@ public sealed class ArknJobRunner
     /// Runs the job described by <paramref name="options"/>, respecting timeout and retry settings.
     /// </summary>
     public async Task RunAsync(
-        ArknJobOptions options,
-        DateTimeOffset scheduledAt,
+        ArknJobOptions    options,
+        DateTimeOffset    scheduledAt,
         CancellationToken hostToken)
     {
-        var runId    = Guid.NewGuid();
-        var jobName  = options.JobName;
+        var runId     = Guid.NewGuid();
+        var jobName   = options.JobName;
         var startedAt = DateTimeOffset.UtcNow;
 
         _logger.Info($"[{jobName}] Starting run {runId} (scheduled {scheduledAt:HH:mm:ss})");
+
+        // Fire Started notification
+        await MaybeNotifyAsync(options, JobEvent.Started, runId, jobName,
+            ArknJobStatus.Running, null, null, null, hostToken);
 
         ArknJobStatus finalStatus = ArknJobStatus.Failed;
         Error?        finalError  = null;
 
         for (int attempt = 1; attempt <= options.MaxAttempts; attempt++)
         {
-            // Build per-attempt CancellationToken (timeout + host)
             using var timeoutCts = options.Timeout.HasValue
                 ? new CancellationTokenSource(options.Timeout.Value)
                 : new CancellationTokenSource();
@@ -58,8 +66,7 @@ public sealed class ArknJobRunner
             using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(
                 hostToken, timeoutCts.Token);
 
-            var ctx = new ArknJobContext(
-                runId, jobName, scheduledAt, linkedCts.Token, _logger);
+            var ctx = new ArknJobContext(runId, jobName, scheduledAt, linkedCts.Token, _logger);
 
             Result result;
             try
@@ -74,7 +81,7 @@ public sealed class ArknJobRunner
                 finalError  = Error.Failure($"{jobName}.TimedOut",
                     $"Job '{jobName}' exceeded timeout of {options.Timeout}.");
                 _logger.Warning($"[{jobName}] Run {runId} timed out (attempt {attempt}/{options.MaxAttempts})");
-                break; // Never retry a timed-out run
+                break;
             }
             catch (Exception ex)
             {
@@ -108,14 +115,92 @@ public sealed class ArknJobRunner
         var finishedAt = DateTimeOffset.UtcNow;
         var duration   = finishedAt - startedAt;
 
-        // Collect scoped logs from InMemoryLogSink
         var logs = _memorySink?.GetEntries(runId.ToString())
-            ?? (IReadOnlyList<Arkn.Logging.Models.LogEntry>)[];
+            ?? (IReadOnlyList<LogEntry>)[];
 
         _history.Record(new ArknJobExecution(
             runId, jobName, finalStatus, startedAt, finishedAt, duration, finalError, logs));
 
-        // Clean up this run's entries from InMemoryLogSink to avoid unbounded growth
         _memorySink?.Clear(runId.ToString());
+
+        // Fire outcome notifications
+        var outcomeEvent = finalStatus switch
+        {
+            ArknJobStatus.Succeeded => JobEvent.Succeeded,
+            ArknJobStatus.TimedOut  => JobEvent.TimedOut,
+            _                       => JobEvent.Failed,
+        };
+
+        await MaybeNotifyAsync(options, outcomeEvent, runId, jobName, finalStatus,
+            finalError, duration, logs, hostToken);
+    }
+
+    private async Task MaybeNotifyAsync(
+        ArknJobOptions           options,
+        JobEvent                 @event,
+        Guid                     runId,
+        string                   jobName,
+        ArknJobStatus            status,
+        Error?                   error,
+        TimeSpan?                duration,
+        IReadOnlyList<LogEntry>? logs,
+        CancellationToken        ct)
+    {
+        bool shouldNotify = options.NotifyOn.HasFlag(@event)
+            || (@event is JobEvent.Failed or JobEvent.TimedOut
+                && options.NotifyOn == JobEvent.None
+                && _registry.GlobalFailureNotifierType is not null);
+
+        if (!shouldNotify) return;
+
+        var notifier = _services.GetService<IArknNotifierRegistry>();
+        if (notifier is null) return;
+
+        var level = @event switch
+        {
+            JobEvent.Started   => NotificationLevel.Info,
+            JobEvent.Succeeded => NotificationLevel.Info,
+            JobEvent.Failed    => NotificationLevel.Error,
+            JobEvent.TimedOut  => NotificationLevel.Error,
+            _                  => NotificationLevel.Warning,
+        };
+
+        var emoji = @event switch
+        {
+            JobEvent.Started   => "▶️",
+            JobEvent.Succeeded => "✅",
+            JobEvent.Failed    => "❌",
+            JobEvent.TimedOut  => "⏱️",
+            _                  => "🔔",
+        };
+
+        var title = $"{emoji} {jobName} — {status}";
+
+        var bodyParts = new List<string>();
+        if (duration.HasValue) bodyParts.Add($"Duration: {duration.Value:mm\\:ss}");
+        bodyParts.Add($"Run: {runId.ToString()[..8]}…");
+        if (error is not null) bodyParts.Add($"Error: {error.Message}");
+
+        var logSnippet = logs is { Count: > 0 }
+            ? string.Join("\n", logs.TakeLast(5).Select(l => $"[{l.Level}] {l.Message}"))
+            : null;
+
+        var metadata = new Dictionary<string, object?>
+        {
+            ["RunId"]   = runId.ToString(),
+            ["Status"]  = status.ToString(),
+            ["JobName"] = jobName,
+        };
+        if (duration.HasValue) metadata["Duration"] = duration.Value.ToString(@"mm\:ss");
+        if (logSnippet is not null) metadata["logs"] = logSnippet;
+
+        var notification = new ArknNotification(
+            title,
+            string.Join("  |  ", bodyParts),
+            level,
+            $"Arkn.Jobs/{jobName}",
+            metadata);
+
+        await notifier.DispatchAsync(notification, ct);
     }
 }

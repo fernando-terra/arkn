@@ -10,5 +10,11 @@ public sealed class ArknJobRegistry : IArknJobRegistry
 
     public IReadOnlyList<ArknJobOptions> Jobs => _jobs.AsReadOnly();
 
+    /// <summary>CLR type of the global failure notifier (set via OnFailure&lt;T&gt;()).</summary>
+    public Type? GlobalFailureNotifierType { get; private set; }
+
     internal void Register(ArknJobOptions options) => _jobs.Add(options);
+
+    internal void SetGlobalFailureNotifier(Type notifierType)
+        => GlobalFailureNotifierType = notifierType;
 }

@@ -15,8 +15,8 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         Action<ArknJobsBuilder>? configure = null)
     {
-        // Core infrastructure
-        services.AddSingleton<ArknJobRegistry>();
+        var registry = new ArknJobRegistry();
+        services.AddSingleton(registry);
         services.AddSingleton<ArknJobHistory>();
 
         services.AddSingleton<ArknJobRunner>(sp =>
@@ -24,7 +24,8 @@ public static class ServiceCollectionExtensions
             var logger     = sp.GetRequiredService<IArknLogger>();
             var history    = sp.GetRequiredService<ArknJobHistory>();
             var memorySink = sp.GetService<InMemoryLogSink>(); // optional
-            return new ArknJobRunner(sp, history, logger, memorySink);
+            var reg        = sp.GetRequiredService<ArknJobRegistry>();
+            return new ArknJobRunner(sp, history, logger, reg, memorySink);
         });
 
         services.AddSingleton<ArknJobScheduler>();
@@ -32,9 +33,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IArknJobScheduler>(sp => sp.GetRequiredService<ArknJobScheduler>());
         services.AddSingleton<IArknJobRegistry>(sp => sp.GetRequiredService<ArknJobRegistry>());
 
-        // Run user configuration
-        var registry = new ArknJobRegistry();
-        var builder  = new ArknJobsBuilder(registry, services);
+        var builder = new ArknJobsBuilder(registry, services);
         configure?.Invoke(builder);
 
         return services;

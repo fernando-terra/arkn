@@ -1,5 +1,6 @@
 using Arkn.Jobs.Core;
 using Arkn.Jobs.Models;
+using Arkn.Notifications.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Arkn.Jobs.Extensions;
@@ -41,6 +42,13 @@ public sealed class ArknJobBuilder<TJob>
         if (retryDelay.HasValue) _options.RetryDelay = retryDelay.Value;
         return this;
     }
+
+    /// <summary>Configures which job lifecycle events trigger notifications for this job.</summary>
+    public ArknJobBuilder<TJob> NotifyOn(JobEvent events)
+    {
+        _options.NotifyOn = events;
+        return this;
+    }
 }
 
 /// <summary>Top-level fluent builder for registering multiple jobs.</summary>
@@ -68,5 +76,17 @@ public sealed class ArknJobsBuilder
 
         _registry.Register(options);
         return new ArknJobBuilder<TJob>(options, _services);
+    }
+
+    /// <summary>
+    /// Registers a global notifier that fires on Failed and TimedOut for all jobs
+    /// that don't have explicit NotifyOn set.
+    /// </summary>
+    public ArknJobsBuilder OnFailure<TNotifier>()
+        where TNotifier : class, IArknNotifier
+    {
+        _services.AddSingleton<IArknNotifier, TNotifier>();
+        _registry.SetGlobalFailureNotifier(typeof(TNotifier));
+        return this;
     }
 }

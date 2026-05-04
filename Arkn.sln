@@ -29,6 +29,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkn.Notifications", "src\A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkn.Extensions.Notifications.Slack", "src\Arkn.Extensions.Notifications.Slack\Arkn.Extensions.Notifications.Slack.csproj", "{B2B2B2B2-B2B2-B2B2-B2B2-B2B2B2B2B2B2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkn.Notifications", "src\\Arkn.Notifications\\Arkn.Notifications.csproj", "{J1J1J1J1-J1J1-J1J1-J1J1-J1J1J1J1J1J1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkn.Extensions.Notifications.Slack", "src\\Arkn.Extensions.Notifications.Slack\\Arkn.Extensions.Notifications.Slack.csproj", "{K2K2K2K2-K2K2-K2K2-K2K2-K2K2K2K2K2K2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkn.Notifications.Tests", "tests\\Arkn.Notifications.Tests\\Arkn.Notifications.Tests.csproj", "{L3L3L3L3-L3L3-L3L3-L3L3-L3L3L3L3L3L3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,5 +93,17 @@ Global
 		{B2B2B2B2-B2B2-B2B2-B2B2-B2B2B2B2B2B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2B2B2B2-B2B2-B2B2-B2B2-B2B2B2B2B2B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B2B2B2B2-B2B2-B2B2-B2B2-B2B2B2B2B2B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{J1J1J1J1-J1J1-J1J1-J1J1-J1J1J1J1J1J1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{J1J1J1J1-J1J1-J1J1-J1J1-J1J1J1J1J1J1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{J1J1J1J1-J1J1-J1J1-J1J1-J1J1J1J1J1J1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{J1J1J1J1-J1J1-J1J1-J1J1-J1J1J1J1J1J1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{K2K2K2K2-K2K2-K2K2-K2K2-K2K2K2K2K2K2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{K2K2K2K2-K2K2-K2K2-K2K2-K2K2K2K2K2K2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{K2K2K2K2-K2K2-K2K2-K2K2-K2K2K2K2K2K2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{K2K2K2K2-K2K2-K2K2-K2K2-K2K2K2K2K2K2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{L3L3L3L3-L3L3-L3L3-L3L3-L3L3L3L3L3L3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{L3L3L3L3-L3L3-L3L3-L3L3-L3L3L3L3L3L3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{L3L3L3L3-L3L3-L3L3-L3L3-L3L3L3L3L3L3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{L3L3L3L3-L3L3-L3L3-L3L3-L3L3L3L3L3L3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

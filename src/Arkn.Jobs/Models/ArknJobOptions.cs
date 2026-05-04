@@ -23,4 +23,8 @@ public sealed class ArknJobOptions
 
     /// <summary>The CLR type of the job implementation.</summary>
     public Type JobType { get; set; } = typeof(object);
+
+    // Notification integration
+    /// <summary>Which events trigger notifications for this specific job.</summary>
+    public JobEvent NotifyOn { get; set; } = JobEvent.None;
 }

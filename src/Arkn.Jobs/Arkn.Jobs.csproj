@@ -21,5 +21,6 @@
     <ProjectReference Include="..\Arkn.Core\Arkn.Core.csproj" />
     <ProjectReference Include="..\Arkn.Results\Arkn.Results.csproj" />
     <ProjectReference Include="..\Arkn.Logging\Arkn.Logging.csproj" />
+    <ProjectReference Include="..\Arkn.Notifications\Arkn.Notifications.csproj" />
   </ItemGroup>
 </Project>
