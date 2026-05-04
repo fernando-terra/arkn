@@ -175,6 +175,11 @@
     .pkg-version { font-family: var(--mono); font-size: .72rem; color: var(--muted); }
     .pkg-desc { font-size: .85rem; color: var(--muted); line-height: 1.55; }
     .pkg-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .9rem; }
+    .pkg-nuget { display: flex; align-items: center; gap: .8rem; margin-top: .75rem; }
+    .pkg-downloads { font-size: .72rem; color: var(--muted); display: flex; align-items: center; gap: .3rem; }
+    .pkg-downloads svg { width: 12px; height: 12px; opacity: .5; }
+    .nuget-link { font-size: .72rem; color: var(--accent2); opacity: .8; transition: opacity .15s; }
+    .nuget-link:hover { opacity: 1; text-decoration: none; border-bottom: 1px solid var(--accent2); }
     .tag {
       font-size: .7rem; padding: .2rem .55rem; border-radius: 4px;
       background: rgba(255,255,255,.05); color: var(--muted);
@@ -324,7 +329,7 @@
       <div class="pkg-top">
         <div class="pkg-icon" style="background:rgba(124,106,247,.15)">🧱</div>
         <div>
-          <div class="pkg-name">Arkn.Core</div>
+          <div class="pkg-name" data-pkg="Arkn.Core">Arkn.Core</div>
           <div class="pkg-version">v0.1.4</div>
         </div>
       </div>
@@ -336,7 +341,7 @@
       <div class="pkg-top">
         <div class="pkg-icon" style="background:rgba(52,211,153,.15)">✅</div>
         <div>
-          <div class="pkg-name">Arkn.Results</div>
+          <div class="pkg-name" data-pkg="Arkn.Results">Arkn.Results</div>
           <div class="pkg-version">v0.1.4</div>
         </div>
       </div>
@@ -348,7 +353,7 @@
       <div class="pkg-top">
         <div class="pkg-icon" style="background:rgba(96,165,250,.15)">🌐</div>
         <div>
-          <div class="pkg-name">Arkn.Http</div>
+          <div class="pkg-name" data-pkg="Arkn.Http">Arkn.Http</div>
           <div class="pkg-version">v0.1.4</div>
         </div>
       </div>
@@ -360,7 +365,7 @@
       <div class="pkg-top">
         <div class="pkg-icon" style="background:rgba(251,191,36,.15)">📋</div>
         <div>
-          <div class="pkg-name">Arkn.Logging</div>
+          <div class="pkg-name" data-pkg="Arkn.Logging">Arkn.Logging</div>
           <div class="pkg-version">v0.1.4</div>
         </div>
       </div>
@@ -372,7 +377,7 @@
       <div class="pkg-top">
         <div class="pkg-icon" style="background:rgba(244,114,182,.15)">⚙️</div>
         <div>
-          <div class="pkg-name">Arkn.Jobs</div>
+          <div class="pkg-name" data-pkg="Arkn.Jobs">Arkn.Jobs</div>
           <div class="pkg-version">v0.1.4</div>
         </div>
       </div>
@@ -384,7 +389,7 @@
       <div class="pkg-top">
         <div class="pkg-icon" style="background:rgba(52,211,153,.12)">🔔</div>
         <div>
-          <div class="pkg-name">Arkn.Notifications</div>
+          <div class="pkg-name" data-pkg="Arkn.Notifications">Arkn.Notifications</div>
           <div class="pkg-version">v0.1.4</div>
         </div>
       </div>
@@ -396,7 +401,7 @@
       <div class="pkg-top">
         <div class="pkg-icon" style="background:rgba(96,165,250,.12)">💬</div>
         <div>
-          <div class="pkg-name">Arkn.Extensions.Notifications.Slack</div>
+          <div class="pkg-name" data-pkg="Arkn.Extensions.Notifications.Slack">Arkn.Extensions.Notifications.Slack</div>
           <div class="pkg-version">v0.1.4</div>
         </div>
       </div>
@@ -408,7 +413,7 @@
       <div class="pkg-top">
         <div class="pkg-icon" style="background:rgba(124,106,247,.12)">🤖</div>
         <div>
-          <div class="pkg-name">Arkn.Analyzers</div>
+          <div class="pkg-name" data-pkg="Arkn.Analyzers">Arkn.Analyzers</div>
           <div class="pkg-version">v0.1.4</div>
         </div>
       </div>
@@ -420,7 +425,7 @@
       <div class="pkg-top">
         <div class="pkg-icon" style="background:rgba(96,165,250,.12)">&#9729;</div>
         <div>
-          <div class="pkg-name">Arkn.Extensions.Logging.ApplicationInsights</div>
+          <div class="pkg-name" data-pkg="Arkn.Extensions.Logging.ApplicationInsights">Arkn.Extensions.Logging.ApplicationInsights</div>
           <div class="pkg-version">v0.1.4</div>
         </div>
       </div>
@@ -633,6 +638,60 @@ result
     Arkn is open source and actively developed. Contributions welcome.
   </p>
 </footer>
+
+<script>
+(async () => {
+  const NUGET_API = 'https://azuresearch-usnc.nuget.org/query?q=Arkn&take=20&prerelease=false';
+
+  function fmt(n) {
+    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
+    if (n >= 1_000)     return (n / 1_000).toFixed(1) + 'k';
+    return String(n);
+  }
+
+  try {
+    const res  = await fetch(NUGET_API);
+    const data = await res.json();
+    const map  = {};
+    for (const p of data.data) map[p.id.toLowerCase()] = p;
+
+    document.querySelectorAll('[data-pkg]').forEach(nameEl => {
+      const id  = nameEl.getAttribute('data-pkg');
+      const pkg = map[id.toLowerCase()];
+      if (!pkg) return;
+
+      // Update version
+      const vEl = nameEl.closest('.pkg-top').querySelector('.pkg-version');
+      if (vEl) vEl.textContent = 'v' + pkg.version;
+
+      // Inject NuGet row after pkg-tags
+      const card = nameEl.closest('.pkg');
+      if (!card.querySelector('.pkg-nuget')) {
+        const dl   = pkg.totalDownloads || 0;
+        const slug = id.toLowerCase();
+        const row  = document.createElement('div');
+        row.className = 'pkg-nuget';
+        row.innerHTML = `
+          <span class="pkg-downloads">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            ${dl === 0 ? 'new' : fmt(dl) + ' downloads'}
+          </span>
+          <a class="nuget-link" href="https://www.nuget.org/packages/${id}" target="_blank" rel="noopener">
+            NuGet &rarr;
+          </a>
+        `;
+        card.appendChild(row);
+      }
+    });
+  } catch(e) {
+    // Silently fail — static content still renders fine
+  }
+})();
+</script>
 
 </body>
 </html>
