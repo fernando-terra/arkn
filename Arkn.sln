@@ -25,6 +25,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkn.Jobs", "src\Arkn.Jobs\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkn.Jobs.Tests", "tests\Arkn.Jobs.Tests\Arkn.Jobs.Tests.csproj", "{I9I9I9I9-I9I9-I9I9-I9I9-I9I9I9I9I9I9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkn.Notifications", "src\Arkn.Notifications\Arkn.Notifications.csproj", "{A1A1A1A1-A1A1-A1A1-A1A1-A1A1A1A1A1A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkn.Extensions.Notifications.Slack", "src\Arkn.Extensions.Notifications.Slack\Arkn.Extensions.Notifications.Slack.csproj", "{B2B2B2B2-B2B2-B2B2-B2B2-B2B2B2B2B2B2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,5 +79,13 @@ Global
 		{I9I9I9I9-I9I9-I9I9-I9I9-I9I9I9I9I9I9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{I9I9I9I9-I9I9-I9I9-I9I9-I9I9I9I9I9I9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{I9I9I9I9-I9I9-I9I9-I9I9-I9I9I9I9I9I9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1A1A1A1-A1A1-A1A1-A1A1-A1A1A1A1A1A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1A1A1A1-A1A1-A1A1-A1A1-A1A1A1A1A1A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1A1A1A1-A1A1-A1A1-A1A1-A1A1A1A1A1A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1A1A1A1-A1A1-A1A1-A1A1-A1A1A1A1A1A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2B2B2B2-B2B2-B2B2-B2B2-B2B2B2B2B2B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2B2B2B2-B2B2-B2B2-B2B2-B2B2B2B2B2B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2B2B2B2-B2B2-B2B2-B2B2-B2B2B2B2B2B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2B2B2B2-B2B2-B2B2-B2B2-B2B2B2B2B2B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
