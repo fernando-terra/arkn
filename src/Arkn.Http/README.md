@@ -169,6 +169,27 @@ var store = serviceProvider.GetRequiredService<IArknTokenStore>();
 await store.InvalidateAsync("my-client_credentials");
 ```
 
+## mTLS — Client Certificates
+
+Attach a client certificate to every TLS handshake (mutual TLS) with zero boilerplate:
+
+```csharp
+// From X509Certificate2 already loaded
+.WithClientCertificate(certificate)
+
+// From PFX/PKCS#12 file
+.WithClientCertificate("/certs/client.pfx", password: "secret")
+.WithClientCertificate("/certs/client.pfx")          // no password
+
+// From PEM files (cert + key separate)
+.WithClientCertificatePem("/certs/client.crt", "/certs/client.key")
+
+// From OS certificate store (Windows / macOS)
+.WithClientCertificate(StoreName.My, StoreLocation.LocalMachine, thumbprint: "ABC123...")
+```
+
+When a certificate is configured, Arkn.Http creates a dedicated `SocketsHttpHandler` with `SslClientAuthenticationOptions` — the certificate is presented on every TLS handshake. Fully compatible with all other interceptors (OAuth2, ApiKey, debug logging, rate limiting, etc.).
+
 ## Part of the Arkn ecosystem
 
 [github.com/fernando-terra/arkn](https://github.com/fernando-terra/arkn) · [nuget.org/packages/Arkn.Http](https://www.nuget.org/packages/Arkn.Http)
