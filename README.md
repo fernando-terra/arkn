@@ -2,14 +2,14 @@
 
 [![CI](https://github.com/fernando-terra/arkn/actions/workflows/ci.yml/badge.svg)](https://github.com/fernando-terra/arkn/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/v/Arkn.Results.svg)](https://www.nuget.org/packages/Arkn.Results)
-[![License: MIT](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![.NET](https://img.shields.io/badge/.NET-9%20%7C%2010-blue.svg)](https://dotnet.microsoft.com/)
 
 **Conventions you can read. Patterns you can enforce.**
 
 Arkn is a composable, zero-dependency .NET framework. Each package delivers one pattern, depends only on what it needs, and integrates naturally with the others.
 
-🌐 [Landing page](https://fernando-terra.github.io/arkn) · 📦 [NuGet](https://www.nuget.org/packages/Arkn.Results) · 📝 [Blog series](https://medium.com/)
+🌐 [Landing page](https://fernando-terra.github.io/arkn) · 📦 [NuGet](https://www.nuget.org/packages/Arkn.Results) · 📖 [Docs](https://fernando-terra.github.io/arkn/docs)
 
 ---
 
@@ -26,8 +26,8 @@ Arkn is a composable, zero-dependency .NET framework. Each package delivers one 
 | `Arkn.Extensions.Notifications.Email` | SMTP + SendGrid email notifier — HTML/plain-text, zero SDK | ✅ v0.1.0 |
 | `Arkn.Extensions.Notifications.Slack` | Slack via Incoming Webhook + Block Kit, zero external SDKs | [![NuGet](https://img.shields.io/nuget/v/Arkn.Extensions.Notifications.Slack.svg)](https://www.nuget.org/packages/Arkn.Extensions.Notifications.Slack) |
 | `Arkn.Extensions.Logging.ApplicationInsights` | Application Insights sink for `Arkn.Logging` | [![NuGet](https://img.shields.io/nuget/v/Arkn.Extensions.Logging.ApplicationInsights.svg)](https://www.nuget.org/packages/Arkn.Extensions.Logging.ApplicationInsights) |
-| `Arkn.Extensions.Logging.Seq` | Seq sink via HTTP + CLEF — zero Serilog dependency | ✅ v0.1.0 |
-| `Arkn.Extensions.Logging.Elasticsearch` | Elasticsearch Bulk API sink — zero NEST dependency | ✅ v0.1.0 |
+| `Arkn.Extensions.Logging.Seq` | Seq sink via HTTP + CLEF — zero Serilog dependency (.NET 10+) | ✅ v0.1.0 |
+| `Arkn.Extensions.Logging.Elasticsearch` | Elasticsearch Bulk API sink — zero NEST dependency (.NET 10+) | ✅ v0.1.0 |
 | `Arkn.Analyzers` | Roslyn analyzers — ARK001–ARK004 enforcing Arkn patterns at compile time | [![NuGet](https://img.shields.io/nuget/v/Arkn.Analyzers.svg)](https://www.nuget.org/packages/Arkn.Analyzers) |
 | `Arkn.SourceGen` | Source generator — generates Error factories from `[ArknErrors]` partial classes | ✅ v0.1.0 |
 | `Arkn.Templates` | `dotnet new` templates — `arkn-api`, `arkn-job`, `arkn-lib` | [![NuGet](https://img.shields.io/nuget/v/Arkn.Templates.svg)](https://www.nuget.org/packages/Arkn.Templates) |
@@ -205,7 +205,7 @@ dotnet new arkn-lib -n MyLibrary   # Class Library — Core, Results, Analyzers
 
 ```bash
 dotnet test
-# 162 tests, 0 failures — ubuntu-latest + windows-latest on every push
+# 0 failures — ubuntu-latest + windows-latest on every push
 ```
 
 ## Contributing
