@@ -174,10 +174,11 @@
 
     /* ── QUICK START ── */
     .steps-list { display: flex; flex-direction: column; gap: 2rem; margin-top: 2.5rem; }
-    .step { display: grid; grid-template-columns: auto 1fr; gap: 1.2rem 1.5rem; align-items: start; }
-    .step-number { width: 36px; height: 36px; border-radius: 50%; background: rgba(124,106,247,.15); border: 1px solid var(--accent); color: var(--accent2); font-size: .88rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: .1rem; }
-    .step-content h3 { font-size: 1rem; font-weight: 600; margin-bottom: .8rem; }
-    .step-body { grid-column: 2; }
+    .step { display: flex; flex-direction: column; gap: .9rem; }
+    .step-header { display: flex; align-items: center; gap: 1rem; }
+    .step-number { width: 36px; height: 36px; border-radius: 50%; background: rgba(124,106,247,.15); border: 1px solid var(--accent); color: var(--accent2); font-size: .88rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .step-header h3 { font-size: 1rem; font-weight: 600; margin: 0; }
+    .step-body { padding-left: 52px; }
 
     /* ── FOOTER ── */
     footer { border-top: 1px solid var(--border); padding: 2.5rem 2rem; text-align: center; }
@@ -647,24 +648,18 @@ services.<span class="m">AddArknJobs</span>(jobs =&gt;
     <div class="steps-list">
 
       <div class="step">
-        <div class="step-number">1</div>
-        <div class="step-content">
-          <h3>Install</h3>
-        </div>
+        <div class="step-header"><div class="step-number">1</div><h3>Install</h3></div>
         <div class="step-body">
           <div class="code-block">
             <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
             <pre>dotnet add package Arkn.Results
 dotnet add package Arkn.Analyzers   <span class="c"># enforces conventions at build time</span></pre>
           </div>
-        </div>
+      </div>
       </div>
 
       <div class="step">
-        <div class="step-number">2</div>
-        <div class="step-content">
-          <h3>Define your errors</h3>
-        </div>
+        <div class="step-header"><div class="step-number">2</div><h3>Define your errors</h3></div>
         <div class="step-body">
           <div class="code-block">
             <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
@@ -676,14 +671,11 @@ dotnet add package Arkn.Analyzers   <span class="c"># enforces conventions at bu
         <span class="t">Error</span>.<span class="m">Validation</span>(<span class="s">"User.InvalidEmail"</span>);
 }</pre>
           </div>
-        </div>
+      </div>
       </div>
 
       <div class="step">
-        <div class="step-number">3</div>
-        <div class="step-content">
-          <h3>Return results</h3>
-        </div>
+        <div class="step-header"><div class="step-number">3</div><h3>Return results</h3></div>
         <div class="step-body">
           <div class="code-block">
             <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
@@ -693,14 +685,11 @@ dotnet add package Arkn.Analyzers   <span class="c"># enforces conventions at bu
     <span class="k">return</span> user <span class="k">is null</span> ? <span class="t">UserErrors</span>.<span class="m">NotFound</span>(id) : <span class="t">Result</span>.<span class="m">Success</span>(user);
 }</pre>
           </div>
-        </div>
+      </div>
       </div>
 
       <div class="step">
-        <div class="step-number">4</div>
-        <div class="step-content">
-          <h3>Consume with Match</h3>
-        </div>
+        <div class="step-header"><div class="step-number">4</div><h3>Consume with Match</h3></div>
         <div class="step-body">
           <div class="code-block">
             <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
@@ -713,21 +702,18 @@ dotnet add package Arkn.Analyzers   <span class="c"># enforces conventions at bu
         _                    =&gt; <span class="m">Problem</span>(error.<span class="p">Message</span>)
     });</pre>
           </div>
-        </div>
+      </div>
       </div>
 
       <div class="step">
-        <div class="step-number">5</div>
-        <div class="step-content">
-          <h3>Or scaffold a full project</h3>
-        </div>
+        <div class="step-header"><div class="step-number">5</div><h3>Or scaffold a full project</h3></div>
         <div class="step-body">
           <div class="code-block">
             <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
             <pre>dotnet new install Arkn.Templates
 dotnet new arkn-api -n MyApi</pre>
           </div>
-        </div>
+      </div>
       </div>
 
     </div><!-- /steps-list -->
