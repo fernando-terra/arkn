@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+    <RootNamespace>Arkn.SourceGen</RootNamespace>
+    <AssemblyName>Arkn.SourceGen</AssemblyName>
+    <Version>0.1.0</Version>
+    <Authors>Fernando Terra</Authors>
+    <Description>Roslyn Source Generator for Arkn — generates Error factory methods from attributed partial classes, eliminating boilerplate.</Description>
+    <PackageTags>dotnet;csharp;source-generator;roslyn;arkn;codegen</PackageTags>
+    <RepositoryUrl>https://github.com/fernando-terra/arkn</RepositoryUrl>
+    <DevelopmentDependency>true</DevelopmentDependency>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all" />
+  </ItemGroup>
+</Project>
