@@ -9,6 +9,7 @@
     <RootNamespace>Arkn.Analyzers</RootNamespace>
     <AssemblyName>Arkn.Analyzers</AssemblyName>
     <Version>0.1.6</Version>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Authors>Fernando Terra</Authors>
     <Description>Roslyn analyzers that enforce Arkn patterns at compile time — Result returns, error code naming, and more.</Description>
     <PackageTags>dotnet;csharp;roslyn;analyzer;arkn;architecture</PackageTags>

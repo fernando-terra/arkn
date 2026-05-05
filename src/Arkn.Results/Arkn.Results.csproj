@@ -8,6 +8,7 @@
     <RootNamespace>Arkn.Results</RootNamespace>
     <AssemblyName>Arkn.Results</AssemblyName>
     <Version>0.1.6</Version>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Authors>Fernando Terra</Authors>
     <Description>Result Pattern for modern .NET — explicit success/failure without exceptions. Zero external dependencies.</Description>
     <PackageTags>dotnet;csharp;result-pattern;railway-oriented;functional</PackageTags>

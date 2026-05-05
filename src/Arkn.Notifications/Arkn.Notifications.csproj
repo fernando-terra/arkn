@@ -8,6 +8,7 @@
     <RootNamespace>Arkn.Notifications</RootNamespace>
     <AssemblyName>Arkn.Notifications</AssemblyName>
     <Version>0.1.6</Version>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Authors>Fernando Terra</Authors>
     <Description>Notification abstractions for Arkn — pluggable notifiers, zero external dependencies.</Description>
     <PackageTags>dotnet;csharp;notifications;alerts;architecture</PackageTags>

@@ -1,0 +1,15 @@
+Arkn — Design Framework for .NET
+Copyright 2026 Fernando Terra
+
+This product includes software developed by Fernando Terra
+(https://github.com/fernando-terra/arkn).
+
+If you use, modify, or redistribute this software, you must:
+  1. Retain this NOTICE file in any distribution.
+  2. Credit "Arkn by Fernando Terra (github.com/fernando-terra/arkn)"
+     in your product documentation, README, or about page.
+  3. Preserve all copyright, patent, and trademark notices found
+     in the source files.
+
+Licensed under the Apache License, Version 2.0.
+See LICENSE for the full license text.

@@ -6,6 +6,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>preview</LangVersion>
     <Version>0.1.6</Version>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Authors>Fernando Terra</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Description>Application Insights sink for Arkn.Logging — zero-config telemetry integration.</Description>
