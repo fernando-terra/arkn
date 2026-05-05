@@ -214,4 +214,4 @@ PRs welcome — open an issue first for non-trivial changes.
 
 ## License
 
-MIT © [Fernando Terra](https://github.com/fernando-terra)
+Apache 2.0 © [Fernando Terra](https://github.com/fernando-terra)
