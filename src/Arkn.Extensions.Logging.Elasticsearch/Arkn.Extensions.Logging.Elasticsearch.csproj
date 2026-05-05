@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>preview</LangVersion>
+    <RootNamespace>Arkn.Extensions.Logging.Elasticsearch</RootNamespace>
+    <AssemblyName>Arkn.Extensions.Logging.Elasticsearch</AssemblyName>
+    <Version>0.1.0</Version>
+    <Authors>Fernando Terra</Authors>
+    <Description>Elasticsearch sink for Arkn.Logging — sends logs via Bulk API. Zero NEST/Elastic SDK dependency.</Description>
+    <PackageTags>dotnet;csharp;elasticsearch;logging;bulk-api;arkn</PackageTags>
+    <RepositoryUrl>https://github.com/fernando-terra/arkn</RepositoryUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.7" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Arkn.Logging\Arkn.Logging.csproj" />
+  </ItemGroup>
+</Project>
