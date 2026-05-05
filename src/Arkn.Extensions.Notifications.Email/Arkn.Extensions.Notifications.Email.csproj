@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net9.0;net10.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <LangVersion>preview</LangVersion>
+    <RootNamespace>Arkn.Extensions.Notifications.Email</RootNamespace>
+    <AssemblyName>Arkn.Extensions.Notifications.Email</AssemblyName>
+    <Version>0.1.0</Version>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <Authors>Fernando Terra</Authors>
+    <Description>Email notifier for Arkn.Notifications — SMTP (System.Net.Mail) and SendGrid HTTP. Zero external SDK dependency.</Description>
+    <PackageTags>dotnet;csharp;email;smtp;sendgrid;notifications;arkn</PackageTags>
+    <RepositoryUrl>https://github.com/fernando-terra/arkn</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.7" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Arkn.Notifications\Arkn.Notifications.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Arkn.Extensions.Notifications.Email.Tests" />
+  </ItemGroup>
+</Project>

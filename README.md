@@ -23,6 +23,7 @@ Arkn is a composable, zero-dependency .NET framework. Each package delivers one 
 | `Arkn.Logging` | Structured logging — ANSI console, rotating file, MEL bridge, pluggable sinks | [![NuGet](https://img.shields.io/nuget/v/Arkn.Logging.svg)](https://www.nuget.org/packages/Arkn.Logging) |
 | `Arkn.Jobs` | Cron scheduler — retry, timeout, `Result<T>` contract, notifications on failure | [![NuGet](https://img.shields.io/nuget/v/Arkn.Jobs.svg)](https://www.nuget.org/packages/Arkn.Jobs) |
 | `Arkn.Notifications` | Pluggable notifier abstraction — fan-out to N channels, zero deps | [![NuGet](https://img.shields.io/nuget/v/Arkn.Notifications.svg)](https://www.nuget.org/packages/Arkn.Notifications) |
+| `Arkn.Extensions.Notifications.Email` | SMTP + SendGrid email notifier — HTML/plain-text, zero SDK | ✅ v0.1.0 |
 | `Arkn.Extensions.Notifications.Slack` | Slack via Incoming Webhook + Block Kit, zero external SDKs | [![NuGet](https://img.shields.io/nuget/v/Arkn.Extensions.Notifications.Slack.svg)](https://www.nuget.org/packages/Arkn.Extensions.Notifications.Slack) |
 | `Arkn.Extensions.Logging.ApplicationInsights` | Application Insights sink for `Arkn.Logging` | [![NuGet](https://img.shields.io/nuget/v/Arkn.Extensions.Logging.ApplicationInsights.svg)](https://www.nuget.org/packages/Arkn.Extensions.Logging.ApplicationInsights) |
 | `Arkn.Extensions.Logging.Seq` | Seq sink via HTTP + CLEF — zero Serilog dependency | ✅ v0.1.0 |

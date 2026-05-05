@@ -8,6 +8,7 @@
     <Project Path="src/Arkn.Extensions.Logging.ApplicationInsights/Arkn.Extensions.Logging.ApplicationInsights.csproj" />
     <Project Path="src/Arkn.Extensions.Logging.Elasticsearch/Arkn.Extensions.Logging.Elasticsearch.csproj" />
     <Project Path="src/Arkn.Extensions.Logging.Seq/Arkn.Extensions.Logging.Seq.csproj" />
+    <Project Path="src/Arkn.Extensions.Notifications.Email/Arkn.Extensions.Notifications.Email.csproj" />
     <Project Path="src/Arkn.Extensions.Notifications.Slack/Arkn.Extensions.Notifications.Slack.csproj" />
     <Project Path="src/Arkn.Http/Arkn.Http.csproj" />
     <Project Path="src/Arkn.Jobs/Arkn.Jobs.csproj" />
@@ -22,6 +23,7 @@
     <Project Path="tests/Arkn.Http.Tests/Arkn.Http.Tests.csproj" />
     <Project Path="tests/Arkn.Jobs.Tests/Arkn.Jobs.Tests.csproj" />
     <Project Path="tests/Arkn.Logging.Tests/Arkn.Logging.Tests.csproj" />
+    <Project Path="tests/Arkn.Extensions.Notifications.Email.Tests/Arkn.Extensions.Notifications.Email.Tests.csproj" />
     <Project Path="tests/Arkn.Notifications.Tests/Arkn.Notifications.Tests.csproj" />
     <Project Path="tests/Arkn.Results.Tests/Arkn.Results.Tests.csproj" />
     <Project Path="tests/Arkn.Extensions.Logging.Sinks.Tests/Arkn.Extensions.Logging.Sinks.Tests.csproj" />
