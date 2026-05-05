@@ -9,7 +9,7 @@
 
 Arkn is a composable, zero-dependency .NET framework. Each package delivers one pattern, depends only on what it needs, and integrates naturally with the others.
 
-🌐 [Landing page](https://fernando-terra.github.io/arkn) · 📦 [NuGet](https://www.nuget.org/packages/Arkn.Results) · 📖 [Docs](https://fernando-terra.github.io/arkn/docs)
+🌐 [Landing page](https://fernando-terra.github.io/arkn) · 📦 [NuGet](https://www.nuget.org/packages/Arkn.Results) · 📖 [Docs](https://fernando-terra.github.io/arkn/getting-started)
 
 ---
 
