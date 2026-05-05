@@ -471,7 +471,7 @@ services.<span class="m">AddArknHttp</span>&lt;<span class="t">PaymentsClient</s
         <div class="pkg-header">
           <div class="pkg-meta">
             <div class="pkg-name"><span data-pkg="Arkn.Logging">Arkn.Logging</span> <span class="pkg-version">v—</span></div>
-            <div class="pkg-desc">Structured logging with pluggable sinks. Console with ANSI colors, daily-rotating file with JSON, and Azure Application Insights — no Serilog required.</div>
+            <div class="pkg-desc">Structured logging with pluggable sinks. Console with ANSI colors, daily-rotating file with JSON. Extensions for Azure Application Insights, Seq (CLEF/HTTP) and Elasticsearch (Bulk API) — no Serilog, no NEST.</div>
           </div>
           <div class="pkg-install">
             <div class="pkg-cmd" onclick="copyInstall(this, 'dotnet add package Arkn.Logging')">
@@ -481,7 +481,7 @@ services.<span class="m">AddArknHttp</span>&lt;<span class="t">PaymentsClient</s
           </div>
         </div>
         <div class="pkg-tags">
-          <span class="tag">logging</span><span class="tag">structured</span><span class="tag">sinks</span><span class="tag">appinsights</span>
+          <span class="tag">logging</span><span class="tag">structured</span><span class="tag">sinks</span><span class="tag">seq</span><span class="tag">elasticsearch</span><span class="tag">appinsights</span>
         </div>
         <div class="pkg-body">
           <details open>
@@ -560,7 +560,7 @@ services.<span class="m">AddArknJobs</span>(jobs =&gt;
         <div class="pkg-header">
           <div class="pkg-meta">
             <div class="pkg-name"><span data-pkg="Arkn.Notifications">Arkn.Notifications</span> <span class="pkg-version">v—</span></div>
-            <div class="pkg-desc">Pluggable alert system. Send structured notifications to Slack, email, or custom sinks — wired directly into <code style="font-family:var(--mono);font-size:.85em">Arkn.Jobs</code> failure hooks.</div>
+            <div class="pkg-desc">Pluggable alert system. Send structured notifications to Slack, Email (SMTP + SendGrid), or custom sinks — wired directly into <code style="font-family:var(--mono);font-size:.85em">Arkn.Jobs</code> failure hooks.</div>
           </div>
           <div class="pkg-install">
             <div class="pkg-cmd" onclick="copyInstall(this, 'dotnet add package Arkn.Notifications')">
@@ -570,11 +570,11 @@ services.<span class="m">AddArknJobs</span>(jobs =&gt;
           </div>
         </div>
         <div class="pkg-tags">
-          <span class="tag">notifications</span><span class="tag">alerts</span><span class="tag">slack</span><span class="tag">pluggable</span>
+          <span class="tag">notifications</span><span class="tag">alerts</span><span class="tag">slack</span><span class="tag">email</span><span class="tag">pluggable</span>
         </div>
         <div class="pkg-body">
           <details open>
-            <summary>Code example — Slack (Block Kit, zero external SDKs)</summary>
+            <summary>Code example — Slack + Email</summary>
             <div class="code-block">
               <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
               <pre>services.<span class="m">AddSlackNotifier</span>(opts =&gt;
@@ -582,6 +582,14 @@ services.<span class="m">AddArknJobs</span>(jobs =&gt;
     opts.<span class="p">WebhookUrl</span>   = config[<span class="s">"Slack:WebhookUrl"</span>];
     opts.<span class="p">Channel</span>      = <span class="s">"#alerts"</span>;
     opts.<span class="p">MinimumLevel</span> = <span class="p">NotificationLevel</span>.<span class="p">Warning</span>;
+});
+
+<span class="c">// or Email (SMTP or SendGrid, zero SDK)</span>
+services.<span class="m">AddEmailNotifier</span>(opts =&gt;
+{
+    opts.<span class="p">Host</span>     = config[<span class="s">"Smtp:Host"</span>];
+    opts.<span class="p">From</span>     = <span class="s">"noreply@example.com"</span>;
+    opts.<span class="p">To</span>       = [<span class="s">"ops@example.com"</span>];
 });</pre>
             </div>
           </details>
@@ -635,88 +643,66 @@ services.<span class="m">AddArknJobs</span>(jobs =&gt;
         </div>
       </div>
 
+
+      <!-- Arkn.SourceGen -->
+      <div class="pkg-card">
+        <div class="pkg-header">
+          <div class="pkg-meta">
+            <div class="pkg-name"><span data-pkg="Arkn.SourceGen">Arkn.SourceGen</span> <span class="pkg-version">v—</span></div>
+            <div class="pkg-desc">Roslyn source generator. Annotate a partial class with <code style="font-family:var(--mono);font-size:.85em">[ArknErrors]</code> and get all <code style="font-family:var(--mono);font-size:.85em">Error</code> factory methods generated — zero boilerplate.</div>
+          </div>
+          <div class="pkg-install">
+            <div class="pkg-cmd" onclick="copyInstall(this, 'dotnet add package Arkn.SourceGen')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              dotnet add package Arkn.SourceGen
+            </div>
+          </div>
+        </div>
+        <div class="pkg-tags">
+          <span class="tag">source-gen</span><span class="tag">roslyn</span><span class="tag">codegen</span><span class="tag">zero-boilerplate</span>
+        </div>
+        <div class="pkg-body">
+          <details open>
+            <summary>Code example</summary>
+            <div class="code-block">
+              <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+              <pre><span class="c">// You write:</span>
+[<span class="t">ArknErrors</span>]
+<span class="k">public static partial class</span> <span class="t">UserErrors</span>
+{
+    [<span class="t">ArknErrorCode</span>(<span class="s">"NotFound"</span>, <span class="s">"User was not found"</span>)]
+    <span class="k">public static partial</span> <span class="t">Error</span> <span class="m">NotFound</span>(<span class="t">string</span>? detail = <span class="k">null</span>);
+
+    [<span class="t">ArknErrorCode</span>(<span class="s">"Validation"</span>, <span class="s">"Email is not valid"</span>)]
+    <span class="k">public static partial</span> <span class="t">Error</span> <span class="m">InvalidEmail</span>(<span class="t">string</span>? detail = <span class="k">null</span>);
+}
+
+<span class="c">// Generator produces:</span>
+<span class="c">// Error.NotFound("UserErrors.NotFound", detail ?? "User was not found")</span></pre>
+            </div>
+          </details>
+        </div>
+      </div>
+
     </div><!-- /packages-grid -->
   </div>
 </section>
 
 <!-- ── QUICK START ── -->
 <section id="quickstart" style="background: var(--surface); border-top: 1px solid var(--border);">
-  <div class="container">
-    <div class="section-badge">Quick Start</div>
-    <div class="section-title">Up and running in 5 minutes.</div>
-
-    <div class="steps-list">
-
-      <div class="step">
-        <div class="step-header"><div class="step-number">1</div><h3>Install</h3></div>
-        <div class="step-body">
-          <div class="code-block">
-            <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-            <pre>dotnet add package Arkn.Results
-dotnet add package Arkn.Analyzers   <span class="c"># enforces conventions at build time</span></pre>
-          </div>
-      </div>
-      </div>
-
-      <div class="step">
-        <div class="step-header"><div class="step-number">2</div><h3>Define your errors</h3></div>
-        <div class="step-body">
-          <div class="code-block">
-            <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-            <pre><span class="k">public static class</span> <span class="t">UserErrors</span>
-{
-    <span class="k">public static</span> <span class="t">Error</span> <span class="m">NotFound</span>(<span class="t">Guid</span> id) =&gt;
-        <span class="t">Error</span>.<span class="m">NotFound</span>(<span class="s">"User.NotFound"</span>, <span class="s">$"User '{id}' not found."</span>);
-    <span class="k">public static readonly</span> <span class="t">Error</span> InvalidEmail =
-        <span class="t">Error</span>.<span class="m">Validation</span>(<span class="s">"User.InvalidEmail"</span>);
-}</pre>
-          </div>
-      </div>
-      </div>
-
-      <div class="step">
-        <div class="step-header"><div class="step-number">3</div><h3>Return results</h3></div>
-        <div class="step-body">
-          <div class="code-block">
-            <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-            <pre><span class="k">public</span> <span class="t">Result</span>&lt;<span class="t">User</span>&gt; <span class="m">GetById</span>(<span class="t">Guid</span> id)
-{
-    <span class="k">var</span> user = _repo.<span class="m">Find</span>(id);
-    <span class="k">return</span> user <span class="k">is null</span> ? <span class="t">UserErrors</span>.<span class="m">NotFound</span>(id) : <span class="t">Result</span>.<span class="m">Success</span>(user);
-}</pre>
-          </div>
-      </div>
-      </div>
-
-      <div class="step">
-        <div class="step-header"><div class="step-number">4</div><h3>Consume with Match</h3></div>
-        <div class="step-body">
-          <div class="code-block">
-            <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-            <pre><span class="k">return</span> result.<span class="m">Match</span>(
-    onSuccess: user  =&gt; <span class="m">Ok</span>(user),
-    onFailure: error =&gt; error.<span class="p">Type</span> <span class="k">switch</span>
-    {
-        <span class="p">ErrorType</span>.<span class="p">NotFound</span>   =&gt; <span class="m">NotFound</span>(),
-        <span class="p">ErrorType</span>.<span class="p">Validation</span> =&gt; <span class="m">BadRequest</span>(error.<span class="p">Message</span>),
-        _                    =&gt; <span class="m">Problem</span>(error.<span class="p">Message</span>)
-    });</pre>
-          </div>
-      </div>
-      </div>
-
-      <div class="step">
-        <div class="step-header"><div class="step-number">5</div><h3>Or scaffold a full project</h3></div>
-        <div class="step-body">
-          <div class="code-block">
-            <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-            <pre>dotnet new install Arkn.Templates
-dotnet new arkn-api -n MyApi</pre>
-          </div>
-      </div>
-      </div>
-
-    </div><!-- /steps-list -->
+  <div class="container" style="text-align:center; padding: 4rem 2rem;">
+    <div class="section-badge">Get Started</div>
+    <div class="section-title">Ready to build?</div>
+    <p class="section-sub" style="margin: 1rem auto 2rem;">Step-by-step guide, package references, and recipes in the docs.</p>
+    <div class="cta-group">
+      <a href="/arkn/getting-started" class="btn btn-primary">Read the Docs →</a>
+      <a href="https://github.com/fernando-terra/arkn" target="_blank" class="btn btn-ghost">View on GitHub</a>
+    </div>
+    <div class="code-block" style="max-width:480px; margin:0 auto; text-align:left;">
+      <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre>dotnet add package Arkn.Results
+dotnet add package Arkn.Analyzers</pre>
+    </div>
   </div>
 </section>
 
