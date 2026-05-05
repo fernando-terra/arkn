@@ -41,10 +41,6 @@ Arkn is a composable, zero-dependency .NET framework. Each package delivers one 
 
 ## Getting Started
 
-```bash
-dotnet add package Arkn.Results
-```
-
 For examples, recipes, and full API reference → **[arkn docs](https://fernando-terra.github.io/arkn/getting-started)**
 
 ---
