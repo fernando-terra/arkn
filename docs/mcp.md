@@ -1,8 +1,8 @@
 # Arkn.MCP
 
-**MCP Server para AI assistants — scaffolding e validação, sem hospedagem.**
+**MCP Server for AI assistants — scaffolding and validation tools, no hosting required.**
 
-`Arkn.MCP` é um [Model Context Protocol](https://modelcontextprotocol.io) server distribuído como `dotnet tool`. Instale uma vez e qualquer AI assistant compatível (Claude, Cursor, GitHub Copilot) passa a ter acesso a ferramentas reais do Arkn durante a conversa.
+`Arkn.MCP` is a [Model Context Protocol](https://modelcontextprotocol.io) server distributed as a `dotnet tool`. Install it once and any compatible AI assistant (Claude, Cursor, GitHub Copilot) gains access to real Arkn tools during your conversation.
 
 ## Instalação
 
@@ -10,11 +10,11 @@
 dotnet tool install -g Arkn.MCP
 ```
 
-## Configuração por assistente
+## Configuration
 
 ### Claude Desktop
 
-`~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) ou `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
+`~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
 
 ```json
 {
@@ -29,7 +29,7 @@ dotnet tool install -g Arkn.MCP
 
 ### Cursor
 
-`.cursor/mcp.json` na raiz do projeto:
+`.cursor/mcp.json` at the project root:
 
 ```json
 {
@@ -64,12 +64,12 @@ dotnet tool install -g Arkn.MCP
 
 ### `scaffold_errors`
 
-Gera um ErrorGroup tipado para um domínio.
+Generates a typed ErrorGroup for a domain.
 
-**Input:** `domain` — nome do domínio (ex: `"Payment"`, `"User"`, `"Invoice"`)
+**Input:** `domain` — domain name (e.g. `"Payment"`, `"User"`, `"Invoice"`)
 
-**Exemplo de uso (conversa com AI):**
-> "Cria os errors para o domínio de Pagamento"
+**Example prompt:**
+> "Create the error group for the Payment domain"
 
 **Output:**
 ```csharp
@@ -94,9 +94,9 @@ public static partial class PaymentErrors
 
 ### `scaffold_job`
 
-Gera um `IArknJob` completo com registro no DI.
+Generates a complete `IArknJob` with DI registration.
 
-**Input:** `name`, `cron`, `description` (opcional)
+**Input:** `name`, `cron`, `description` (optional)
 
 **Output:**
 ```csharp
@@ -124,9 +124,9 @@ services.AddArknJobs(jobs =>
 
 ### `scaffold_http_client`
 
-Gera um `ArknHttpClient` tipado.
+Generates a typed `ArknHttpClient`.
 
-**Input:** `name`, `baseUrl`, `operations` (lista de nomes de operação)
+**Input:** `name`, `baseUrl`, `operations` (list of operation names)
 
 **Output:**
 ```csharp
@@ -153,22 +153,22 @@ services.AddArknHttp<PaymentsClient>("https://api.payments.example.com")
 
 ### `validate_pattern`
 
-Analisa um trecho de código C# e retorna violações das regras Arkn.
+Analyzes a C# snippet and returns Arkn rule violations.
 
-**Input:** `code` — trecho de código C#
+**Input:** `code` — C# code snippet
 
-**Regras verificadas:**
+**Rules checked:**
 
-| Regra | Detecta | Severidade |
+| Rule | Detects | Severity |
 |---|---|---|
-| ARK001 | `Error.*()` inline fora de um ErrorGroup | error |
-| ARK002 | Error code sem `Namespace.Reason` (sem ponto) | error |
-| ARK003 | `.Value` acessado diretamente em `Result` | error |
-| ARK004 | `IArknJob.ExecuteAsync` retornando `Task` | error |
-| ARK005 | `new HttpClient()` ou `HttpClient` injetado diretamente | warning |
-| ARK006 | `Console.Write` / `ILogger` MEL em componente Arkn | warning |
-| ARK007 | `throw` em método de domínio | error |
-| ARK008 | `catch` sem `Result.Failure` de retorno | warning |
+| ARK001 | Inline `Error.*()` call outside an ErrorGroup | error |
+| ARK002 | Error code missing `Namespace.Reason` format | error |
+| ARK003 | `.Value` accessed directly on a `Result` | error |
+| ARK004 | `IArknJob.ExecuteAsync` returning `Task` instead of `Task<Result>` | error |
+| ARK005 | `new HttpClient()` or raw `HttpClient` injection | warning |
+| ARK006 | `Console.Write` / MEL `ILogger` in an Arkn-managed component | warning |
+| ARK007 | `throw` inside a domain method | error |
+| ARK008 | `catch` block without a `Result.Failure` return | warning |
 
 **Output:**
 ```json
@@ -186,26 +186,26 @@ Analisa um trecho de código C# e retorna violações das regras Arkn.
 
 ### `docs_lookup`
 
-Busca na documentação do Arkn — funciona offline, conteúdo embutido no binário.
+Searches the Arkn documentation — works offline, content is embedded in the binary.
 
-**Input:** `query` — termo ou pergunta (ex: `"como registrar um job"`, `"Result.Match"`)
+**Input:** `query` — term or question (e.g. `"how to register a job"`, `"Result.Match"`)
 
 ---
 
-## Como funciona
+## How it works
 
-O `arkn-mcp` roda como processo local via **stdio transport** — o AI assistant o inicia automaticamente quando detecta a configuração e o chama conforme necessário durante a conversa. Não há porta aberta, não há servidor remoto, não há autenticação.
+`arkn-mcp` runs as a local process via **stdio transport** — the AI assistant starts it automatically when it detects the configuration and calls its tools as needed during the conversation. No open port, no remote server, no authentication.
 
 ```
 [AI Assistant]  →  stdin/stdout  →  [arkn-mcp process]
 ```
 
-## Compatibilidade
+## Compatibility
 
-| Assistente | Suporte |
+| Assistant | Support |
 |---|---|
 | Claude Desktop | ✅ |
 | Cursor | ✅ |
 | VS Code + GitHub Copilot | ✅ |
-| JetBrains AI | em breve |
-| Windsurf | em breve |
+| JetBrains AI | coming soon |
+| Windsurf | coming soon |
