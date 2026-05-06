@@ -59,6 +59,7 @@ export default defineConfig({
           { text: 'Seq', link: '/packages/seq' },
           { text: 'Elasticsearch', link: '/packages/elasticsearch' },
           { text: 'Email', link: '/packages/email' },
+          { text: 'Slack', link: '/packages/slack' },
         ]
       }
     ],
