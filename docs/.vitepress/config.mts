@@ -116,7 +116,7 @@ export default defineConfig({
   title: 'Arkn',
   description: 'Architecture Kernel for modern .NET — design patterns as composable packages',
   base: '/arkn/',
-  appearance: 'dark',
+  appearance: { default: 'dark' },
 
   head: [
     ['link', { rel: 'icon', href: '/arkn/favicon.ico' }],
@@ -133,6 +133,9 @@ export default defineConfig({
       themeConfig: {
         nav: ptBrNav,
         sidebar: ptBrSidebar,
+        darkModeSwitchLabel: 'Aparência',
+        lightModeSwitchTitle: 'Mudar para tema claro',
+        darkModeSwitchTitle: 'Mudar para tema escuro',
       }
     }
   },
@@ -152,6 +155,10 @@ export default defineConfig({
       message: 'Released under the Apache 2.0 License.',
       copyright: 'Copyright © 2026 Fernando Terra'
     },
+
+    darkModeSwitchLabel: 'Appearance',
+    lightModeSwitchTitle: 'Switch to light theme',
+    darkModeSwitchTitle: 'Switch to dark theme',
 
     editLink: {
       pattern: 'https://github.com/fernando-terra/arkn/edit/main/docs/:path',
