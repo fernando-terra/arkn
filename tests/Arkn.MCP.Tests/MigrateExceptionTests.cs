@@ -19,7 +19,9 @@ public class MigrateExceptionTests
         var code   = "public void Process() { throw new InvalidOperationException(\"bad state\"); }";
         var result = MigrateTools.MigrateExceptionToResult(code);
         Assert.Contains("Result.Failure", result);
-        Assert.DoesNotContain("throw new InvalidOperationException", result);
+        // Check only the generated code section — not the changes-applied comments at the bottom
+        var codeSection = result.Split("// ── Changes applied")[0];
+        Assert.DoesNotContain("throw new InvalidOperationException", codeSection);
     }
 
     [Fact]

@@ -31,7 +31,10 @@ public static class AnalysisTools
             var items = JsonSerializer.Deserialize<JsonElement[]>(json) ?? [];
             foreach (var item in items)
             {
-                var rule = item.GetProperty("rule").GetString() ?? "";
+                // Violation record serializes as PascalCase (Rule, not rule)
+                var rule = item.TryGetProperty("Rule", out var rProp) ? rProp.GetString() ?? ""
+                         : item.TryGetProperty("rule", out var rlProp) ? rlProp.GetString() ?? ""
+                         : "";
                 if (byRule.ContainsKey(rule)) byRule[rule]++;
             }
         }
