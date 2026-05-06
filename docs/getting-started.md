@@ -1,6 +1,6 @@
 # Getting Started
 
-> **v0.2.0** — This guide covers the current stable release.
+> **v0.3.0** — This guide covers the current stable release.
 
 ## Installation
 
