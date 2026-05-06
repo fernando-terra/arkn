@@ -116,7 +116,7 @@ export default defineConfig({
   title: 'Arkn',
   description: 'Architecture Kernel for modern .NET — design patterns as composable packages',
   base: '/arkn/',
-  appearance: { default: 'dark' },
+  appearance: 'dark',
 
   head: [
     ['link', { rel: 'icon', href: '/arkn/favicon.ico' }],

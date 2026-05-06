@@ -58,8 +58,18 @@ onMounted(async () => {
     if (!res.ok) return
     const data = await res.json()
 
+    const ARKN_PACKAGES = new Set([
+      'Arkn.Core', 'Arkn.Results', 'Arkn.Http', 'Arkn.Jobs',
+      'Arkn.Logging', 'Arkn.Notifications', 'Arkn.Analyzers',
+      'Arkn.SourceGen', 'Arkn.Templates', 'Arkn.MCP',
+      'Arkn.Extensions.Notifications.Slack', 'Arkn.Extensions.Notifications.Email',
+      'Arkn.Extensions.Notifications.Teams', 'Arkn.Extensions.Notifications.Discord',
+      'Arkn.Extensions.Logging.ApplicationInsights',
+      'Arkn.Extensions.Logging.Seq', 'Arkn.Extensions.Logging.Elasticsearch',
+    ])
+
     packages.value = (data.data as any[])
-      .filter(p => (p.id as string).startsWith('Arkn'))
+      .filter(p => ARKN_PACKAGES.has(p.id as string))
       .map(p => ({ id: p.id as string, totalDownloads: p.totalDownloads as number }))
       .sort((a, b) => b.totalDownloads - a.totalDownloads)
   } catch {
