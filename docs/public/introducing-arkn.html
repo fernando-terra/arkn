@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Introducing Arkn</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Introducing Arkn</h1>
+</header>
+<h1
+id="introducing-arkn-a-zero-dependency-.net-framework-built-for-clarity">Introducing
+Arkn: A Zero-Dependency .NET Framework Built for Clarity</h1>
+<h2 id="conventions-you-can-read.-patterns-you-can-enforce.">Conventions
+you can read. Patterns you can enforce.</h2>
+<hr />
+<p><em>Building with Arkn — Part 1 of 12</em></p>
+<hr />
+<p>You’ve been there. You start a new .NET project and before you write
+a single line of business logic, you’re already knee-deep in framework
+decisions. Which ORM? Which HTTP abstraction? Which logging library?
+Which retry library? Which scheduler? You install NuGet packages that
+pull in other NuGet packages, and suddenly you have a dependency graph
+that looks like a bowl of spaghetti and an <code>appsettings.json</code>
+with a hundred keys you don’t fully understand.</p>
+<p>The code you actually care about — the domain, the rules, the logic
+that makes your product valuable — gets buried under layers of framework
+ceremony.</p>
+<p>Arkn is built around a different idea: <strong>the framework should
+earn its place in every line it adds</strong>.</p>
+<h2 id="the-problem-with-heavy-frameworks">The Problem with Heavy
+Frameworks</h2>
+<p>Modern .NET is extraordinarily powerful. But the ecosystem has
+evolved in a direction where convenience often trumps clarity. You add a
+package for HTTP retries and it brings Polly. You add a job scheduler
+and it brings Quartz with its database tables and clustering
+configuration. You add structured logging and you’re configuring Serilog
+enrichers before you’ve written a single domain model.</p>
+<p>Each of these choices is individually reasonable. Collectively, they
+create what I call <strong>framework gravity</strong> — the tendency for
+the framework to dominate the codebase, making it hard to see where the
+framework ends and your application begins.</p>
+<p>The specific symptoms:</p>
+<ul>
+<li><strong>Exceptions as control flow.</strong> A missing record in a
+database causes a <code>KeyNotFoundException</code> that propagates up
+three layers before being caught — or worse, not caught at all.</li>
+<li><strong>Implicit contracts.</strong> Your service returns
+<code>User?</code>. Is <code>null</code> “not found” or “not loaded yet”
+or “access denied”? Nobody knows until runtime.</li>
+<li><strong>Lock-in.</strong> You want to swap your HTTP client for a
+different one and you realize every service in your codebase references
+<code>RestSharp</code> types directly.</li>
+<li><strong>Verbose boilerplate.</strong> The same retry logic
+copy-pasted across twelve services because the abstraction never got
+built.</li>
+</ul>
+<p>Arkn is an answer to these symptoms.</p>
+<h2 id="philosophy-zero-lock-in-composability-explicitness">Philosophy:
+Zero Lock-in, Composability, Explicitness</h2>
+<p>Arkn is built on three principles that drive every API decision:</p>
+<p><strong>Zero lock-in.</strong> Every Arkn package depends only on
+other Arkn packages and the .NET BCL. No Polly. No Serilog. No Hangfire.
+No ORMs. If you want to replace Arkn’s HTTP client with something else
+tomorrow, your domain code is untouched — because your domain code only
+knows about <code>Result&lt;T&gt;</code>, not about
+<code>ArknHttp</code>.</p>
+<p><strong>Composability.</strong> You install only what you need. Using
+<code>Arkn.Results</code> doesn’t force you to use
+<code>Arkn.Http</code>. Using <code>Arkn.Jobs</code> doesn’t force you
+to use <code>Arkn.Notifications</code>. Each package is independently
+useful and integrates naturally with the others when you choose to
+combine them.</p>
+<p><strong>Explicitness.</strong> Failures are values, not exceptions.
+Every operation that can fail returns a <code>Result&lt;T&gt;</code>.
+Every error has a machine-readable code, a human-readable message, and a
+semantic type. There is no <code>User?</code> — there is
+<code>Result&lt;User&gt;</code>, and the compiler forces you to handle
+both paths.</p>
+<h2 id="a-quick-tour-of-the-packages">A Quick Tour of the Packages</h2>
+<p>Here’s what the Arkn ecosystem looks like today:</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Package</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Arkn.Core</code></td>
+<td>Domain primitives: <code>IEntity</code>, <code>IValueObject</code>,
+<code>IAggregateRoot</code></td>
+</tr>
+<tr class="even">
+<td><code>Arkn.Results</code></td>
+<td><code>Result&lt;T&gt;</code>, <code>Error</code>,
+<code>ErrorType</code> — the lingua franca of the framework</td>
+</tr>
+<tr class="odd">
+<td><code>Arkn.Http</code></td>
+<td>Fluent typed HTTP client with built-in retry and timeout</td>
+</tr>
+<tr class="even">
+<td><code>Arkn.Jobs</code></td>
+<td>Cron scheduler with retry, timeout, distributed lock, DLQ, and
+<code>Result&lt;T&gt;</code> contracts</td>
+</tr>
+<tr class="odd">
+<td><code>Arkn.Logging</code></td>
+<td>Structured logging with pluggable sinks and a MEL bridge</td>
+</tr>
+<tr class="even">
+<td><code>Arkn.Notifications</code></td>
+<td>Pluggable notification abstraction</td>
+</tr>
+<tr class="odd">
+<td><code>Arkn.Extensions.Notifications.Slack</code></td>
+<td>Slack via Incoming Webhook + Block Kit, zero external deps</td>
+</tr>
+<tr class="even">
+<td><code>Arkn.Extensions.Notifications.Email</code></td>
+<td>SMTP + SendGrid notifier, zero external deps</td>
+</tr>
+<tr class="odd">
+<td><code>Arkn.Extensions.Notifications.Teams</code></td>
+<td>Microsoft Teams via Adaptive Cards 1.4, zero external deps</td>
+</tr>
+<tr class="even">
+<td><code>Arkn.Extensions.Notifications.Discord</code></td>
+<td>Discord via Embeds + Webhook, zero external deps</td>
+</tr>
+<tr class="odd">
+<td><code>Arkn.Extensions.Logging.ApplicationInsights</code></td>
+<td>Application Insights sink — maps <code>LogEntry</code> to telemetry
+automatically</td>
+</tr>
+<tr class="even">
+<td><code>Arkn.Extensions.Logging.Seq</code></td>
+<td>Seq sink via CLEF-over-HTTP with batching</td>
+</tr>
+<tr class="odd">
+<td><code>Arkn.Extensions.Logging.Elasticsearch</code></td>
+<td>Elasticsearch sink via Bulk API with date-pattern indices</td>
+</tr>
+<tr class="even">
+<td><code>Arkn.Analyzers</code></td>
+<td>Roslyn analyzers (ARK001–ARK008) that enforce Arkn patterns at
+compile time</td>
+</tr>
+<tr class="odd">
+<td><code>Arkn.SourceGen</code></td>
+<td>Source generator — eliminates error factory boilerplate via
+<code>[ArknErrors]</code></td>
+</tr>
+<tr class="even">
+<td><code>Arkn.MCP</code></td>
+<td>Native MCP server — lets AI assistants scaffold and validate Arkn
+code correctly</td>
+</tr>
+<tr class="odd">
+<td><code>Arkn.Templates</code></td>
+<td><code>dotnet new</code> templates for API, Worker and Library
+projects</td>
+</tr>
+</tbody>
+</table>
+<p>Each package has a clear job. None of them surprise you.</p>
+<h2 id="the-result-teaser">The Result<T> Teaser</h2>
+<p>The single idea that unifies everything in Arkn is
+<code>Result&lt;T&gt;</code>. Let me show you the difference it
+makes.</p>
+<p>Here’s a traditional service method:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Traditional approach — what does null mean?</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> async Task<span class="op">&lt;</span>User<span class="op">?&gt;</span> <span class="fu">GetUserAsync</span><span class="op">(</span>Guid id<span class="op">)</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">var</span> user <span class="op">=</span> await _db<span class="op">.</span><span class="fu">Users</span><span class="op">.</span><span class="fu">FindAsync</span><span class="op">(</span>id<span class="op">);</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> user<span class="op">;</span> <span class="co">// null = not found? not authorized? not loaded?</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Here’s the same method with Arkn:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Arkn approach — the type tells the whole story</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> async Task<span class="op">&lt;</span>Result<span class="op">&lt;</span>User<span class="op">&gt;&gt;</span> <span class="fu">GetUserAsync</span><span class="op">(</span>Guid id<span class="op">)</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">var</span> user <span class="op">=</span> await _db<span class="op">.</span><span class="fu">Users</span><span class="op">.</span><span class="fu">FindAsync</span><span class="op">(</span>id<span class="op">);</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> <span class="op">(</span>user <span class="kw">is</span> <span class="kw">null</span><span class="op">)</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> Error<span class="op">.</span><span class="fu">NotFound</span><span class="op">(</span><span class="st">&quot;User.NotFound&quot;</span><span class="op">,</span> $<span class="st">&quot;User {id} does not exist.&quot;</span><span class="op">);</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> user<span class="op">;</span> <span class="co">// implicit conversion to Result&lt;User&gt;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>At the call site, the compiler forces you to handle both
+outcomes:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> result <span class="op">=</span> await userService<span class="op">.</span><span class="fu">GetUserAsync</span><span class="op">(</span>id<span class="op">);</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">return</span> result<span class="op">.</span><span class="fu">Match</span><span class="op">(</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    onSuccess<span class="op">:</span> user  <span class="op">=&gt;</span> <span class="fu">Ok</span><span class="op">(</span>user<span class="op">),</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    onFailure<span class="op">:</span> error <span class="op">=&gt;</span> error<span class="op">.</span><span class="fu">Type</span> <span class="kw">switch</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        ErrorType<span class="op">.</span><span class="fu">NotFound</span> <span class="op">=&gt;</span> <span class="fu">NotFound</span><span class="op">(</span><span class="kw">new</span> <span class="op">{</span> error<span class="op">.</span><span class="fu">Code</span><span class="op">,</span> error<span class="op">.</span><span class="fu">Message</span> <span class="op">}),</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        _                  <span class="op">=&gt;</span> <span class="fu">Problem</span><span class="op">(</span>error<span class="op">.</span><span class="fu">Message</span><span class="op">)</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">});</span></span></code></pre></div>
+<p>No hidden nulls. No surprise exceptions. No ambiguous contracts. The
+type system does the work.</p>
+<p>We’ll go deep on <code>Result&lt;T&gt;</code> in the next post. For
+now, just notice that it makes the unhappy path as visible as the happy
+path.</p>
+<h2 id="how-to-install">How to Install</h2>
+<p>All Arkn packages target <strong>.NET 9 and .NET 10</strong>. Install
+only the ones you need:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The core Result pattern — start here</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">dotnet</span> add package Arkn.Results</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Domain primitives</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">dotnet</span> add package Arkn.Core</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Fluent typed HTTP client</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="ex">dotnet</span> add package Arkn.Http</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Background job scheduling (with persistence, distributed lock, and DLQ)</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="ex">dotnet</span> add package Arkn.Jobs</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Structured logging</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="ex">dotnet</span> add package Arkn.Logging</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Notification abstraction</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="ex">dotnet</span> add package Arkn.Notifications</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Notifiers (pick what you need)</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="ex">dotnet</span> add package Arkn.Extensions.Notifications.Slack</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="ex">dotnet</span> add package Arkn.Extensions.Notifications.Email</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="ex">dotnet</span> add package Arkn.Extensions.Notifications.Teams</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="ex">dotnet</span> add package Arkn.Extensions.Notifications.Discord</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Logging sinks (pick what you need)</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="ex">dotnet</span> add package Arkn.Extensions.Logging.ApplicationInsights</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="ex">dotnet</span> add package Arkn.Extensions.Logging.Seq</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="ex">dotnet</span> add package Arkn.Extensions.Logging.Elasticsearch</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Roslyn analyzers — enforce Arkn patterns at compile time (ARK001–ARK008)</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="ex">dotnet</span> add package Arkn.Analyzers</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Source generator — eliminate error factory boilerplate</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="ex">dotnet</span> add package Arkn.SourceGen</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a><span class="co"># MCP server — AI-assisted scaffolding and validation</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a><span class="ex">dotnet</span> tool install <span class="at">-g</span> Arkn.MCP</span></code></pre></div>
+<p>Or, if you want to scaffold a full project from a template:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">dotnet</span> new install Arkn.Templates</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">dotnet</span> new arkn-api <span class="at">-n</span> MyApi        <span class="co"># Minimal API with Results + Http</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ex">dotnet</span> new arkn-job <span class="at">-n</span> MyWorker     <span class="co"># Worker Service with Jobs + Notifications</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="ex">dotnet</span> new arkn-lib <span class="at">-n</span> MyLibrary    <span class="co"># Class library with Core + Results</span></span></code></pre></div>
+<h2 id="what-this-series-covers">What This Series Covers</h2>
+<p>This is the first post in a twelve-part series. Here’s the
+roadmap:</p>
+<ol type="1">
+<li><strong>Introducing Arkn</strong> ← you are here</li>
+<li><strong>Stop Throwing Exceptions: The <code>Result&lt;T&gt;</code>
+Pattern with <code>Arkn.Results</code></strong></li>
+<li><strong>Domain Primitives Done Right:
+<code>Arkn.Core</code></strong></li>
+<li><strong>Typed HTTP Clients Without the Boilerplate:
+<code>Arkn.Http</code></strong></li>
+<li><strong>Structured Logging That Actually Makes Sense:
+<code>Arkn.Logging</code></strong></li>
+<li><strong>Cron Jobs, Retry, and Timeout Done Right:
+<code>Arkn.Jobs</code></strong></li>
+<li><strong>Slack, Teams, Discord and Email Notifications Without
+External SDKs: <code>Arkn.Notifications</code></strong></li>
+<li><strong>Making Your .NET Framework AI-Ready:
+<code>Arkn.Analyzers</code> and <code>Arkn.MCP</code></strong></li>
+<li><strong>Zero Boilerplate: Generating Error Factories with
+<code>Arkn.SourceGen</code></strong></li>
+<li><strong>The First .NET Framework with a Native MCP
+Server</strong></li>
+<li><strong>Arkn v0.3.0: What’s New</strong></li>
+<li><strong>Structured Logging Without Serilog:
+<code>Arkn.Logging</code> + Seq + Elasticsearch</strong></li>
+</ol>
+<p>Each post stands alone. If you care about HTTP clients, jump to post
+4. If you’re building a worker service, jump to post 6. If you want to
+understand the foundation first, read them in order.</p>
+<h2 id="a-final-thought">A Final Thought</h2>
+<p>Frameworks are tools. The best tools are the ones you stop noticing
+because they fit so naturally into the work. Arkn’s goal is to be the
+kind of tool where, six months into a project, you’re not fighting the
+framework — you’re just writing code.</p>
+<p>Source code, samples, and documentation are all on GitHub: <a
+href="https://github.com/fernando-terra/arkn">github.com/fernando-terra/arkn</a></p>
+<hr />
+<p><strong>Next in the series:</strong> <a
+href="./02-arkn-results.md">Stop Throwing Exceptions: The
+Result&lt;T&gt; Pattern with Arkn.Results</a> — where we go deep on the
+<code>Result&lt;T&gt;</code> API, error factories, functional chaining,
+and real-world examples.</p>
+<hr />
+<p><em>All packages available on <a
+href="https://www.nuget.org/packages?q=Arkn">NuGet</a> — current
+version: <strong>v0.3.0</strong>.</em></p>
+<p><em>Author: Fernando Terra | <a
+href="https://github.com/fernando-terra/arkn">github.com/fernando-terra/arkn</a></em></p>
+</body>
+</html>
