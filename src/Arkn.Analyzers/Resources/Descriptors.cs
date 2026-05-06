@@ -49,4 +49,26 @@ internal static class Descriptors
         isEnabledByDefault: true,
         description:        "All IArknJob implementations must return Task<Result> from ExecuteAsync. Using Task, void, or any other return type breaks the Arkn job runner contract.",
         helpLinkUri:        "https://github.com/fernando-terra/arkn/blob/main/docs/analyzers.md#ARK004");
+
+    public static readonly DiagnosticDescriptor ARK005_AvoidRawHttpClient = new(
+        id:                 "ARK005",
+        title:              "Avoid using raw HttpClient",
+        messageFormat:      "'{0}' uses HttpClient directly. Inject IArknHttp and extend ArknHttpClient instead.",
+        category:           "Arkn.Http",
+        defaultSeverity:    DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description:        "Direct use of HttpClient bypasses Arkn's retry, timeout and Result-based error handling. " +
+                            "Extend ArknHttpClient and register via AddArknHttp<TClient>() instead.",
+        helpLinkUri:        "https://github.com/fernando-terra/arkn/blob/main/docs/analyzers.md#ARK005");
+
+    public static readonly DiagnosticDescriptor ARK006_PreferIArknLogger = new(
+        id:                 "ARK006",
+        title:              "Prefer IArknLogger over ILogger or Console in Arkn components",
+        messageFormat:      "'{0}' uses {1} in an Arkn-managed component. Use IArknLogger for consistent structured logging.",
+        category:           "Arkn.Logging",
+        defaultSeverity:    DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description:        "Using MEL ILogger or Console.Write in classes that implement IArknJob or extend ArknHttpClient " +
+                            "bypasses the Arkn logging pipeline. Inject IArknLogger instead.",
+        helpLinkUri:        "https://github.com/fernando-terra/arkn/blob/main/docs/analyzers.md#ARK006");
 }

@@ -20,6 +20,8 @@ dotnet add package Arkn.Analyzers
 | **ARK002** | Error codes must follow `Namespace.Reason` pattern (e.g. `User.NotFound`) | Warning |
 | **ARK003** | `Result` / `Result<T>` must not be silently discarded | Warning |
 | **ARK004** | `IArknJob.ExecuteAsync` must return `Task<Result>` or `Task<Result<T>>` | Error |
+| **ARK005** | Avoid using raw `HttpClient` — extend `ArknHttpClient` instead | Warning |
+| **ARK006** | Prefer `IArknLogger` over MEL `ILogger` or `Console` in Arkn components | Warning |
 
 ARK001 includes a **code fix** that wraps the return type in `Result<T>` automatically.
 
