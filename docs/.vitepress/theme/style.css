@@ -1,144 +1,103 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
-/* ─── Arkn color tokens (match landing page) ─────────────────────────────── */
+/* ─── Arkn tokens ─────────────────────────────────────────────────────────── */
 :root {
+  --arkn-accent:   #7c6af7;
+  --arkn-accent2:  #a78bfa;
+  /* dark-only tokens — referenced only inside .dark rules below */
   --arkn-bg:       #0d0d0f;
   --arkn-surface:  #131316;
   --arkn-border:   #1e1e24;
-  --arkn-border2:  #2a2a33;
   --arkn-text:     #e8e8f0;
   --arkn-muted:    #6b6b80;
-  --arkn-accent:   #7c6af7;
-  --arkn-accent2:  #a78bfa;
+
+  /* Brand — works in both light and dark */
+  --vp-c-brand-1:    var(--arkn-accent2);
+  --vp-c-brand-2:    var(--arkn-accent);
+  --vp-c-brand-3:    var(--arkn-accent);
+  --vp-c-brand-soft: rgba(124, 106, 247, 0.12);
+
+  /* Buttons */
+  --vp-button-brand-bg:           var(--arkn-accent);
+  --vp-button-brand-hover-bg:     var(--arkn-accent2);
+  --vp-button-brand-border:       var(--arkn-accent);
+  --vp-button-brand-hover-border: var(--arkn-accent2);
+  --vp-button-brand-text:         #ffffff;
+  --vp-button-brand-hover-text:   #ffffff;
+
+  /* Code accent */
+  --vp-code-bg:          rgba(124, 106, 247, 0.10);
+  --vp-code-color:       var(--arkn-accent2);
+  --vp-code-font-size:   0.875em;
+  --vp-code-line-height: 1.7;
 }
 
-/* ─── Force dark mode always ──────────────────────────────────────────────── */
-:root,
+/* ─── Dark mode overrides ─────────────────────────────────────────────────── */
 .dark {
   color-scheme: dark;
 
-  /* Backgrounds */
-  --vp-c-bg:          var(--arkn-bg);
-  --vp-c-bg-soft:     var(--arkn-surface);
-  --vp-c-bg-alt:      var(--arkn-bg);
-  --vp-c-bg-elv:      var(--arkn-surface);
+  --vp-c-bg:      var(--arkn-bg);
+  --vp-c-bg-soft: var(--arkn-surface);
+  --vp-c-bg-alt:  var(--arkn-bg);
+  --vp-c-bg-elv:  var(--arkn-surface);
 
-  /* Borders */
-  --vp-c-border:       var(--arkn-border);
-  --vp-c-divider:      var(--arkn-border);
-  --vp-c-gutter:       var(--arkn-bg);
+  --vp-c-border:  var(--arkn-border);
+  --vp-c-divider: var(--arkn-border);
+  --vp-c-gutter:  var(--arkn-bg);
 
-  /* Text */
-  --vp-c-text-1:       var(--arkn-text);
-  --vp-c-text-2:       #a0a0b8;
-  --vp-c-text-3:       var(--arkn-muted);
+  --vp-c-text-1: var(--arkn-text);
+  --vp-c-text-2: #a0a0b8;
+  --vp-c-text-3: var(--arkn-muted);
 
-  /* Brand / accent */
-  --vp-c-brand-1:      var(--arkn-accent2);
-  --vp-c-brand-2:      var(--arkn-accent);
-  --vp-c-brand-3:      var(--arkn-accent);
-  --vp-c-brand-soft:   rgba(124, 106, 247, 0.12);
+  --vp-nav-bg-color:      rgba(13, 13, 15, 0.85);
+  --vp-nav-border-color:  var(--arkn-border);
+  --vp-sidebar-bg-color:  var(--arkn-bg);
 
-  /* Navbar */
-  --vp-nav-bg-color:   rgba(13, 13, 15, 0.85);
-  --vp-nav-border-color: var(--arkn-border);
+  --vp-code-block-bg: var(--arkn-surface);
 
-  /* Sidebar */
-  --vp-sidebar-bg-color: var(--arkn-bg);
-
-  /* Code blocks */
-  --vp-code-block-bg:       var(--arkn-surface);
-  --vp-code-bg:             rgba(124, 106, 247, 0.10);
-  --vp-code-color:          var(--arkn-accent2);
-  --vp-code-font-size:      0.875em;
-  --vp-code-line-height:    1.7;
-
-  /* Buttons */
-  --vp-button-brand-bg:          var(--arkn-accent);
-  --vp-button-brand-hover-bg:    var(--arkn-accent2);
-  --vp-button-brand-border:      var(--arkn-accent);
-  --vp-button-brand-hover-border:var(--arkn-accent2);
-  --vp-button-brand-text:        #ffffff;
-  --vp-button-brand-hover-text:  #ffffff;
-
-  /* Custom block tips */
-  --vp-custom-block-tip-bg:      rgba(124, 106, 247, 0.08);
-  --vp-custom-block-tip-border:  var(--arkn-accent);
-  --vp-custom-block-tip-text:    var(--arkn-accent2);
+  --vp-custom-block-tip-bg:     rgba(124, 106, 247, 0.08);
+  --vp-custom-block-tip-border: var(--arkn-accent);
+  --vp-custom-block-tip-text:   var(--arkn-accent2);
 }
 
-/* ─── Typography ─────────────────────────────────────────────────────────── */
-body,
-.vp-doc {
+/* ─── Typography ──────────────────────────────────────────────────────────── */
+body, .vp-doc {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-.vp-doc code,
-.vp-doc pre,
-code,
-pre {
+.vp-doc code, .vp-doc pre, code, pre {
   font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace !important;
 }
 
-/* ─── Navbar ─────────────────────────────────────────────────────────────── */
+/* ─── Navbar ──────────────────────────────────────────────────────────────── */
 .VPNav {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--arkn-border) !important;
+  border-bottom: 1px solid var(--vp-c-border) !important;
 }
+.VPNavBar { background: transparent !important; }
+.VPNavBarTitle .title { font-weight: 700; letter-spacing: -0.02em; }
 
-.VPNavBar {
-  background: transparent !important;
-}
+/* ─── Sidebar ─────────────────────────────────────────────────────────────── */
+.VPSidebar { border-right: 1px solid var(--vp-c-border) !important; }
+.dark .VPSidebar { background: var(--arkn-bg) !important; }
+.VPSidebarItem.is-active > .item .link .text { color: var(--arkn-accent2) !important; }
 
-/* Logo text — match landing "ark+n" style */
-.VPNavBarTitle .title {
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--arkn-text);
-}
-
-/* ─── Sidebar ────────────────────────────────────────────────────────────── */
-.VPSidebar {
-  border-right: 1px solid var(--arkn-border) !important;
-  background: var(--arkn-bg) !important;
-}
-
-.VPSidebarItem.is-active > .item .link .text {
-  color: var(--arkn-accent2) !important;
-}
-
-/* ─── Content ────────────────────────────────────────────────────────────── */
-.vp-doc h1,
-.vp-doc h2,
-.vp-doc h3 {
-  letter-spacing: -0.02em;
-}
+/* ─── Content ─────────────────────────────────────────────────────────────── */
+.vp-doc h1, .vp-doc h2, .vp-doc h3 { letter-spacing: -0.02em; }
 
 .vp-doc h2 {
-  border-top: 1px solid var(--arkn-border);
+  border-top: 1px solid var(--vp-c-border);
   padding-top: 1.5rem;
   margin-top: 2rem;
 }
 
-.vp-doc a {
-  color: var(--arkn-accent2);
-  text-decoration: none;
-  transition: color 0.15s;
-}
+.vp-doc a { color: var(--arkn-accent2); text-decoration: none; transition: color 0.15s; }
+.vp-doc a:hover { color: var(--vp-c-text-1); }
 
-.vp-doc a:hover {
-  color: var(--arkn-text);
-}
+.vp-doc div[class*='language-'] { border: 1px solid var(--vp-c-border); border-radius: 8px; }
 
-/* Code blocks */
-.vp-doc div[class*='language-'] {
-  border: 1px solid var(--arkn-border);
-  border-radius: 8px;
-}
-
-/* Inline code */
 .vp-doc :not(pre) > code {
   background: rgba(124, 106, 247, 0.10);
   color: var(--arkn-accent2);
@@ -147,31 +106,19 @@ pre {
   font-size: 0.875em;
 }
 
-/* Table */
-.vp-doc table {
-  border-collapse: collapse;
-  width: 100%;
-}
-
+/* ─── Tables ──────────────────────────────────────────────────────────────── */
+.vp-doc table { border-collapse: collapse; width: 100%; }
 .vp-doc table th {
-  background: var(--arkn-surface);
-  border: 1px solid var(--arkn-border);
-  color: var(--arkn-muted);
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-border);
+  color: var(--vp-c-text-2);
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
+.vp-doc table td { border: 1px solid var(--vp-c-border); }
+.vp-doc table tr:hover td { background: rgba(124, 106, 247, 0.04); }
 
-.vp-doc table td {
-  border: 1px solid var(--arkn-border);
-}
-
-.vp-doc table tr:hover td {
-  background: rgba(124, 106, 247, 0.04);
-}
-
-/* ─── Footer ─────────────────────────────────────────────────────────────── */
-.VPFooter {
-  border-top: 1px solid var(--arkn-border) !important;
-  background: var(--arkn-bg) !important;
-}
+/* ─── Footer ──────────────────────────────────────────────────────────────── */
+.VPFooter { border-top: 1px solid var(--vp-c-border) !important; }
+.dark .VPFooter { background: var(--arkn-bg) !important; }
