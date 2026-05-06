@@ -15,6 +15,7 @@
     <Project Path="src/Arkn.Logging/Arkn.Logging.csproj" />
     <Project Path="src/Arkn.Notifications/Arkn.Notifications.csproj" />
     <Project Path="src/Arkn.Results/Arkn.Results.csproj" />
+    <Project Path="src/Arkn.MCP/Arkn.MCP.csproj" />
     <Project Path="src/Arkn.SourceGen/Arkn.SourceGen.csproj" />
   </Folder>
   <Folder Name="/tests/">
@@ -27,6 +28,7 @@
     <Project Path="tests/Arkn.Notifications.Tests/Arkn.Notifications.Tests.csproj" />
     <Project Path="tests/Arkn.Results.Tests/Arkn.Results.Tests.csproj" />
     <Project Path="tests/Arkn.Extensions.Logging.Sinks.Tests/Arkn.Extensions.Logging.Sinks.Tests.csproj" />
+    <Project Path="tests/Arkn.MCP.Tests/Arkn.MCP.Tests.csproj" />
     <Project Path="tests/Arkn.SourceGen.Tests/Arkn.SourceGen.Tests.csproj" />
   </Folder>
   <Folder Name="/templates/">
