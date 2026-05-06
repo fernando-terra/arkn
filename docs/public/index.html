@@ -193,8 +193,8 @@
 <nav>
   <a href="#" class="nav-logo">ark<span>n</span></a>
   <div class="nav-links">
+    <a href="#copilot" style="color:var(--accent2);font-weight:600;">MCP ✨</a>
     <a href="#packages">Packages</a>
-    <a href="#copilot">Copilot</a>
     <a href="/arkn/getting-started">Docs</a>
     <a href="https://github.com/fernando-terra/arkn" target="_blank" class="nav-gh">GitHub →</a>
   </div>
@@ -202,9 +202,9 @@
 
 <!-- ── HERO ── -->
 <section class="hero">
-  <div class="hero-badge">Design Framework · .NET 9 &amp; 10 · AI-First</div>
-  <h1>Conventions you can read.<br>Patterns you can enforce.</h1>
-  <p class="hero-sub">Arkn is a composable .NET framework where every failure is explicit, every pattern is enforced at compile time, and AI assistants generate correct code on the first try.</p>
+  <div class="hero-badge">Design Framework · .NET 9 &amp; 10 · MCP-Native</div>
+  <h1>The .NET framework<br>built for AI assistants.</h1>
+  <p class="hero-sub">Arkn gives your AI real tools — scaffold, validate, and reason about your codebase. Not just instructions to read and forget. Works in Claude, Cursor, and Copilot.</p>
   <div class="cta-group">
     <a href="/arkn/getting-started" class="btn btn-primary">Get Started →</a>
     <a href="https://github.com/fernando-terra/arkn" target="_blank" class="btn btn-ghost">View on GitHub</a>
@@ -212,60 +212,27 @@
   <div class="hero-code">
     <div class="code-block">
       <div class="code-header">
-        <span class="code-lang">csharp</span>
-        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        <span class="code-lang">arkn-mcp — AI assistant session</span>
       </div>
-      <pre><span class="c">// Define errors once — never inline Error.* calls</span>
-<span class="k">public static class</span> <span class="t">OrderErrors</span>
+      <pre><span class="c"># Install once</span>
+$ dotnet tool install -g Arkn.MCP
+
+<span class="c"># You type in Claude / Cursor / Copilot:</span>
+<span class="n">&gt; Create the error group for the Payment domain</span>
+
+<span class="c"># AI calls scaffold_errors({ domain: "Payment" }) →</span>
+[<span class="t">ArknErrors</span>]
+<span class="k">public static partial class</span> <span class="t">PaymentErrors</span>
 {
-    <span class="k">public static</span> <span class="t">Error</span> <span class="m">NotFound</span>(<span class="t">Guid</span> id) =&gt;
-        <span class="t">Error</span>.<span class="m">NotFound</span>(<span class="s">"Order.NotFound"</span>, <span class="s">$"Order '</span>{id}<span class="s">' not found."</span>);
-    <span class="k">public static readonly</span> <span class="t">Error</span> InvalidAmount =
-        <span class="t">Error</span>.<span class="m">Validation</span>(<span class="s">"Order.InvalidAmount"</span>); <span class="c">// message defaults to code</span>
+    [<span class="t">ArknErrorCode</span>(<span class="s">"NotFound"</span>, <span class="s">"Payment was not found"</span>)]
+    <span class="k">public static partial</span> <span class="t">Error</span> <span class="m">NotFound</span>(<span class="t">string</span>? detail = <span class="k">null</span>);
+
+    [<span class="t">ArknErrorCode</span>(<span class="s">"Conflict"</span>, <span class="s">"Payment already exists"</span>)]
+    <span class="k">public static partial</span> <span class="t">Error</span> <span class="m">Conflict</span>(<span class="t">string</span>? detail = <span class="k">null</span>);
 }
 
-<span class="c">// Return results, never throw</span>
-<span class="k">public async</span> <span class="t">Task</span>&lt;<span class="t">Result</span>&lt;<span class="t">Order</span>&gt;&gt; <span class="m">GetAsync</span>(<span class="t">Guid</span> id)
-{
-    <span class="k">var</span> order = <span class="k">await</span> _repo.<span class="m">FindAsync</span>(id);
-    <span class="k">return</span> order <span class="k">is null</span> ? <span class="t">OrderErrors</span>.<span class="m">NotFound</span>(id) : <span class="t">Result</span>.<span class="m">Success</span>(order);
-}
-
-<span class="c">// Consume with Match — exhaustive, compiler-enforced</span>
-<span class="k">return</span> result.<span class="m">Match</span>(
-    onSuccess: order =&gt; <span class="m">Ok</span>(order),
-    onFailure: error =&gt; error.<span class="p">Type</span> <span class="k">switch</span>
-    {
-        <span class="p">ErrorType</span>.<span class="p">NotFound</span>   =&gt; <span class="m">NotFound</span>(<span class="k">new</span> { error.<span class="p">Code</span>, error.<span class="p">Message</span> }),
-        <span class="p">ErrorType</span>.<span class="p">Validation</span> =&gt; <span class="m">BadRequest</span>(<span class="k">new</span> { error.<span class="p">Code</span>, error.<span class="p">Message</span> }),
-        _                    =&gt; <span class="m">Problem</span>(error.<span class="p">Message</span>)
-    });</pre>
-    </div>
-  </div>
-</section>
-
-<!-- ── THE PROBLEM ── -->
-<section class="problem-section">
-  <div class="container">
-    <div class="problem-cards">
-      <div class="problem-card">
-        <div class="problem-icon">💥</div>
-        <h3>Exceptions as control flow</h3>
-        <p>A missing record throws <code style="font-family:var(--mono);font-size:.82em;color:var(--red)">KeyNotFoundException</code> up 3 layers. Nobody knows it's expected.</p>
-      </div>
-      <div class="problem-card">
-        <div class="problem-icon">❓</div>
-        <h3>Implicit contracts</h3>
-        <p>Your service returns <code style="font-family:var(--mono);font-size:.82em;color:var(--yellow)">User?</code>. Is null "not found", "not loaded", or "access denied"? Nobody knows until runtime.</p>
-      </div>
-      <div class="problem-card">
-        <div class="problem-icon">⚓</div>
-        <h3>Framework gravity</h3>
-        <p>You add retry, you get Polly. You add jobs, you get Quartz with database tables. The framework dominates the codebase.</p>
-      </div>
-    </div>
-    <div class="problem-answer">
-      Arkn answers all three. <code>Result&lt;T&gt;</code> makes failures visible. Conventions make contracts readable. Zero lock-in means every dependency is a choice.
+<span class="c"># validate_pattern(code) → ARK007 at line 14:</span>
+<span class="c">#   throw in domain method — return Result.Failure(...) instead.</span></pre>
     </div>
   </div>
 </section>
@@ -391,6 +358,32 @@
           <p><code style="font-family:var(--mono);font-size:.82em">try/catch</code> blocks that swallow errors without returning <code style="font-family:var(--mono);font-size:.82em">Result.Failure</code> are flagged.</p>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── THE PROBLEM ── -->
+<section class="problem-section">
+  <div class="container">
+    <div class="problem-cards">
+      <div class="problem-card">
+        <div class="problem-icon">💥</div>
+        <h3>Exceptions as control flow</h3>
+        <p>A missing record throws <code style="font-family:var(--mono);font-size:.82em;color:var(--red)">KeyNotFoundException</code> up 3 layers. Nobody knows it's expected.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">❓</div>
+        <h3>Implicit contracts</h3>
+        <p>Your service returns <code style="font-family:var(--mono);font-size:.82em;color:var(--yellow)">User?</code>. Is null "not found", "not loaded", or "access denied"? Nobody knows until runtime.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">⚓</div>
+        <h3>Framework gravity</h3>
+        <p>You add retry, you get Polly. You add jobs, you get Quartz with database tables. The framework dominates the codebase.</p>
+      </div>
+    </div>
+    <div class="problem-answer">
+      Arkn answers all three. <code>Result&lt;T&gt;</code> makes failures visible. Conventions make contracts readable. Zero lock-in means every dependency is a choice.
     </div>
   </div>
 </section>
