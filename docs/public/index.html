@@ -275,7 +275,7 @@
   <div class="container">
     <div class="section-badge">Arkn.Copilot</div>
     <div class="section-title">The first .NET framework designed for AI-assisted development.</div>
-    <p class="section-sub">APIs so consistent that LLMs generate correct code on the first attempt. Conventions enforced by the compiler, not by documentation.</p>
+    <p class="section-sub">From instruction files to an MCP server with real tools — Arkn makes AI generate correct code, not just plausible code.</p>
 
     <div class="copilot-grid">
       <div class="copilot-steps">
@@ -289,8 +289,8 @@
         <div class="copilot-step">
           <div class="step-num">2</div>
           <div>
-            <h4>Analyzers catch violations</h4>
-            <p>ARK001–ARK004 fire at compile time, not in code review. The CI fails if a job returns <code>Task</code> instead of <code>Task&lt;Result&gt;</code>.</p>
+            <h4>Analyzers catch violations at compile time</h4>
+            <p>ARK001–ARK008 fire during build, not in code review. CI fails if AI generates <code>throw</code> in domain code or skips <code>Result</code> on a job.</p>
           </div>
         </div>
         <div class="copilot-step">
@@ -300,18 +300,37 @@
             <p><code>Result&lt;T&gt;</code> everywhere, <code>Namespace.Reason</code> error codes always, ErrorGroup always. LLMs learn the pattern once and apply it consistently.</p>
           </div>
         </div>
+        <div class="copilot-step" style="border-left: 2px solid var(--accent); padding-left: 1rem;">
+          <div class="step-num" style="background: var(--accent);">4</div>
+          <div>
+            <h4>MCP Server — tools, not just instructions <span style="font-size:.72rem;background:rgba(124,106,247,.15);color:var(--accent2);border-radius:4px;padding:.1rem .45rem;margin-left:.4rem;font-weight:600;letter-spacing:.03em;">NEW</span></h4>
+            <p>Install <code>Arkn.MCP</code> as a local <code>dotnet tool</code>. Claude, Cursor, and Copilot gain real scaffolding and validation tools — no server, no hosting, zero setup.</p>
+          </div>
+        </div>
       </div>
 
       <div class="code-block">
         <div class="code-header">
-          <span class="code-lang">.github/copilot-instructions.md</span>
+          <span class="code-lang">arkn-mcp — tool call example</span>
         </div>
-        <pre><span class="c">// .github/copilot-instructions.md</span>
+        <pre><span class="c"># Install once</span>
+<span class="m">dotnet tool install</span> -g Arkn.MCP
 
-<span class="k">✅</span> <span class="n">Always return </span><span class="t">Result&lt;T&gt;</span><span class="n"> from domain methods — never throw</span>
-<span class="k">✅</span><span class="n"> Error codes: </span><span class="s">Namespace.Reason</span><span class="n"> (</span><span class="s">User.NotFound</span><span class="n">, </span><span class="s">Order.Invalid</span><span class="n">)</span>
-<span class="k">✅</span><span class="n"> Consume results with </span><span class="m">.Match()</span><span class="n"> — never access </span><span class="p">.Value</span><span class="n"> directly</span>
-<span class="k">✅</span> <span class="t">IArknJob</span><span class="n">.</span><span class="m">ExecuteAsync</span><span class="n"> must return </span><span class="t">Task&lt;Result&gt;</span></pre>
+<span class="c"># The AI calls tools automatically during your conversation:</span>
+
+<span class="c">// scaffold_errors(domain: "Payment")</span>
+[<span class="t">ArknErrors</span>]
+<span class="k">public static partial class</span> <span class="t">PaymentErrors</span>
+{
+    [<span class="t">ArknErrorCode</span>(<span class="s">"NotFound"</span>, <span class="s">"Payment was not found"</span>)]
+    <span class="k">public static partial</span> <span class="t">Error</span> <span class="m">NotFound</span>(<span class="t">string</span>? detail = <span class="k">null</span>);
+
+    [<span class="t">ArknErrorCode</span>(<span class="s">"Conflict"</span>, <span class="s">"Payment already exists"</span>)]
+    <span class="k">public static partial</span> <span class="t">Error</span> <span class="m">Conflict</span>(<span class="t">string</span>? detail = <span class="k">null</span>);
+}
+
+<span class="c">// validate_pattern(…) → ARK007: throw in domain method at line 14.</span>
+<span class="c">//   Suggestion: return Result.Failure(Error.Failure(…)) instead.</span></pre>
       </div>
     </div>
 
@@ -342,6 +361,34 @@
         <div class="rule-info">
           <h4>Job return type <span class="severity sev-error">error</span></h4>
           <p><code style="font-family:var(--mono);font-size:.82em">IArknJob.ExecuteAsync</code> must return <code style="font-family:var(--mono);font-size:.82em">Task&lt;Result&gt;</code>, never <code style="font-family:var(--mono);font-size:.82em">Task</code>.</p>
+        </div>
+      </div>
+      <div class="rule-card">
+        <span class="rule-id">ARK005</span>
+        <div class="rule-info">
+          <h4>Avoid raw HttpClient <span class="severity sev-error">warning</span></h4>
+          <p>Use <code style="font-family:var(--mono);font-size:.82em">AddArknHttp&lt;TClient&gt;()</code> instead of injecting or instantiating <code style="font-family:var(--mono);font-size:.82em">HttpClient</code> directly.</p>
+        </div>
+      </div>
+      <div class="rule-card">
+        <span class="rule-id">ARK006</span>
+        <div class="rule-info">
+          <h4>Use IArknLogger <span class="severity sev-error">warning</span></h4>
+          <p>Prefer <code style="font-family:var(--mono);font-size:.82em">IArknLogger</code> over MEL <code style="font-family:var(--mono);font-size:.82em">ILogger</code> or <code style="font-family:var(--mono);font-size:.82em">Console.Write</code> in Arkn-managed components.</p>
+        </div>
+      </div>
+      <div class="rule-card">
+        <span class="rule-id">ARK007</span>
+        <div class="rule-info">
+          <h4>No throw in domain <span class="severity sev-error">error</span></h4>
+          <p>Domain methods must not throw. Return <code style="font-family:var(--mono);font-size:.82em">Result.Failure(Error.Failure(…))</code> instead.</p>
+        </div>
+      </div>
+      <div class="rule-card">
+        <span class="rule-id">ARK008</span>
+        <div class="rule-info">
+          <h4>Catch must propagate <span class="severity sev-error">warning</span></h4>
+          <p><code style="font-family:var(--mono);font-size:.82em">try/catch</code> blocks that swallow errors without returning <code style="font-family:var(--mono);font-size:.82em">Result.Failure</code> are flagged.</p>
         </div>
       </div>
     </div>
@@ -643,6 +690,41 @@ services.<span class="m">AddEmailNotifier</span>(opts =&gt;
         </div>
       </div>
 
+
+      <!-- Arkn.MCP -->
+      <div class="pkg-card" style="border-color: var(--accent);">
+        <div class="pkg-header">
+          <div class="pkg-meta">
+            <div class="pkg-name">
+              <span>Arkn.MCP</span>
+              <span class="pkg-version" style="background:rgba(124,106,247,.15);color:var(--accent2);border-radius:4px;padding:.1rem .4rem;font-size:.75rem;font-weight:600;">NEW</span>
+            </div>
+            <div class="pkg-desc">MCP Server distribuído como <code style="font-family:var(--mono);font-size:.85em">dotnet tool</code>. Conecta qualquer AI assistant (Claude, Cursor, Copilot) a ferramentas reais de scaffolding e validação — sem hospedagem, sem config.</div>
+          </div>
+          <div class="pkg-install">
+            <div class="pkg-cmd" onclick="copyInstall(this, 'dotnet tool install -g Arkn.MCP')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              dotnet tool install -g Arkn.MCP
+            </div>
+          </div>
+        </div>
+        <div class="pkg-tags">
+          <span class="tag">mcp</span><span class="tag">ai</span><span class="tag">scaffold</span><span class="tag">validate</span><span class="tag">claude</span><span class="tag">cursor</span>
+        </div>
+        <div class="pkg-body">
+          <details open>
+            <summary>Tools expostos ao AI assistant</summary>
+            <div class="code-block">
+              <div class="code-header"><span class="code-lang">tools</span></div>
+              <pre><span class="m">scaffold_errors</span>      <span class="c">// ErrorGroup tipado a partir do nome do domínio</span>
+<span class="m">scaffold_job</span>         <span class="c">// IArknJob completo com registro no DI</span>
+<span class="m">scaffold_http_client</span> <span class="c">// ArknHttpClient tipado com operações</span>
+<span class="m">validate_pattern</span>     <span class="c">// analisa código C# contra ARK001–ARK008</span>
+<span class="m">docs_lookup</span>          <span class="c">// busca na doc Arkn (offline, embutida)</span></pre>
+            </div>
+          </details>
+        </div>
+      </div>
 
       <!-- Arkn.SourceGen -->
       <div class="pkg-card">

@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>arkn-mcp</ToolCommandName>
+    <PackageId>Arkn.MCP</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Fernando Terra</Authors>
+    <Description>Arkn MCP Server — scaffolding and validation tools for AI assistants via Model Context Protocol</Description>
+    <PackageTags>dotnet;mcp;ai;scaffold;arkn;claude;cursor</PackageTags>
+    <RepositoryUrl>https://github.com/fernando-terra/arkn</RepositoryUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="ModelContextProtocol" Version="1.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
+  </ItemGroup>
+</Project>

@@ -16,6 +16,7 @@ export default defineConfig({
 
     nav: [
       { text: 'Guide', link: '/getting-started' },
+      { text: 'MCP Server', link: '/mcp' },
       { text: 'Packages', link: '/packages/core' },
       { text: 'Roadmap', link: '/roadmap' },
       {
@@ -32,6 +33,7 @@ export default defineConfig({
         text: 'Introduction',
         items: [
           { text: 'Getting Started', link: '/getting-started' },
+          { text: 'MCP Server ✨', link: '/mcp' },
           { text: 'Roadmap', link: '/roadmap' },
           { text: 'Contributing', link: '/contributing' },
         ]

@@ -26,6 +26,7 @@ Arkn is a composable, zero-dependency .NET framework. Each package delivers one 
 | `Arkn.Analyzers` | Roslyn analyzers — ARK001–ARK004 enforcing Arkn patterns at compile time | [![NuGet](https://img.shields.io/nuget/v/Arkn.Analyzers.svg)](https://www.nuget.org/packages/Arkn.Analyzers) |
 | `Arkn.SourceGen` | Source generator — generates `Error` factories from `[ArknErrors]` partial classes | [![NuGet](https://img.shields.io/nuget/v/Arkn.SourceGen.svg)](https://www.nuget.org/packages/Arkn.SourceGen) |
 | `Arkn.Templates` | `dotnet new` templates — `arkn-api`, `arkn-job`, `arkn-lib` | [![NuGet](https://img.shields.io/nuget/v/Arkn.Templates.svg)](https://www.nuget.org/packages/Arkn.Templates) |
+| `Arkn.MCP` ✨ | MCP Server — scaffolding + validation tools for Claude, Cursor, and Copilot | `dotnet tool install -g Arkn.MCP` |
 
 ### Extensions
 
