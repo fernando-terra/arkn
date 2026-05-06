@@ -237,17 +237,17 @@ public static class AnalysisTools
             ? $"dto => Results.Created($\"/{resource.ToLowerInvariant()}s/{{dto.Id}}\", dto)"
             : "dto => Results.Ok(dto)";
 
-        return $"""
+        return $$"""
                 return result.Match(
-                    onSuccess: {ok},
+                    onSuccess: {{ok}},
                     onFailure: error => error.Type switch
-                    {{
-                        ErrorType.NotFound   => Results.NotFound(new {{ error.Code, error.Message }}),
-                        ErrorType.Validation => Results.BadRequest(new {{ error.Code, error.Message }}),
-                        ErrorType.Conflict   => Results.Conflict(new {{ error.Code, error.Message }}),
+                    {
+                        ErrorType.NotFound   => Results.NotFound(new { error.Code, error.Message }),
+                        ErrorType.Validation => Results.BadRequest(new { error.Code, error.Message }),
+                        ErrorType.Conflict   => Results.Conflict(new { error.Code, error.Message }),
                         ErrorType.Unauthorized => Results.Unauthorized(),
                         _                    => Results.Problem(error.Message)
-                    }});
+                    });
         """;
     }
 
