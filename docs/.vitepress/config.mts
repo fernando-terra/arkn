@@ -38,28 +38,33 @@ export default defineConfig({
         ]
       },
       {
-        text: 'Core Packages',
+        text: 'Packages',
         items: [
           { text: 'Arkn.Core', link: '/packages/core' },
           { text: 'Arkn.Results', link: '/packages/results' },
           { text: 'Arkn.Http', link: '/packages/http' },
-          { text: 'Arkn.Logging', link: '/packages/logging' },
+          {
+            text: 'Arkn.Logging',
+            link: '/packages/logging',
+            items: [
+              { text: 'Seq', link: '/packages/seq' },
+              { text: 'Elasticsearch', link: '/packages/elasticsearch' },
+              { text: 'Application Insights', link: '/packages/appinsights' },
+            ]
+          },
           { text: 'Arkn.Jobs', link: '/packages/jobs' },
-          { text: 'Arkn.Notifications', link: '/packages/notifications' },
+          {
+            text: 'Arkn.Notifications',
+            link: '/packages/notifications',
+            items: [
+              { text: 'Slack', link: '/packages/slack' },
+              { text: 'Email', link: '/packages/email' },
+            ]
+          },
           { text: 'Arkn.Analyzers', link: '/packages/analyzers' },
           { text: 'Arkn.SourceGen', link: '/packages/sourcegen' },
           { text: 'Arkn.Templates', link: '/packages/templates' },
           { text: 'Arkn.MCP', link: '/packages/mcp' },
-        ]
-      },
-      {
-        text: 'Extensions',
-        items: [
-          { text: 'Application Insights', link: '/packages/appinsights' },
-          { text: 'Seq', link: '/packages/seq' },
-          { text: 'Elasticsearch', link: '/packages/elasticsearch' },
-          { text: 'Email', link: '/packages/email' },
-          { text: 'Slack', link: '/packages/slack' },
         ]
       }
     ],
