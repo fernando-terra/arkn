@@ -34,7 +34,6 @@ export default defineConfig({
         items: [
           { text: 'Getting Started', link: '/getting-started' },
           { text: 'MCP Server ✨', link: '/mcp' },
-          { text: 'Roadmap', link: '/roadmap' },
           { text: 'Contributing', link: '/contributing' },
         ]
       },
