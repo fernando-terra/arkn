@@ -6,7 +6,7 @@
     <LangVersion>preview</LangVersion>
     <RootNamespace>Arkn.Extensions.Logging.Seq</RootNamespace>
     <AssemblyName>Arkn.Extensions.Logging.Seq</AssemblyName>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <Authors>Fernando Terra</Authors>
     <Description>Seq sink for Arkn.Logging — sends structured logs via HTTP using CLEF format. Zero Serilog dependency.</Description>
     <PackageTags>dotnet;csharp;seq;logging;clef;arkn</PackageTags>

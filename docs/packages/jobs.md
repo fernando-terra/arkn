@@ -1,6 +1,6 @@
 # Arkn.Jobs
 
-Zero-dependency cron scheduler with retry, timeout and scoped logs per run.
+Zero-dependency cron scheduler with retry, timeout, distributed lock, persistence, and DLQ — wired into `Arkn.Notifications`.
 
 ```bash
 dotnet add package Arkn.Jobs
@@ -18,7 +18,11 @@ builder.Services.AddArknJobs(jobs =>
         .WithRetry(maxAttempts: 3)
         .NotifyOn(JobEvent.Failed | JobEvent.TimedOut);
 
-    jobs.OnFailure<SlackNotifier>();  // global fallback notifier
+    // Optional extensions (v0.3.0+)
+    jobs.WithInMemoryHistory(capacity: 200)
+        .WithInMemoryDlq()
+        .WithDistributedLock<MyRedisLock>()
+        .OnFailure<SlackNotifier>();
 });
 ```
 
@@ -38,6 +42,62 @@ public sealed class InvoiceProcessorJob(IInvoiceService invoices) : IArknJob
             onFailure: error => Result.Failure(error));
     }
 }
+```
+
+## Persistence — `IJobHistoryStore` <Badge type="tip" text="v0.3.0" />
+
+Stores job execution records for audit, dashboards, or replay. Default is in-memory:
+
+```csharp
+jobs.WithInMemoryHistory(capacity: 100);        // circular buffer, 100 records/job
+jobs.WithHistoryStore<MyEfCoreHistoryStore>();   // plug custom IJobHistoryStore
+```
+
+Query via the scheduler endpoint:
+
+```csharp
+app.MapGet("/jobs/history", (IArknJobScheduler scheduler) =>
+    Results.Ok(scheduler.GetAllHistory()));
+
+// Or inject IJobHistoryStore directly
+app.MapGet("/jobs/{name}/history", async (string name, IJobHistoryStore store) =>
+    Results.Ok(await store.GetRecentAsync(name, limit: 20)));
+```
+
+## Distributed Lock — `IDistributedJobLock` <Badge type="tip" text="v0.3.0" />
+
+Prevents concurrent execution across multiple replicas. Default (`NoOpDistributedJobLock`) always acquires — single-instance safe out of the box:
+
+```csharp
+jobs.WithDistributedLock<RedisDistributedJobLock>();
+```
+
+```csharp
+public sealed class RedisDistributedJobLock(IConnectionMultiplexer redis) : IDistributedJobLock
+{
+    public async Task<bool> TryAcquireAsync(string jobName, TimeSpan expiry, CancellationToken ct)
+        => await redis.GetDatabase().LockTakeAsync(jobName, Environment.MachineName, expiry);
+
+    public async Task ReleaseAsync(string jobName, CancellationToken ct)
+        => await redis.GetDatabase().LockReleaseAsync(jobName, Environment.MachineName);
+}
+```
+
+## Dead-Letter Queue — `IJobDlq` <Badge type="tip" text="v0.3.0" />
+
+Jobs that exhaust all retry attempts land in the DLQ. Default is in-memory:
+
+```csharp
+jobs.WithInMemoryDlq();
+```
+
+```csharp
+// Inspect the DLQ
+app.MapGet("/jobs/dlq", (InMemoryJobDlq dlq) => dlq.GetEntriesAsync());
+
+// Drain by job name
+app.MapDelete("/jobs/dlq/{name}", (string name, InMemoryJobDlq dlq) =>
+    dlq.ClearAsync(name));
 ```
 
 ## Cron expression support

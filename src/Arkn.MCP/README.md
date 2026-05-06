@@ -1,6 +1,6 @@
 # Arkn.MCP
 
-Model Context Protocol server for Arkn — scaffolding and validation tools for AI assistants.
+Model Context Protocol server for Arkn — scaffolding, migration, and validation tools for AI assistants.
 
 ## Installation
 
@@ -40,8 +40,7 @@ dotnet tool install -g Arkn.MCP
   "servers": {
     "arkn": {
       "type": "stdio",
-      "command": "arkn-mcp",
-      "args": []
+      "command": "arkn-mcp"
     }
   }
 }
@@ -49,119 +48,69 @@ dotnet tool install -g Arkn.MCP
 
 ## Available tools
 
-### `scaffold_errors`
-Generates a complete Arkn error group for a domain.
+### Scaffolding
 
-**Input:** `domain` — e.g. `"User"`, `"Payment"`, `"Invoice"`
-
-**Example prompt:** *"Use scaffold_errors to create errors for the Order domain"*
-
-**Output:**
-```csharp
-[ArknErrors]
-public static partial class OrderErrors
-{
-    [ArknErrorCode("NotFound", "Order was not found")]
-    public static partial Error NotFound(string? detail = null);
-    // ...
-}
+#### `scaffold_errors`
+Generates a complete Arkn error group class for a given domain.
+```
+Input:  domain = "User"
+Output: [ArknErrors] public static partial class UserErrors { ... }
 ```
 
----
-
-### `scaffold_job`
-Generates an `IArknJob` implementation and DI registration.
-
-**Inputs:** `name`, `cron`, `description` (optional)
-
-**Example prompt:** *"Scaffold a job named InvoiceProcessor that runs at 2am daily"*
-
----
-
-### `scaffold_http_client`
-Generates a typed `ArknHttpClient` with inferred methods.
-
-**Inputs:** `name`, `baseUrl`, `operations` (comma-separated)
-
-**Example prompt:** *"Create an HTTP client for PaymentGateway at https://api.pay.com with GetPayment, CreatePayment, CancelPayment"*
-
----
-
-### `validate_pattern`
-Validates a C# code snippet against Arkn rules.
-
-**Input:** `code` — C# source code
-
-**Rules checked:**
-
-| Rule | Detects |
-|---|---|
-| ARK001 | Domain method returning void/Task without Result |
-| ARK002 | Error code not following Namespace.Reason |
-| ARK003 | .Value accessed without IsSuccess check |
-| ARK004 | ExecuteAsync not returning Task\<Result\> |
-| ARK005 | new HttpClient() instead of AddArknHttp |
-| ARK006 | Console.Write or MEL ILogger instead of IArknLogger |
-| ARK007 | throw new in domain code |
-| ARK008 | Empty catch swallowing exceptions |
-
----
-
-### `docs_lookup`
-Searches Arkn documentation by keyword.
-
-**Input:** `query` — e.g. `"result pattern"`, `"job registration"`, `"error code naming"`
-
-**Topics:** result, error, iarknjob, iarknlogger, addarknhttp, analyzers, sourcegen, templates
-
----
-
-### `migrate_exception_to_result`
-Refactors a C# method using throw/try-catch into one that returns `Result` or `Result<T>`.
-
-**Input:** `code` — C# method source code
-
----
-
-### `migrate_httpclient_to_arkn`
-Refactors code using raw `HttpClient` into a typed `ArknHttpClient` with Result-based error handling.
-
-**Input:** `code` — C# source code with HttpClient usage
-
----
-
-### `project_health`
-Analyzes multiple C# files and returns an aggregate health report with score and top issues.
-
-**Input:** `files` — array of C# source file contents
-**Returns:** `{ score, totalViolations, byRule, topIssues, verdict }`
-
----
-
-### `list_arkn_types`
-Scans source files and returns an inventory of Arkn types (error groups, jobs, HTTP clients, error codes).
-
-**Input:** `files` — array of C# source file contents
-
----
-
-### `scaffold_minimal_api`
-Generates Minimal API endpoint groups with full Result→HTTP mapping.
-
-**Input:** `resource`, `operations` (get,getall,create,update,delete), `errorGroup` (optional)
-
----
-
-### `scaffold_domain_entity`
-Generates a domain Entity or AggregateRoot with Value Objects using Arkn.Core.
-
-**Input:** `name`, `valueObjects` (comma-separated), `isAggregate` (bool)
-
----
-
-## Running locally (development)
-
-```bash
-cd src/Arkn.MCP
-dotnet run
+#### `scaffold_job`
+Generates an `IArknJob` implementation and DI registration snippet.
 ```
+Input:  name = "InvoiceProcessor", cron = "0 2 * * *"
+Output: public sealed class InvoiceProcessorJob : IArknJob { ... }
+```
+
+#### `scaffold_http_client`
+Generates a typed `ArknHttpClient` with methods from operation names.
+```
+Input:  name = "Payment", baseUrl = "https://api.pay.com", operations = "GetPayment,CreatePayment"
+Output: public sealed class PaymentClient : ArknHttpClient { ... }
+```
+
+#### `scaffold_minimal_api` *(v0.3.0)*
+Scaffolds a complete Minimal API endpoint with `Result` pattern matching.
+```
+Input:  entity = "Order", operations = "Get,Create,Cancel"
+Output: app.MapGet/MapPost/MapDelete with full Result.Match routing
+```
+
+#### `scaffold_domain_entity` *(v0.3.0)*
+Scaffolds a domain entity implementing `IAggregateRoot` with error group.
+```
+Input:  name = "Order", properties = "CustomerId:Guid,TotalAmount:decimal"
+Output: public sealed class Order : Entity, IAggregateRoot { ... } + OrderErrors class
+```
+
+### Validation & Analysis
+
+#### `validate_pattern`
+Analyses a C# code snippet and returns violations with line numbers and fix suggestions.
+Rules checked: ARK001–ARK008 (see [Arkn.Analyzers](https://www.nuget.org/packages/Arkn.Analyzers) for full list).
+
+#### `project_health` *(v0.3.0)*
+Analyses a project for ARK001–ARK008 violations and returns a health summary with counts per rule and top offending files.
+
+### Migration
+
+#### `migrate_exception_to_result` *(v0.3.0)*
+Converts `throw`/`try-catch` patterns in C# code to `Result`-based returns following Arkn conventions.
+
+#### `migrate_httpclient_to_arkn` *(v0.3.0)*
+Migrates raw `HttpClient` usage to typed `ArknHttpClient` with interceptors.
+
+### Documentation
+
+#### `docs_lookup`
+Searches embedded Arkn documentation by keyword. No HTTP required.
+Topics: `result`, `error`, `iarknjob`, `iarknlogger`, `addarknhttp`, `analyzers`, `sourcegen`, `templates`
+
+#### `list_arkn_types` *(v0.3.0)*
+Lists all Arkn types available in a given namespace or assembly with their summary docs.
+
+## Part of the Arkn ecosystem
+
+[github.com/fernando-terra/arkn](https://github.com/fernando-terra/arkn) · [nuget.org/packages/Arkn.MCP](https://www.nuget.org/packages/Arkn.MCP)

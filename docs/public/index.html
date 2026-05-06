@@ -553,7 +553,7 @@ services.<span class="m">AddArknHttp</span>&lt;<span class="t">PaymentsClient</s
         <div class="pkg-header">
           <div class="pkg-meta">
             <div class="pkg-name"><span data-pkg="Arkn.Jobs">Arkn.Jobs</span> <span class="pkg-version">v—</span></div>
-            <div class="pkg-desc">In-process cron scheduler. No database, no external process. ARK004 enforces <code style="font-family:var(--mono);font-size:.85em">Task&lt;Result&gt;</code> return types at compile time.</div>
+            <div class="pkg-desc">In-process cron scheduler with retry, timeout, <strong>distributed lock</strong>, <strong>persistence</strong> (<code style="font-family:var(--mono);font-size:.85em">IJobHistoryStore</code>), and <strong>DLQ</strong> for failed jobs. ARK004 enforces <code style="font-family:var(--mono);font-size:.85em">Task&lt;Result&gt;</code> return types at compile time.</div>
           </div>
           <div class="pkg-install">
             <div class="pkg-cmd" onclick="copyInstall(this, 'dotnet add package Arkn.Jobs')">
@@ -563,7 +563,7 @@ services.<span class="m">AddArknHttp</span>&lt;<span class="t">PaymentsClient</s
           </div>
         </div>
         <div class="pkg-tags">
-          <span class="tag">jobs</span><span class="tag">cron</span><span class="tag">scheduler</span><span class="tag">in-process</span><span class="tag">retry</span>
+          <span class="tag">jobs</span><span class="tag">cron</span><span class="tag">scheduler</span><span class="tag">in-process</span><span class="tag">retry</span><span class="tag">persistence</span><span class="tag">distributed-lock</span><span class="tag">dlq</span>
         </div>
         <div class="pkg-body">
           <details open>
@@ -600,7 +600,7 @@ services.<span class="m">AddArknJobs</span>(jobs =&gt;
         <div class="pkg-header">
           <div class="pkg-meta">
             <div class="pkg-name"><span data-pkg="Arkn.Notifications">Arkn.Notifications</span> <span class="pkg-version">v—</span></div>
-            <div class="pkg-desc">Pluggable alert system. Send structured notifications to Slack, Email (SMTP + SendGrid), or custom sinks — wired directly into <code style="font-family:var(--mono);font-size:.85em">Arkn.Jobs</code> failure hooks.</div>
+            <div class="pkg-desc">Pluggable alert system. Send structured notifications to Slack, Email (SMTP + SendGrid), <strong>Teams</strong> (Adaptive Cards), <strong>Discord</strong> (Embeds), or custom sinks — wired directly into <code style="font-family:var(--mono);font-size:.85em">Arkn.Jobs</code> failure hooks.</div>
           </div>
           <div class="pkg-install">
             <div class="pkg-cmd" onclick="copyInstall(this, 'dotnet add package Arkn.Notifications')">
@@ -610,26 +610,29 @@ services.<span class="m">AddArknJobs</span>(jobs =&gt;
           </div>
         </div>
         <div class="pkg-tags">
-          <span class="tag">notifications</span><span class="tag">alerts</span><span class="tag">slack</span><span class="tag">email</span><span class="tag">pluggable</span>
+          <span class="tag">notifications</span><span class="tag">alerts</span><span class="tag">slack</span><span class="tag">email</span><span class="tag">teams</span><span class="tag">discord</span><span class="tag">pluggable</span>
         </div>
         <div class="pkg-body">
           <details open>
-            <summary>Code example — Slack + Email</summary>
+            <summary>Code example — Slack + Teams + Discord</summary>
             <div class="code-block">
               <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-              <pre>services.<span class="m">AddSlackNotifier</span>(opts =&gt;
+              <pre>services.<span class="m">AddArknNotifications</span>(n =&gt;
 {
-    opts.<span class="p">WebhookUrl</span>   = config[<span class="s">"Slack:WebhookUrl"</span>];
-    opts.<span class="p">Channel</span>      = <span class="s">"#alerts"</span>;
-    opts.<span class="p">MinimumLevel</span> = <span class="p">NotificationLevel</span>.<span class="p">Warning</span>;
-});
+    n.<span class="m">AddSlackNotifier</span>(opts =&gt; { opts.<span class="p">WebhookUrl</span> = config[<span class="s">"Slack:WebhookUrl"</span>]; });
 
-<span class="c">// or Email (SMTP or SendGrid, zero SDK)</span>
-services.<span class="m">AddEmailNotifier</span>(opts =&gt;
-{
-    opts.<span class="p">Host</span>     = config[<span class="s">"Smtp:Host"</span>];
-    opts.<span class="p">From</span>     = <span class="s">"noreply@example.com"</span>;
-    opts.<span class="p">To</span>       = [<span class="s">"ops@example.com"</span>];
+    <span class="c">// Microsoft Teams — Adaptive Cards 1.4 (v0.3.0+)</span>
+    n.<span class="m">AddTeamsNotifier</span>(opts =&gt; { opts.<span class="p">WebhookUrl</span> = config[<span class="s">"Teams:WebhookUrl"</span>]; });
+
+    <span class="c">// Discord — Webhook Embeds (v0.3.0+)</span>
+    n.<span class="m">AddDiscordNotifier</span>(opts =&gt;
+    {
+        opts.<span class="p">WebhookUrl</span> = config[<span class="s">"Discord:WebhookUrl"</span>];
+        opts.<span class="p">Username</span>   = <span class="s">"Arkn"</span>;
+    });
+
+    <span class="c">// Email — SMTP or SendGrid, zero SDK</span>
+    n.<span class="m">AddSmtpEmailNotifier</span>(opts =&gt; { opts.<span class="p">Host</span> = config[<span class="s">"Smtp:Host"</span>]; });
 });</pre>
             </div>
           </details>

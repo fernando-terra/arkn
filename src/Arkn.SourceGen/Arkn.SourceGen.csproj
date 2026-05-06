@@ -7,7 +7,7 @@
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <RootNamespace>Arkn.SourceGen</RootNamespace>
     <AssemblyName>Arkn.SourceGen</AssemblyName>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <Authors>Fernando Terra</Authors>
     <Description>Roslyn Source Generator for Arkn — generates Error factory methods from attributed partial classes, eliminating boilerplate.</Description>
     <PackageTags>dotnet;csharp;source-generator;roslyn;arkn;codegen</PackageTags>

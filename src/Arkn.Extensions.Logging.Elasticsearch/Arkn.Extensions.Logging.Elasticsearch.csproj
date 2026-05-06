@@ -6,7 +6,7 @@
     <LangVersion>preview</LangVersion>
     <RootNamespace>Arkn.Extensions.Logging.Elasticsearch</RootNamespace>
     <AssemblyName>Arkn.Extensions.Logging.Elasticsearch</AssemblyName>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <Authors>Fernando Terra</Authors>
     <Description>Elasticsearch sink for Arkn.Logging — sends logs via Bulk API. Zero NEST/Elastic SDK dependency.</Description>
     <PackageTags>dotnet;csharp;elasticsearch;logging;bulk-api;arkn</PackageTags>

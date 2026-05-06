@@ -20,7 +20,7 @@ export default defineConfig({
       { text: 'Packages', link: '/packages/core' },
       { text: 'Roadmap', link: '/roadmap' },
       {
-        text: 'v0.2.0',
+        text: 'v0.3.0',
         items: [
           { text: 'Changelog', link: 'https://github.com/fernando-terra/arkn/blob/main/CHANGELOG.md' },
           { text: 'Contributing', link: '/contributing' },
@@ -59,6 +59,8 @@ export default defineConfig({
             items: [
               { text: 'Slack', link: '/packages/slack' },
               { text: 'Email', link: '/packages/email' },
+              { text: 'Teams', link: '/packages/teams' },
+              { text: 'Discord', link: '/packages/discord' },
             ]
           },
           { text: 'Arkn.Analyzers', link: '/packages/analyzers' },

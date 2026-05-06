@@ -72,7 +72,7 @@ public class MyJob : IArknJob {
 public Task<Result> ExecuteAsync(ArknJobContext ctx) { ... }
 ```
 
-## ARK005 — Raw HttpClient
+## ARK005 — Raw HttpClient <Badge type="tip" text="v0.3.0" />
 
 ```csharp
 // ❌ ARK005
@@ -82,11 +82,13 @@ var client = new HttpClient();
 builder.Services.AddArknHttp<PaymentClient>("https://api.pay.com");
 ```
 
-## ARK006 — MEL ILogger instead of IArknLogger
+## ARK006 — MEL ILogger instead of IArknLogger <Badge type="tip" text="v0.3.0" />
 
 ```csharp
 // ❌ ARK006 — MEL logger in an Arkn component
 public class MyService(ILogger<MyService> logger) { ... }
+// ❌ Also triggers
+Console.WriteLine("something happened");
 
 // ✅ Use IArknLogger for structured, sink-routed logging
 public class MyService(IArknLogger logger) { ... }

@@ -7,7 +7,7 @@
     <LangVersion>preview</LangVersion>
     <RootNamespace>Arkn.Extensions.Notifications.Teams</RootNamespace>
     <AssemblyName>Arkn.Extensions.Notifications.Teams</AssemblyName>
-    <Version>0.1.0</Version>
+    <Version>0.3.0</Version>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Authors>Fernando Terra</Authors>
     <Description>Microsoft Teams notifier for Arkn via Incoming Webhook and Adaptive Cards — zero external dependencies.</Description>

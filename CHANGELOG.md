@@ -10,6 +10,52 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.3.0] — 2026-05-06
+
+### Added
+
+#### `Arkn.Jobs`
+- `IJobHistoryStore` / `InMemoryJobHistoryStore` — pluggable persistence for job execution records; circular-buffer, capacity-bounded per job, thread-safe
+- `IDistributedJobLock` / `NoOpDistributedJobLock` — distributed-lock abstraction preventing concurrent execution across instances; `NoOp` default preserves single-instance behaviour; plug any implementation (e.g. Redis) via `WithDistributedLock<T>()`
+- `IJobDlq` / `InMemoryJobDlq` — dead-letter queue for permanently failed jobs after all retry attempts are exhausted; supports per-job `ClearAsync`
+- Full execution pipeline: lock → execute → retry → persist → DLQ → notify
+- Fluent builder helpers: `WithInMemoryHistory()`, `WithInMemoryDlq()`, `WithDistributedLock<T>()`, `WithHistoryStore<T>()`
+- `JobExecutionRecord` — immutable persistence record with `Duration` computed property
+
+#### `Arkn.Analyzers`
+- **ARK005** (`AvoidRawHttpClient`) — warns when `new HttpClient()` is used directly; recommends `AddArknHttp<T>()`
+- **ARK006** (`PreferIArknLogger`) — warns when MEL `ILogger` or `Console` is used in Arkn components; recommends `IArknLogger`
+
+#### `Arkn.Extensions.Notifications.Teams` *(new package)*
+- `TeamsNotifier` — `IArknNotifier` implementation posting to Microsoft Teams via Incoming Webhook
+- `TeamsCardBuilder` — Adaptive Cards 1.4 payload builder: level-coloured `Container` header (`good/warning/attention`), `FactSet` for metadata, monospace log snippet, footer with source + timestamp
+- `TeamsNotifierOptions` — `WebhookUrl`, `MinimumLevel`, `MaxLogLines`, `Timeout`
+- `AddTeamsNotifier()` — fluent extension on `ArknNotificationsBuilder`
+- Zero external dependencies — `System.Text.Json` only
+
+#### `Arkn.Extensions.Notifications.Discord` *(new package)*
+- `DiscordNotifier` — `IArknNotifier` implementation posting to Discord via Webhook Embeds
+- `DiscordEmbedBuilder` — Discord embed payload builder: level-coloured sidebar, inline metadata fields, code-block log snippet, ISO 8601 timestamp, footer with source
+- `DiscordNotifierOptions` — `WebhookUrl`, `Username`, `AvatarUrl`, `MinimumLevel`, `MaxLogLines`, `Timeout`
+- `AddDiscordNotifier()` — fluent extension on `ArknNotificationsBuilder`
+- Zero external dependencies — `System.Text.Json` only
+
+#### `Arkn.MCP`
+- `migrate_exception_to_result` — converts `throw`/`try-catch` patterns to `Result`-based returns
+- `migrate_httpclient_to_arkn` — migrates raw `HttpClient` usage to typed `ArknHttpClient`
+- `project_health` — analyses a project for ARK001–ARK008 violations and returns a health summary
+- `list_arkn_types` — lists all Arkn types available in a given namespace or assembly
+- `scaffold_minimal_api` — scaffolds a complete Minimal API endpoint with `Result` matching
+- `scaffold_domain_entity` — scaffolds a domain entity implementing `IAggregateRoot` with error group
+
+### Changed
+- All packages bumped to `v0.3.0`
+
+### Fixed
+- N/A
+
+---
+
 ## [0.2.0] — 2026-05-06
 
 ### Added
@@ -60,26 +106,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [0.1.4] — 2026-04-27
-
-### Added
-- `Arkn.Http` — mTLS support: PFX, PEM, `X509Certificate2`, and certificate store (`WithClientCertificate`)
-
----
-
-## [0.1.0] — 2026-04-20
-
-### Added
-- `Arkn.Core` — `IEntity`, `IAggregateRoot`, `IDomainEvent`, `IRepository<T,TId>`, `IUnitOfWork`
-- `Arkn.Core` — `Entity`, `ValueObject`, `AggregateRoot` base classes
-- `Arkn.Results` — `Result`, `Result<T>`, `Error`, `ErrorType`
-- `Arkn.Results` — functional combinators: `Map`, `Bind`, `BindAsync`, `Match`, `MatchAsync`, `Tap`, `Ensure`
-- `Arkn.Results` — implicit conversions from `T` and `Error` to `Result<T>`
-- `Arkn.Results` — multiple-error support (`Result.Failure<T>(IEnumerable<Error>)`)
-- GitHub Actions CI matrix (ubuntu-latest + windows-latest)
-
-[Unreleased]: https://github.com/fernando-terra/arkn/compare/v0.1.6...HEAD
+[0.3.0]: https://github.com/fernando-terra/arkn/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/fernando-terra/arkn/compare/v0.1.6...v0.2.0
 [0.1.6]: https://github.com/fernando-terra/arkn/compare/v0.1.5...v0.1.6
-[0.1.5]: https://github.com/fernando-terra/arkn/compare/v0.1.4...v0.1.5
-[0.1.4]: https://github.com/fernando-terra/arkn/compare/v0.1.0...v0.1.4
-[0.1.0]: https://github.com/fernando-terra/arkn/releases/tag/v0.1.0
+[0.1.5]: https://github.com/fernando-terra/arkn/releases/tag/v0.1.5
