@@ -20,7 +20,7 @@ export default defineConfig({
       { text: 'Packages', link: '/packages/core' },
       { text: 'Roadmap', link: '/roadmap' },
       {
-        text: 'v0.1.0',
+        text: 'v0.2.0',
         items: [
           { text: 'Changelog', link: 'https://github.com/fernando-terra/arkn/blob/main/CHANGELOG.md' },
           { text: 'Contributing', link: '/contributing' },
@@ -39,16 +39,27 @@ export default defineConfig({
         ]
       },
       {
-        text: 'Packages',
+        text: 'Core Packages',
         items: [
           { text: 'Arkn.Core', link: '/packages/core' },
           { text: 'Arkn.Results', link: '/packages/results' },
+          { text: 'Arkn.Http', link: '/packages/http' },
           { text: 'Arkn.Logging', link: '/packages/logging' },
           { text: 'Arkn.Jobs', link: '/packages/jobs' },
           { text: 'Arkn.Notifications', link: '/packages/notifications' },
           { text: 'Arkn.Analyzers', link: '/packages/analyzers' },
           { text: 'Arkn.SourceGen', link: '/packages/sourcegen' },
           { text: 'Arkn.Templates', link: '/packages/templates' },
+          { text: 'Arkn.MCP', link: '/packages/mcp' },
+        ]
+      },
+      {
+        text: 'Extensions',
+        items: [
+          { text: 'Application Insights', link: '/packages/appinsights' },
+          { text: 'Seq', link: '/packages/seq' },
+          { text: 'Elasticsearch', link: '/packages/elasticsearch' },
+          { text: 'Email', link: '/packages/email' },
         ]
       }
     ],

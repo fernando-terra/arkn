@@ -1,5 +1,7 @@
 # Getting Started
 
+> **v0.2.0** — This guide covers the current stable release.
+
 ## Installation
 
 Install only the packages you need:
@@ -21,11 +23,17 @@ dotnet add package Arkn.Jobs
 dotnet add package Arkn.Notifications
 dotnet add package Arkn.Extensions.Notifications.Slack
 
-# Roslyn analyzers (compile-time enforcement)
+# Typed HTTP client with retry, OAuth2, mTLS
+dotnet add package Arkn.Http
+
+# Roslyn analyzers — compile-time enforcement (ARK001–ARK008)
 dotnet add package Arkn.Analyzers
 
-# Source generator (eliminates Error boilerplate)
+# Source generator — eliminates Error factory boilerplate
 dotnet add package Arkn.SourceGen
+
+# MCP Server — scaffold + validate tools for AI assistants
+dotnet tool install -g Arkn.MCP
 ```
 
 ## Quick start with Result pattern
@@ -65,6 +73,33 @@ app.MapGet("/users/{id:guid}", async (Guid id, IUserService svc) =>
         });
 });
 ```
+
+## AI-assisted development
+
+Arkn ships a **Model Context Protocol server** that integrates with Claude, Cursor and GitHub Copilot, giving your AI assistant direct knowledge of Arkn patterns:
+
+```bash
+# Install the MCP tool
+dotnet tool install -g Arkn.MCP
+```
+
+Add to your AI client config (example for Claude Desktop):
+
+```json
+{
+  "mcpServers": {
+    "arkn": { "command": "arkn-mcp", "args": [] }
+  }
+}
+```
+
+Once connected, your assistant can:
+- Generate error groups (`scaffold_errors`)
+- Scaffold jobs and HTTP clients
+- Validate code against ARK001–ARK008 rules
+- Search Arkn documentation inline
+
+→ See the full [MCP Server guide](/mcp) for configuration details.
 
 ## Use dotnet new templates
 
