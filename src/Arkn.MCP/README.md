@@ -116,6 +116,49 @@ Searches Arkn documentation by keyword.
 
 ---
 
+### `migrate_exception_to_result`
+Refactors a C# method using throw/try-catch into one that returns `Result` or `Result<T>`.
+
+**Input:** `code` — C# method source code
+
+---
+
+### `migrate_httpclient_to_arkn`
+Refactors code using raw `HttpClient` into a typed `ArknHttpClient` with Result-based error handling.
+
+**Input:** `code` — C# source code with HttpClient usage
+
+---
+
+### `project_health`
+Analyzes multiple C# files and returns an aggregate health report with score and top issues.
+
+**Input:** `files` — array of C# source file contents
+**Returns:** `{ score, totalViolations, byRule, topIssues, verdict }`
+
+---
+
+### `list_arkn_types`
+Scans source files and returns an inventory of Arkn types (error groups, jobs, HTTP clients, error codes).
+
+**Input:** `files` — array of C# source file contents
+
+---
+
+### `scaffold_minimal_api`
+Generates Minimal API endpoint groups with full Result→HTTP mapping.
+
+**Input:** `resource`, `operations` (get,getall,create,update,delete), `errorGroup` (optional)
+
+---
+
+### `scaffold_domain_entity`
+Generates a domain Entity or AggregateRoot with Value Objects using Arkn.Core.
+
+**Input:** `name`, `valueObjects` (comma-separated), `isAggregate` (bool)
+
+---
+
 ## Running locally (development)
 
 ```bash
