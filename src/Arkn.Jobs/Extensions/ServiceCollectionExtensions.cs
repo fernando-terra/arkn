@@ -1,5 +1,8 @@
 using Arkn.Jobs.Abstractions;
 using Arkn.Jobs.Core;
+using Arkn.Jobs.Dlq;
+using Arkn.Jobs.Locking;
+using Arkn.Jobs.Persistence;
 using Arkn.Logging.Abstractions;
 using Arkn.Logging.Sinks;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,11 +25,14 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<ArknJobRunner>(sp =>
         {
-            var logger     = sp.GetRequiredService<IArknLogger>();
-            var history    = sp.GetRequiredService<ArknJobHistory>();
-            var memorySink = sp.GetService<InMemoryLogSink>(); // optional
-            var reg        = sp.GetRequiredService<ArknJobRegistry>();
-            return new ArknJobRunner(sp, history, logger, reg, memorySink);
+            var logger       = sp.GetRequiredService<IArknLogger>();
+            var history      = sp.GetRequiredService<ArknJobHistory>();
+            var memorySink   = sp.GetService<InMemoryLogSink>(); // optional
+            var reg          = sp.GetRequiredService<ArknJobRegistry>();
+            var historyStore = sp.GetService<IJobHistoryStore>();
+            var distLock     = sp.GetService<IDistributedJobLock>() ?? new NoOpDistributedJobLock();
+            var dlq          = sp.GetService<IJobDlq>();
+            return new ArknJobRunner(sp, history, logger, reg, memorySink, historyStore, distLock, dlq);
         });
 
         services.AddSingleton<ArknJobScheduler>();

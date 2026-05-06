@@ -1,5 +1,8 @@
 using Arkn.Jobs.Core;
+using Arkn.Jobs.Dlq;
+using Arkn.Jobs.Locking;
 using Arkn.Jobs.Models;
+using Arkn.Jobs.Persistence;
 using Arkn.Notifications.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -91,6 +94,37 @@ public sealed class ArknJobsBuilder
     {
         _services.AddSingleton<IArknNotifier, TNotifier>();
         _registry.SetGlobalFailureNotifier(typeof(TNotifier));
+        return this;
+    }
+
+    /// <summary>Adds in-memory job execution history (circular buffer, default 100 entries per job).</summary>
+    public ArknJobsBuilder WithInMemoryHistory(int capacity = 100)
+    {
+        _services.AddSingleton<IJobHistoryStore>(new InMemoryJobHistoryStore(capacity));
+        return this;
+    }
+
+    /// <summary>Adds a custom job history store.</summary>
+    public ArknJobsBuilder WithHistoryStore<TStore>()
+        where TStore : class, IJobHistoryStore
+    {
+        _services.AddSingleton<IJobHistoryStore, TStore>();
+        return this;
+    }
+
+    /// <summary>Adds in-memory dead-letter queue for permanently failed jobs.</summary>
+    public ArknJobsBuilder WithInMemoryDlq()
+    {
+        _services.AddSingleton<InMemoryJobDlq>();
+        _services.AddSingleton<IJobDlq>(sp => sp.GetRequiredService<InMemoryJobDlq>());
+        return this;
+    }
+
+    /// <summary>Adds a distributed lock implementation to prevent parallel execution across instances.</summary>
+    public ArknJobsBuilder WithDistributedLock<TLock>()
+        where TLock : class, IDistributedJobLock
+    {
+        _services.AddSingleton<IDistributedJobLock, TLock>();
         return this;
     }
 }

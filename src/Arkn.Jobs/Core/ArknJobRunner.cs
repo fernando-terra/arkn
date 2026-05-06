@@ -1,5 +1,8 @@
 using Arkn.Jobs.Abstractions;
+using Arkn.Jobs.Dlq;
+using Arkn.Jobs.Locking;
 using Arkn.Jobs.Models;
+using Arkn.Jobs.Persistence;
 using Arkn.Logging.Abstractions;
 using Arkn.Logging.Models;
 using Arkn.Logging.Sinks;
@@ -16,25 +19,34 @@ namespace Arkn.Jobs.Core;
 /// </summary>
 public sealed class ArknJobRunner
 {
-    private readonly IServiceProvider _services;
-    private readonly ArknJobHistory   _history;
-    private readonly IArknLogger      _logger;
-    private readonly InMemoryLogSink? _memorySink;
-    private readonly ArknJobRegistry  _registry;
+    private readonly IServiceProvider    _services;
+    private readonly ArknJobHistory      _history;
+    private readonly IArknLogger         _logger;
+    private readonly InMemoryLogSink?    _memorySink;
+    private readonly ArknJobRegistry     _registry;
+    private readonly IJobHistoryStore?   _historyStore;
+    private readonly IDistributedJobLock _distributedLock;
+    private readonly IJobDlq?            _dlq;
 
-    /// <summary>Initializes the runner with its required services and optional in-memory log sink.</summary>
+    /// <summary>Initializes the runner with its required services and optional extensions.</summary>
     public ArknJobRunner(
-        IServiceProvider services,
-        ArknJobHistory   history,
-        IArknLogger      logger,
-        ArknJobRegistry  registry,
-        InMemoryLogSink? memorySink = null)
+        IServiceProvider    services,
+        ArknJobHistory      history,
+        IArknLogger         logger,
+        ArknJobRegistry     registry,
+        InMemoryLogSink?    memorySink       = null,
+        IJobHistoryStore?   historyStore     = null,
+        IDistributedJobLock? distributedLock = null,
+        IJobDlq?            dlq              = null)
     {
-        _services   = services;
-        _history    = history;
-        _logger     = logger;
-        _registry   = registry;
-        _memorySink = memorySink;
+        _services        = services;
+        _history         = history;
+        _logger          = logger;
+        _registry        = registry;
+        _memorySink      = memorySink;
+        _historyStore    = historyStore;
+        _distributedLock = distributedLock ?? new NoOpDistributedJobLock();
+        _dlq             = dlq;
     }
 
     /// <summary>
@@ -49,6 +61,36 @@ public sealed class ArknJobRunner
         var jobName   = options.JobName;
         var startedAt = DateTimeOffset.UtcNow;
 
+        // Acquire distributed lock — skip execution if another instance holds it
+        var lockExpiry = options.Timeout.HasValue
+            ? options.Timeout.Value * options.MaxAttempts + TimeSpan.FromSeconds(30)
+            : TimeSpan.FromMinutes(5);
+
+        var lockAcquired = await _distributedLock.TryAcquireAsync(jobName, lockExpiry, hostToken);
+        if (!lockAcquired)
+        {
+            _logger.Warning($"[{jobName}] Skipping run — distributed lock already held by another instance.");
+            return;
+        }
+
+        try
+        {
+            await RunCoreAsync(options, runId, jobName, startedAt, scheduledAt, hostToken);
+        }
+        finally
+        {
+            await _distributedLock.ReleaseAsync(jobName, hostToken);
+        }
+    }
+
+    private async Task RunCoreAsync(
+        ArknJobOptions    options,
+        Guid              runId,
+        string            jobName,
+        DateTimeOffset    startedAt,
+        DateTimeOffset    scheduledAt,
+        CancellationToken hostToken)
+    {
         _logger.Info($"[{jobName}] Starting run {runId} (scheduled {scheduledAt:HH:mm:ss})");
 
         // Fire Started notification
@@ -123,6 +165,32 @@ public sealed class ArknJobRunner
             runId, jobName, finalStatus, startedAt, finishedAt, duration, finalError, logs));
 
         _memorySink?.Clear(runId.ToString());
+
+        // Persist to external history store (if configured)
+        if (_historyStore is not null)
+        {
+            var record = new JobExecutionRecord
+            {
+                JobName      = jobName,
+                StartedAt    = startedAt,
+                FinishedAt   = finishedAt,
+                Success      = finalStatus == ArknJobStatus.Succeeded,
+                ErrorMessage = finalError?.Message,
+            };
+            await _historyStore.SaveAsync(record, hostToken);
+        }
+
+        // Enqueue to DLQ if permanently failed after exhausting all retries
+        if (_dlq is not null && finalStatus == ArknJobStatus.Failed && finalError is not null)
+        {
+            await _dlq.EnqueueAsync(new FailedJobEntry
+            {
+                JobName      = jobName,
+                FailedAt     = finishedAt,
+                AttemptsMade = options.MaxAttempts,
+                ErrorMessage = finalError.Message,
+            }, hostToken);
+        }
 
         // Fire outcome notifications
         var outcomeEvent = finalStatus switch
