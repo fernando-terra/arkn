@@ -33,15 +33,21 @@ jobs:
 
       - name: Pack all packages
         run: |
-          dotnet pack src/Arkn.Core/Arkn.Core.csproj                                                     --configuration Release --no-build -o ./artifacts
-          dotnet pack src/Arkn.Results/Arkn.Results.csproj                                               --configuration Release --no-build -o ./artifacts
-          dotnet pack src/Arkn.Http/Arkn.Http.csproj                                                     --configuration Release --no-build -o ./artifacts
-          dotnet pack src/Arkn.Logging/Arkn.Logging.csproj                                               --configuration Release --no-build -o ./artifacts
-          dotnet pack src/Arkn.Jobs/Arkn.Jobs.csproj                                                     --configuration Release --no-build -o ./artifacts
-          dotnet pack src/Arkn.Notifications/Arkn.Notifications.csproj                                   --configuration Release --no-build -o ./artifacts
-          dotnet pack src/Arkn.Extensions.Notifications.Slack/Arkn.Extensions.Notifications.Slack.csproj --configuration Release --no-build -o ./artifacts
-          dotnet pack src/Arkn.Analyzers/Arkn.Analyzers.csproj                                           --configuration Release --no-build -o ./artifacts
-          dotnet pack templates/Arkn.Templates.csproj                                                     --configuration Release -o ./artifacts
+          dotnet pack src/Arkn.Core/Arkn.Core.csproj                                                                         --configuration Release --no-build -o ./artifacts
+          dotnet pack src/Arkn.Results/Arkn.Results.csproj                                                                   --configuration Release --no-build -o ./artifacts
+          dotnet pack src/Arkn.Http/Arkn.Http.csproj                                                                         --configuration Release --no-build -o ./artifacts
+          dotnet pack src/Arkn.Logging/Arkn.Logging.csproj                                                                   --configuration Release --no-build -o ./artifacts
+          dotnet pack src/Arkn.Jobs/Arkn.Jobs.csproj                                                                         --configuration Release --no-build -o ./artifacts
+          dotnet pack src/Arkn.Notifications/Arkn.Notifications.csproj                                                       --configuration Release --no-build -o ./artifacts
+          dotnet pack src/Arkn.Extensions.Notifications.Slack/Arkn.Extensions.Notifications.Slack.csproj                     --configuration Release --no-build -o ./artifacts
+          dotnet pack src/Arkn.Extensions.Notifications.Email/Arkn.Extensions.Notifications.Email.csproj                     --configuration Release --no-build -o ./artifacts
+          dotnet pack src/Arkn.Analyzers/Arkn.Analyzers.csproj                                                               --configuration Release --no-build -o ./artifacts
+          dotnet pack src/Arkn.SourceGen/Arkn.SourceGen.csproj                                                               --configuration Release --no-build -o ./artifacts
+          dotnet pack src/Arkn.Extensions.Logging.ApplicationInsights/Arkn.Extensions.Logging.ApplicationInsights.csproj     --configuration Release --no-build -o ./artifacts
+          dotnet pack src/Arkn.Extensions.Logging.Seq/Arkn.Extensions.Logging.Seq.csproj                                     --configuration Release --no-build -o ./artifacts
+          dotnet pack src/Arkn.Extensions.Logging.Elasticsearch/Arkn.Extensions.Logging.Elasticsearch.csproj                 --configuration Release --no-build -o ./artifacts
+          dotnet pack src/Arkn.MCP/Arkn.MCP.csproj                                                                           --configuration Release --no-build -o ./artifacts
+          dotnet pack templates/Arkn.Templates.csproj                                                                         --configuration Release -o ./artifacts
 
       - name: List artifacts
         run: ls -lh ./artifacts/

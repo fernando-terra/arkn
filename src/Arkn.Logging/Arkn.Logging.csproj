@@ -7,7 +7,7 @@
     <LangVersion>preview</LangVersion>
     <RootNamespace>Arkn.Logging</RootNamespace>
     <AssemblyName>Arkn.Logging</AssemblyName>
-    <Version>0.1.6</Version>
+    <Version>0.2.0</Version>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Authors>Fernando Terra</Authors>
     <Description>Structured, sink-pluggable logging for Arkn — zero external dependencies.</Description>

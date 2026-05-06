@@ -7,7 +7,7 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>arkn-mcp</ToolCommandName>
     <PackageId>Arkn.MCP</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Authors>Fernando Terra</Authors>
     <Description>Arkn MCP Server — scaffolding and validation tools for AI assistants via Model Context Protocol</Description>
     <PackageTags>dotnet;mcp;ai;scaffold;arkn;claude;cursor</PackageTags>

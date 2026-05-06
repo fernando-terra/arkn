@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageType>Template</PackageType>
-    <PackageVersion>0.1.0</PackageVersion>
+    <PackageVersion>0.2.0</PackageVersion>
     <PackageId>Arkn.Templates</PackageId>
     <Title>Arkn .NET Templates</Title>
     <Authors>Fernando Terra</Authors>

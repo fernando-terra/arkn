@@ -10,6 +10,21 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.2.0] — 2026-05-06
+
+### Added
+- `Arkn.MCP` — MCP Server as `dotnet tool`; exposes `scaffold_errors`, `scaffold_job`, `scaffold_http_client`, `validate_pattern` (ARK001–ARK008), and `docs_lookup` to any compatible AI assistant (Claude, Cursor, Copilot)
+- `Arkn.SourceGen` — Roslyn incremental source generator; `[ArknErrors]` + `[ArknErrorCode]` generate `Error` factory methods
+- `Arkn.Extensions.Logging.Seq` — Seq sink via HTTP + CLEF, zero Serilog dependency (.NET 10+)
+- `Arkn.Extensions.Logging.Elasticsearch` — Elasticsearch Bulk API sink, zero NEST dependency (.NET 10+)
+- `Arkn.Extensions.Notifications.Email` — SMTP (native) and SendGrid (HTTP, zero SDK) email notifier
+- ARK005–ARK008 validation rules (raw HttpClient, ILogger over IArknLogger, throw in domain, swallowed catch)
+
+### Changed
+- All packages bumped to `v0.2.0`
+
+---
+
 ## [0.1.6] — 2026-05-05
 
 ### Added

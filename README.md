@@ -23,20 +23,20 @@ Arkn is a composable, zero-dependency .NET framework. Each package delivers one 
 | `Arkn.Logging` | Structured logging — ANSI console, rotating file, pluggable sinks | [![NuGet](https://img.shields.io/nuget/v/Arkn.Logging.svg)](https://www.nuget.org/packages/Arkn.Logging) |
 | `Arkn.Jobs` | Cron scheduler — retry, timeout, `Result<T>` contract, failure notifications | [![NuGet](https://img.shields.io/nuget/v/Arkn.Jobs.svg)](https://www.nuget.org/packages/Arkn.Jobs) |
 | `Arkn.Notifications` | Pluggable notifier — Slack, Email (SMTP + SendGrid), fan-out to N channels | [![NuGet](https://img.shields.io/nuget/v/Arkn.Notifications.svg)](https://www.nuget.org/packages/Arkn.Notifications) |
-| `Arkn.Analyzers` | Roslyn analyzers — ARK001–ARK004 enforcing Arkn patterns at compile time | [![NuGet](https://img.shields.io/nuget/v/Arkn.Analyzers.svg)](https://www.nuget.org/packages/Arkn.Analyzers) |
+| `Arkn.Analyzers` | Roslyn analyzers — ARK001–ARK008 enforcing Arkn patterns at compile time | [![NuGet](https://img.shields.io/nuget/v/Arkn.Analyzers.svg)](https://www.nuget.org/packages/Arkn.Analyzers) |
 | `Arkn.SourceGen` | Source generator — generates `Error` factories from `[ArknErrors]` partial classes | [![NuGet](https://img.shields.io/nuget/v/Arkn.SourceGen.svg)](https://www.nuget.org/packages/Arkn.SourceGen) |
 | `Arkn.Templates` | `dotnet new` templates — `arkn-api`, `arkn-job`, `arkn-lib` | [![NuGet](https://img.shields.io/nuget/v/Arkn.Templates.svg)](https://www.nuget.org/packages/Arkn.Templates) |
-| `Arkn.MCP` | MCP Server (`dotnet tool`) — scaffold + validate tools for AI assistants | ✅ v0.1.0 |
+| `Arkn.MCP` ✨ | MCP Server (`dotnet tool`) — scaffold + validate tools for AI assistants | [![NuGet](https://img.shields.io/nuget/v/Arkn.MCP.svg)](https://www.nuget.org/packages/Arkn.MCP) |
 
 ### Extensions
 
-| Package | What it does |
-|---|---|
-| `Arkn.Extensions.Logging.ApplicationInsights` | Application Insights sink for `Arkn.Logging` |
-| `Arkn.Extensions.Logging.Seq` | Seq sink via HTTP + CLEF — zero Serilog dependency (.NET 10+) |
-| `Arkn.Extensions.Logging.Elasticsearch` | Elasticsearch Bulk API sink — zero NEST dependency (.NET 10+) |
-| `Arkn.Extensions.Notifications.Slack` | Slack via Incoming Webhook + Block Kit |
-| `Arkn.Extensions.Notifications.Email` | SMTP + SendGrid email notifier |
+| Package | What it does | NuGet |
+|---|---|---|
+| `Arkn.Extensions.Logging.ApplicationInsights` | Application Insights sink for `Arkn.Logging` | [![NuGet](https://img.shields.io/nuget/v/Arkn.Extensions.Logging.ApplicationInsights.svg)](https://www.nuget.org/packages/Arkn.Extensions.Logging.ApplicationInsights) |
+| `Arkn.Extensions.Logging.Seq` | Seq sink via HTTP + CLEF — zero Serilog dependency (.NET 10+) | [![NuGet](https://img.shields.io/nuget/v/Arkn.Extensions.Logging.Seq.svg)](https://www.nuget.org/packages/Arkn.Extensions.Logging.Seq) |
+| `Arkn.Extensions.Logging.Elasticsearch` | Elasticsearch Bulk API sink — zero NEST dependency (.NET 10+) | [![NuGet](https://img.shields.io/nuget/v/Arkn.Extensions.Logging.Elasticsearch.svg)](https://www.nuget.org/packages/Arkn.Extensions.Logging.Elasticsearch) |
+| `Arkn.Extensions.Notifications.Slack` | Slack via Incoming Webhook + Block Kit | [![NuGet](https://img.shields.io/nuget/v/Arkn.Extensions.Notifications.Slack.svg)](https://www.nuget.org/packages/Arkn.Extensions.Notifications.Slack) |
+| `Arkn.Extensions.Notifications.Email` | SMTP + SendGrid email notifier | [![NuGet](https://img.shields.io/nuget/v/Arkn.Extensions.Notifications.Email.svg)](https://www.nuget.org/packages/Arkn.Extensions.Notifications.Email) |
 
 ---
 
