@@ -111,6 +111,62 @@ Topics: `result`, `error`, `iarknjob`, `iarknlogger`, `addarknhttp`, `analyzers`
 #### `list_arkn_types` *(v0.3.0)*
 Lists all Arkn types available in a given namespace or assembly with their summary docs.
 
+---
+
+### Refactoring *(v0.3.1)*
+
+#### `refactor_to_result`
+Converts C# code that uses exception-based error handling into the Arkn `Result<T>` pattern. Automatically:
+- Generates an `[ArknErrors]` class for the detected domain
+- Replaces `throw new XException(...)` with `DomainErrors.Reason(...)` calls
+- Changes `void` returns to `Result` and `T` returns to `Result<T>`
+- Converts rethrows and empty catch blocks
+
+```
+Input:  C# code with try/catch or throw statements, optional domain name
+Output: ErrorGroup class + refactored method with changes log
+```
+
+#### `migrate_exception`
+Converts a specific `catch` block into a `Result.Failure` return with the semantically correct Arkn `ErrorType`. Analyses the exception type (`ArgumentNullException` → `Validation`, `KeyNotFoundException` → `NotFound`, etc.) and preserves any existing logging.
+
+```
+Input:  A catch block, optional error code (Namespace.Reason)
+Output: Migrated catch block + Why-this-ErrorType explanation
+```
+
+---
+
+### Review & Explanation *(v0.3.1)*
+
+#### `explain_error`
+Explains an Arkn error code in natural language. Returns the error type, meaning, recommended HTTP status, when to use it, and a complete usage example (ErrorGroup definition, domain method, API endpoint handler).
+
+```
+Input:  Error code in Namespace.Reason format, e.g. "User.NotFound"
+Output: Markdown explanation with usage examples and HTTP mapping
+```
+
+#### `review_pattern`
+Like `validate_pattern` but returns a human-readable markdown code review instead of raw JSON. Includes a score (0–100), grade (A–F), grouped violations with descriptions, and actionable next steps.
+
+```
+Input:  C# source code, optional file name for the review header
+Output: Markdown review with score, grade, violations and recommendations
+```
+
+---
+
+### Test Generation *(v0.3.1)*
+
+#### `generate_tests`
+Generates xUnit unit tests for a method returning `Result` or `Result<T>`. Produces a success test and one failure test per error code. Uses NSubstitute for mocking. Tests follow the Arrange/Act/Assert pattern.
+
+```
+Input:  Method signature, class name, comma-separated error codes
+Output: Complete xUnit test class with success + failure test cases
+```
+
 ## Part of the Arkn ecosystem
 
 [github.com/fernando-terra/arkn](https://github.com/fernando-terra/arkn) · [nuget.org/packages/Arkn.MCP](https://www.nuget.org/packages/Arkn.MCP)

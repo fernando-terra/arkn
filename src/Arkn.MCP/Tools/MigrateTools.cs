@@ -90,6 +90,106 @@ public static class MigrateTools
         return sb.ToString();
     }
 
+    [McpServerTool, Description(
+        "Converts a C# catch block into a Result.Failure return with the semantically correct Arkn ErrorType. " +
+        "Analyses the exception type and message pattern to choose NotFound, Validation, Conflict, Unauthorized, Forbidden or Failure.")]
+    public static string MigrateException(
+        [Description("A C# catch block, e.g. 'catch (ArgumentNullException ex) { throw; }' or 'catch (Exception ex) { _logger.Log(ex); }'")] string catchBlock,
+        [Description("Error code to use (Namespace.Reason format). Leave empty to auto-generate from the exception type.")] string errorCode = "")
+    {
+        if (string.IsNullOrWhiteSpace(catchBlock))
+            return "Error: catch block cannot be empty.";
+
+        // ── Extract exception type and variable ───────────────────────────────
+        var catchMatch = Regex.Match(catchBlock,
+            @"catch\s*\(\s*(\w+(?:<[^>]+>)?)(?:\s+(\w+))?\s*\)");
+
+        var exType  = catchMatch.Success ? catchMatch.Groups[1].Value : "Exception";
+        var exVar   = catchMatch.Success && catchMatch.Groups[2].Length > 0
+                        ? catchMatch.Groups[2].Value : "ex";
+
+        // ── Classify exception to Arkn ErrorType ─────────────────────────────
+        var (suggestedReason, arkErrorType) = RefactorTools.ClassifyException(exType);
+
+        // ── Resolve error code ────────────────────────────────────────────────
+        string code;
+        if (!string.IsNullOrWhiteSpace(errorCode))
+        {
+            code = errorCode;
+        }
+        else
+        {
+            // Infer domain from context (class names, method names in catch block)
+            var domainMatch = Regex.Match(catchBlock, @"(\w+(?:Service|Repository|Handler|Manager))");
+            var domain = domainMatch.Success
+                ? Regex.Replace(domainMatch.Groups[1].Value, "(Service|Repository|Handler|Manager)$", "")
+                : "Domain";
+            domain = char.ToUpperInvariant(domain[0]) + domain[1..];
+            code   = $"{domain}.{suggestedReason}";
+        }
+
+        // ── Detect what the existing catch body does ──────────────────────────
+        var bodyMatch  = Regex.Match(catchBlock, @"\{(.*?)\}$", RegexOptions.Singleline);
+        var bodyRaw    = bodyMatch.Success ? bodyMatch.Groups[1].Value.Trim() : "";
+
+        // Detect: rethrow, empty, log-only, or has return
+        var hasRethrow = Regex.IsMatch(bodyRaw, @"\bthrow\s*;");
+        var hasReturn  = Regex.IsMatch(bodyRaw, @"\breturn\b");
+        var isEmpty    = string.IsNullOrWhiteSpace(bodyRaw) || bodyRaw == "{ }";
+        var isLogOnly  = !hasRethrow && !hasReturn &&
+                         Regex.IsMatch(bodyRaw, @"\b(logger|_logger|log|Log|Logger|Console)\b");
+
+        // ── Build the migrated catch block ────────────────────────────────────
+        var sb = new StringBuilder();
+        sb.AppendLine("// ── Migrated by Arkn.MCP migrate_exception ──────────────────────────────");
+        sb.AppendLine();
+        sb.AppendLine($"catch ({exType} {exVar})");
+        sb.AppendLine("{");
+
+        // Preserve non-trivial logging if present
+        if (isLogOnly)
+        {
+            var logLines = bodyRaw
+                .Split('\n', StringSplitOptions.RemoveEmptyEntries)
+                .Select(l => l.Trim())
+                .Where(l => !string.IsNullOrEmpty(l));
+            foreach (var l in logLines)
+                sb.AppendLine($"    {l}");
+        }
+
+        sb.AppendLine($"    return Result.Failure(Error.{arkErrorType}(\"{code}\", {exVar}.Message));");
+        sb.AppendLine("}");
+        sb.AppendLine();
+
+        // ── Explanation ───────────────────────────────────────────────────────
+        sb.AppendLine("// ── Why this ErrorType? ─────────────────────────────────────────────────");
+        sb.AppendLine($"// Exception type : {exType}");
+        sb.AppendLine($"// → Arkn ErrorType: Error.{arkErrorType}  (reason: {ExplainChoice(exType, arkErrorType)})");
+        sb.AppendLine($"// Error code      : \"{code}\"  (ARK002-compliant Namespace.Reason)");
+        sb.AppendLine();
+        sb.AppendLine("// ── Before / After summary ──────────────────────────────────────────────");
+
+        if (isEmpty)        sb.AppendLine("// Before: empty catch — exception was silently swallowed (ARK008)");
+        else if (hasRethrow) sb.AppendLine("// Before: rethrow — exception propagated as unhandled (ARK007 / ARK008)");
+        else if (isLogOnly)  sb.AppendLine("// Before: log-only catch — exception swallowed after logging (ARK008)");
+        else if (hasReturn)  sb.AppendLine("// Before: partial return — may have been incomplete");
+        else                 sb.AppendLine("// Before: custom body — review preserved lines above");
+
+        sb.AppendLine($"// After : Result.Failure returned — caller receives a typed, inspectable error");
+
+        return sb.ToString();
+    }
+
+    private static string ExplainChoice(string exType, string arkType) => (exType, arkType) switch
+    {
+        (_, "NotFound")     => "indicates the requested entity was not found",
+        (_, "Validation")   => "indicates bad/missing input data",
+        (_, "Conflict")     => "indicates a state conflict or duplicate",
+        (_, "Unauthorized") => "indicates authentication failure",
+        (_, "Forbidden")    => "indicates authorisation failure",
+        _                   => "generic unclassified failure — consider a more specific type",
+    };
+
     [McpServerTool, Description("Refactors C# code using raw HttpClient into a typed ArknHttpClient with Result-based error handling.")]
     public static string MigrateHttpClientToArkn(
         [Description("C# code that uses HttpClient directly")] string code)
