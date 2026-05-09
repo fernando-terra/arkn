@@ -37,6 +37,12 @@ jobs:
       - name: Build docs
         run: npm run docs:build
 
+      - name: Promote custom landing page
+        # docs/public/index.html is the hand-crafted landing page.
+        # VitePress overwrites dist/index.html with the one generated from
+        # docs/index.md, so we copy it back after the build.
+        run: cp docs/public/index.html docs/.vitepress/dist/index.html
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
