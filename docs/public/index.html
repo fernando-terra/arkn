@@ -197,6 +197,12 @@
     .step-header h3 { font-size: 1rem; font-weight: 600; margin: 0; }
     .step-body { padding-left: 52px; }
 
+    /* ── SHOWCASE responsive ── */
+    @media (max-width: 768px) {
+      .showcase-grid { grid-template-columns: 1fr !important; }
+      .showcase-left { border-right: none !important; border-bottom: 1px solid var(--border); }
+    }
+
     /* ── FOOTER ── */
     footer { border-top: 1px solid var(--border); padding: 2.5rem 2rem; text-align: center; }
     footer p { font-size: .85rem; color: var(--muted); }
@@ -780,6 +786,84 @@ services.<span class="m">AddArknJobs</span>(jobs =&gt;
       </div>
 
     </div><!-- /packages-grid -->
+  </div>
+</section>
+
+<!-- ── AIFEED SHOWCASE ── -->
+<section id="showcase" style="background: var(--bg); border-top: 1px solid var(--border);">
+  <div class="container">
+    <div class="section-badge">Built with Arkn</div>
+    <div class="section-title">See it in the wild.</div>
+    <p class="section-sub">AIFeed is an open-source AI news broker built entirely with Arkn packages — a real codebase you can read, fork, and deploy.</p>
+
+    <div class="showcase-grid" style="margin-top: 2.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; gap: 0;">
+
+      <!-- Left: description -->
+      <div class="showcase-left" style="padding: 2.5rem; border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 1.5rem;">
+        <div style="display: flex; align-items: center; gap: .8rem;">
+          <span style="font-size: 2rem;">🤖</span>
+          <div>
+            <div style="font-size: 1.2rem; font-weight: 700; letter-spacing: -.02em;">AIFeed</div>
+            <div style="font-size: .82rem; color: var(--muted);">AI News Broker · .NET 10 · Minimal API</div>
+          </div>
+        </div>
+
+        <p style="font-size: .9rem; color: var(--muted); line-height: 1.7;">Aggregates AI news from five sources — Hacker News, dev.to, arXiv, GitHub Trending, and Product Hunt — normalises them into a unified feed, and serves a public REST API with search, pagination, and daily digests.</p>
+
+        <div style="display: flex; flex-direction: column; gap: .75rem;">
+          <div style="font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600;">Arkn packages used</div>
+          <div style="display: flex; flex-wrap: wrap; gap: .5rem;">
+            <span style="font-family: var(--mono); font-size: .78rem; background: rgba(124,106,247,.1); color: var(--accent2); border: 1px solid rgba(124,106,247,.2); padding: .25rem .65rem; border-radius: 5px;">Arkn.Results</span>
+            <span style="font-family: var(--mono); font-size: .78rem; background: rgba(96,165,250,.08); color: var(--blue); border: 1px solid rgba(96,165,250,.2); padding: .25rem .65rem; border-radius: 5px;">Arkn.Http</span>
+            <span style="font-family: var(--mono); font-size: .78rem; background: rgba(52,211,153,.08); color: var(--green); border: 1px solid rgba(52,211,153,.2); padding: .25rem .65rem; border-radius: 5px;">Arkn.Jobs</span>
+            <span style="font-family: var(--mono); font-size: .78rem; background: rgba(251,191,36,.08); color: var(--yellow); border: 1px solid rgba(251,191,36,.2); padding: .25rem .65rem; border-radius: 5px;">Arkn.Logging</span>
+            <span style="font-family: var(--mono); font-size: .78rem; background: rgba(244,114,182,.08); color: var(--pink); border: 1px solid rgba(244,114,182,.2); padding: .25rem .65rem; border-radius: 5px;">Arkn.Templates</span>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: .6rem;">
+          <div style="display: flex; align-items: center; gap: .6rem; font-size: .85rem; color: var(--muted);"><span style="color: var(--green);">✓</span> Vertical slice architecture (Sources · Feed · Digest · Search)</div>
+          <div style="display: flex; align-items: center; gap: .6rem; font-size: .85rem; color: var(--muted);"><span style="color: var(--green);">✓</span> <code style="font-family:var(--mono);font-size:.82em">Result&lt;T&gt;</code> — one broken source never crashes the feed</div>
+          <div style="display: flex; align-items: center; gap: .6rem; font-size: .85rem; color: var(--muted);"><span style="color: var(--green);">✓</span> SQLite + auto refresh every 30min via <code style="font-family:var(--mono);font-size:.82em">Arkn.Jobs</code></div>
+          <div style="display: flex; align-items: center; gap: .6rem; font-size: .85rem; color: var(--muted);"><span style="color: var(--green);">✓</span> Spike arrest + per-IP rate limiting (public API)</div>
+        </div>
+
+        <div style="display: flex; gap: .8rem; flex-wrap: wrap; margin-top: auto; padding-top: .5rem;">
+          <a href="https://fernando-terra.github.io/aifeed/" target="_blank" rel="noopener" class="btn btn-primary" style="gap:.5rem;">🤖 Open AIFeed →</a>
+          <a href="https://github.com/fernando-terra/aifeed" target="_blank" rel="noopener" class="btn btn-ghost">View Source</a>
+        </div>
+      </div>
+
+      <!-- Right: live snippet -->
+      <div style="padding: 2.5rem; display: flex; flex-direction: column; gap: 1.2rem;">
+        <div style="font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600;">How Arkn.Results isolates source failures</div>
+        <div class="code-block" style="flex: 1;">
+          <div class="code-header"><span class="code-lang">csharp — HackerNewsSource.cs</span></div>
+          <pre style="font-size:.78rem;"><span class="k">public async</span> <span class="t">Task</span>&lt;<span class="t">Result</span>&lt;<span class="t">IReadOnlyList</span>&lt;<span class="t">FeedItem</span>&gt;&gt;&gt; <span class="m">FetchAsync</span>(<span class="t">CancellationToken</span> ct)
+{
+    <span class="k">try</span>
+    {
+        <span class="k">var</span> response = <span class="k">await</span> http.<span class="m">GetFromJsonAsync</span>&lt;<span class="t">HnResponse</span>&gt;(Url, ct);
+        <span class="k">if</span> (response <span class="k">is null</span>)
+            <span class="k">return</span> <span class="t">Result</span>.<span class="m">Failure</span>&lt;<span class="t">IReadOnlyList</span>&lt;<span class="t">FeedItem</span>&gt;&gt;(
+                <span class="t">Error</span>.<span class="m">Failure</span>(<span class="s">"HN.Empty"</span>, <span class="s">"Empty response"</span>));
+
+        <span class="k">return</span> <span class="t">Result</span>.<span class="m">Success</span>(response.<span class="p">Hits</span>.<span class="m">ToFeedItems</span>());
+    }
+    <span class="k">catch</span> (<span class="t">HttpRequestException</span> ex)
+    {
+        <span class="c">// Failure is returned — not thrown.</span>
+        <span class="c">// RefreshFeedJob logs and continues to the next source.</span>
+        <span class="k">return</span> <span class="t">Result</span>.<span class="m">Failure</span>&lt;<span class="t">IReadOnlyList</span>&lt;<span class="t">FeedItem</span>&gt;&gt;(
+            <span class="t">Error</span>.<span class="m">Failure</span>(<span class="s">"HN.HttpError"</span>, ex.<span class="p">Message</span>));
+    }
+}</pre>
+        </div>
+        <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.2rem; font-size: .82rem; color: var(--muted); line-height: 1.7;">
+          <span style="color: var(--accent2); font-weight: 600;">Why it matters —</span> Five external sources. Any can go down. <code style="font-family:var(--mono);font-size:.85em">Result&lt;T&gt;</code> makes that an explicit, composable outcome instead of a silent crash.
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
