@@ -68,7 +68,27 @@
     .nav-links a:hover { color: var(--text); text-decoration: none; }
     .nav-gh { background: var(--border2); border: 1px solid var(--border2); color: var(--text) !important; padding: .3rem .8rem; border-radius: 6px; font-size: .85rem; font-weight: 500; transition: background .15s; }
     .nav-gh:hover { background: var(--border); text-decoration: none !important; }
-    @media (max-width: 600px) { .nav-links a:not(.nav-gh) { display: none; } }
+    .hamburger {
+      display: none; background: none; border: 1px solid var(--border);
+      color: var(--text); border-radius: 6px; padding: 5px 8px;
+      cursor: pointer; font-size: 16px; line-height: 1;
+    }
+    .mobile-menu {
+      display: none; flex-direction: column; gap: 0;
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      position: sticky; top: 58px; z-index: 99;
+    }
+    .mobile-menu a {
+      padding: 14px 20px; color: var(--muted); font-size: .9rem;
+      border-bottom: 1px solid var(--border); text-decoration: none;
+    }
+    .mobile-menu a:hover { color: var(--text); background: var(--bg); }
+    .mobile-menu a:last-child { border-bottom: none; }
+    .mobile-menu.open { display: flex; }
+    @media (max-width: 600px) {
+      .nav-links a:not(.nav-gh) { display: none; }
+      .hamburger { display: block; }
+    }
 
     /* ── LAYOUT HELPERS ── */
     .container { max-width: 1080px; margin: 0 auto; padding: 0 2rem; }
@@ -221,7 +241,15 @@
     <a href="/arkn/getting-started">Docs</a>
     <a href="https://github.com/fernando-terra/arkn" target="_blank" class="nav-gh">GitHub →</a>
   </div>
+  <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">☰</button>
 </nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#copilot" onclick="closeMenu()">MCP ✨</a>
+  <a href="#packages" onclick="closeMenu()">Packages</a>
+  <a href="#showcase" onclick="closeMenu()">AIFeed Demo</a>
+  <a href="/arkn/getting-started" onclick="closeMenu()">Docs</a>
+  <a href="https://github.com/fernando-terra/arkn" target="_blank">GitHub →</a>
+</div>
 
 <!-- ── HERO ── -->
 <section class="hero">
@@ -973,5 +1001,17 @@ function copyInstall(el, cmd) {
 })();
 </script>
 
+<script>
+  function toggleMenu() {
+    const m = document.getElementById('mobile-menu');
+    const btn = document.querySelector('.hamburger');
+    const open = m.classList.toggle('open');
+    btn.textContent = open ? '✕' : '☰';
+  }
+  function closeMenu() {
+    document.getElementById('mobile-menu').classList.remove('open');
+    document.querySelector('.hamburger').textContent = '☰';
+  }
+</script>
 </body>
 </html>
