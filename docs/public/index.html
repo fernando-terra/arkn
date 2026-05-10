@@ -872,26 +872,35 @@ services.<span class="m">AddArknJobs</span>(jobs =&gt;
             <span class="code-lang">csharp — HackerNewsSource.cs</span>
             <button class="copy-btn" onclick="copyCode(this)">copy</button>
           </div>
-          <pre><span class="k">public async</span> <span class="t">Task</span>&lt;<span class="t">Result</span>&lt;<span class="t">IReadOnlyList</span>&lt;<span class="t">FeedItem</span>&gt;&gt;&gt;
-    <span class="m">FetchAsync</span>(<span class="t">CancellationToken</span> ct)
+          <pre><span class="k">public sealed class</span> <span class="t">HackerNewsSource</span>(<span class="t">HttpClient</span> http) : <span class="t">IFeedSource</span>
 {
-    <span class="k">try</span>
-    {
-        <span class="k">var</span> res = <span class="k">await</span> http
-            .<span class="m">GetFromJsonAsync</span>&lt;<span class="t">HnResponse</span>&gt;(Url, ct);
+    <span class="k">public string</span> <span class="p">Id</span> =&gt; <span class="s">"hackernews"</span>;
 
-        <span class="k">if</span> (res <span class="k">is null</span>)
-            <span class="k">return</span> <span class="t">Result</span>.<span class="m">Failure</span>&lt;...&gt;(
-                <span class="t">Error</span>.<span class="m">Failure</span>(<span class="s">"HN.Empty"</span>, <span class="s">"No data"</span>));
-
-        <span class="k">return</span> <span class="t">Result</span>.<span class="m">Success</span>(res.<span class="p">Hits</span>.<span class="m">ToFeedItems</span>());
-    }
-    <span class="k">catch</span> (<span class="t">HttpRequestException</span> ex)
+    <span class="k">public async</span> <span class="t">Task</span>&lt;<span class="t">Result</span>&lt;<span class="t">IReadOnlyList</span>&lt;<span class="t">FeedItem</span>&gt;&gt;&gt;
+        <span class="m">FetchAsync</span>(<span class="t">CancellationToken</span> ct = <span class="k">default</span>)
     {
-        <span class="c">// Failure returned, not thrown.</span>
-        <span class="c">// RefreshFeedJob logs &amp; moves to the next source.</span>
-        <span class="k">return</span> <span class="t">Result</span>.<span class="m">Failure</span>&lt;...&gt;(
-            <span class="t">Error</span>.<span class="m">Failure</span>(<span class="s">"HN.HttpError"</span>, ex.<span class="p">Message</span>));
+        <span class="k">try</span>
+        {
+            <span class="k">var</span> data = <span class="k">await</span> http.<span class="m">GetFromJsonAsync</span>&lt;<span class="t">HnResponse</span>&gt;(Url, ct);
+
+            <span class="k">if</span> (data <span class="k">is null</span>)
+                <span class="k">return</span> <span class="t">Result</span>.<span class="m">Failure</span>&lt;<span class="t">IReadOnlyList</span>&lt;<span class="t">FeedItem</span>&gt;&gt;(
+                    <span class="t">Error</span>.<span class="m">Failure</span>(<span class="s">"HN.Empty"</span>, <span class="s">"Empty response"</span>));
+
+            <span class="k">var</span> items = data.<span class="p">Hits</span>
+                .<span class="m">Where</span>(h =&gt; h.<span class="p">Url</span> <span class="k">is not null</span>)
+                .<span class="m">Select</span>(h =&gt; <span class="k">new</span> <span class="t">FeedItem</span> { <span class="p">Title</span> = h.<span class="p">Title</span>!, <span class="p">Url</span> = h.<span class="p">Url</span>! })
+                .<span class="m">ToList</span>().<span class="m">AsReadOnly</span>();
+
+            <span class="k">return</span> <span class="t">Result</span>.<span class="m">Success</span>&lt;<span class="t">IReadOnlyList</span>&lt;<span class="t">FeedItem</span>&gt;&gt;(items);
+        }
+        <span class="k">catch</span> (<span class="t">HttpRequestException</span> ex)
+        {
+            <span class="c">// Failure returned, never thrown — one broken</span>
+            <span class="c">// source never takes down the rest of the feed.</span>
+            <span class="k">return</span> <span class="t">Result</span>.<span class="m">Failure</span>&lt;<span class="t">IReadOnlyList</span>&lt;<span class="t">FeedItem</span>&gt;&gt;(
+                <span class="t">Error</span>.<span class="m">Failure</span>(<span class="s">"HN.HttpError"</span>, ex.<span class="p">Message</span>));
+        }
     }
 }</pre>
         </div>
