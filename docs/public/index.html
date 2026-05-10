@@ -824,84 +824,63 @@ services.<span class="m">AddArknJobs</span>(jobs =&gt;
 <section id="showcase" class="copilot-section">
   <div class="container">
     <div class="section-badge">Built with Arkn</div>
-    <div class="section-title">See it in the wild.</div>
-    <p class="section-sub">AIFeed is an open-source AI news broker built entirely with Arkn — a real codebase you can read, fork, and deploy.</p>
+    <div class="section-title">AIFeed — a real app, open source.</div>
+    <p class="section-sub">An AI news broker that aggregates Hacker News, dev.to, arXiv, GitHub Trending and Product Hunt into one API — built entirely with Arkn packages.</p>
 
-    <div class="copilot-grid" style="margin-top: 2.5rem;">
-
-      <!-- Left: what it is -->
-      <div>
-        <div class="pkg-card" style="margin-bottom: 1.5rem;">
-          <div class="pkg-header">
-            <div class="pkg-meta">
-              <div class="pkg-name">🤖 AIFeed <span class="pkg-version">demo</span></div>
-              <div class="pkg-desc">AI news broker — aggregates Hacker News, dev.to, arXiv, GitHub Trending and Product Hunt into a single REST API with search, pagination, and daily digests.</div>
-            </div>
-          </div>
-          <div class="pkg-tags">
-            <span class="tag">Arkn.Results</span>
-            <span class="tag">Arkn.Http</span>
-            <span class="tag">Arkn.Jobs</span>
-            <span class="tag">Arkn.Logging</span>
-            <span class="tag">Arkn.Templates</span>
-          </div>
-          <div class="pkg-nuget" style="justify-content: flex-start; gap: 1rem;">
-            <a href="https://fernando-terra.github.io/aifeed/" target="_blank" rel="noopener" class="btn btn-primary">Open Live Demo →</a>
-            <a href="https://github.com/fernando-terra/aifeed" target="_blank" rel="noopener" class="btn btn-ghost">View Source</a>
+    <div class="copilot-grid">
+      <div class="copilot-steps">
+        <div class="copilot-step">
+          <div class="step-num">1</div>
+          <div>
+            <h4>Vertical slice architecture</h4>
+            <p><code>Sources</code>, <code>Feed</code>, <code>Digest</code> and <code>Search</code> are fully isolated features — no shared application layer, no coupling between slices.</p>
           </div>
         </div>
-
-        <div class="copilot-steps">
-          <div class="copilot-step">
-            <div class="step-num">1</div>
-            <div>
-              <h4>Vertical slice architecture</h4>
-              <p>Features <code>Sources</code>, <code>Feed</code>, <code>Digest</code>, and <code>Search</code> live in isolated folders. Zero shared application layer.</p>
-            </div>
+        <div class="copilot-step">
+          <div class="step-num">2</div>
+          <div>
+            <h4>Five sources, zero coupling</h4>
+            <p>Each adapter implements <code>IFeedSource</code> and returns <code>Result&lt;T&gt;</code>. One broken source never crashes the feed — the job logs and moves on.</p>
           </div>
-          <div class="copilot-step">
-            <div class="step-num">2</div>
-            <div>
-              <h4>Five sources, zero coupling</h4>
-              <p>Each adapter implements <code>IFeedSource</code> and returns <code>Result&lt;T&gt;</code>. One broken source never crashes the feed.</p>
-            </div>
+        </div>
+        <div class="copilot-step">
+          <div class="step-num">3</div>
+          <div>
+            <h4>Jobs + auto-cleanup via Arkn.Jobs</h4>
+            <p>Refresh runs every 30 min. A daily cleanup purges items older than 7 days. No external scheduler, no infrastructure overhead.</p>
           </div>
-          <div class="copilot-step">
-            <div class="step-num">3</div>
-            <div>
-              <h4>Jobs + auto-cleanup</h4>
-              <p><code>Arkn.Jobs</code> runs a refresh every 30 min and purges items older than 7 days — no external scheduler needed.</p>
-            </div>
+        </div>
+        <div class="copilot-step">
+          <div class="step-num">4</div>
+          <div>
+            <h4>Public API with rate limiting</h4>
+            <p>Spike arrest (20 req/s global) + sliding window per IP (100 req/min). Live at <code>aifeed.bluezee.dev</code> with a GitHub Pages UI.</p>
           </div>
+        </div>
+        <div class="cta-group" style="justify-content: flex-start; margin-top: 1rem;">
+          <a href="https://fernando-terra.github.io/aifeed/" target="_blank" rel="noopener" class="btn btn-primary">Open Live Demo →</a>
+          <a href="https://github.com/fernando-terra/aifeed" target="_blank" rel="noopener" class="btn btn-ghost">View Source</a>
         </div>
       </div>
 
-      <!-- Right: focused code snippet -->
-      <div>
-        <div class="code-block">
-          <div class="code-header">
-            <span class="code-lang">csharp — RefreshFeedJob.cs</span>
-            <button class="copy-btn" onclick="copyCode(this)">copy</button>
-          </div>
-          <pre><span class="k">foreach</span> (<span class="k">var</span> source <span class="k">in</span> _sources)
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">csharp — RefreshFeedJob.cs</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><span class="k">foreach</span> (<span class="k">var</span> source <span class="k">in</span> _sources)
 {
     <span class="k">var</span> result = <span class="k">await</span> source.<span class="m">FetchAsync</span>(ct);
 
     <span class="k">if</span> (result.<span class="p">IsFailure</span>)
     {
-        _logger.<span class="m">Warning</span>(<span class="s">$"[{source.Id}] {result.Error.Message}"</span>);
-        <span class="k">continue</span>; <span class="c">// next source</span>
+        _logger.<span class="m">Warning</span>(<span class="s">$"[{source.<span class="p">Id</span>}] {result.<span class="p">Error</span>.<span class="p">Message</span>}"</span>);
+        <span class="k">continue</span>; <span class="c">// next source — feed stays up</span>
     }
 
     <span class="k">await</span> <span class="m">UpsertAsync</span>(result.<span class="p">Value</span>, ct);
 }</pre>
-        </div>
-        <div class="problem-answer" style="margin-top: 1rem;">
-          <code>Result&lt;T&gt;</code> turns source failures into explicit, composable values.
-          The job logs and moves on — the feed stays up even when one source goes down.
-        </div>
       </div>
-
     </div>
   </div>
 </section>
