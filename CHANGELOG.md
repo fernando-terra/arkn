@@ -10,6 +10,24 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.3.1] — 2026-05-28
+
+### Added
+- Multi-targeting support across all applicable packages (`net8.0;net9.0;net10.0`).
+- Documentation overhaul: fully rewritten `README.md`, Landing Page (`index.md`), and Getting Started guide (`getting-started.md`) to emphasize Zero Lock-in, DDD, and Failures as First-Class.
+
+### Changed
+- All packages bumped to `v0.3.1`
+- Refactored xUnit tests to use standard `async/await` semantics and removed discouraged obsolete APIs (`SYSLIB0057`).
+- Suppressed `CS1591` (Missing XML Documentation) globally across all projects to ensure a flawless warning-free build without machine-generated XML stubs.
+
+### Fixed
+- Fixed `.NET 8` build compatibility by downgrading C# 13 `System.Threading.Lock` back to standard generic `object` locks where applicable.
+- Fixed NuGet deployment pipeline authentication (`401 Unauthorized`) via secret rotation.
+- **0 Warnings / 0 Code Smells**: comprehensive code quality pass addressing Roslyn analyzer warnings (RS1032, RS2008), XML tag errors (CS1574, CS1734), and test assertions (xUnit 2012, 2013).
+
+---
+
 ## [0.3.0] — 2026-05-06
 
 ### Added
@@ -110,3 +128,4 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 [0.2.0]: https://github.com/fernando-terra/arkn/compare/v0.1.6...v0.2.0
 [0.1.6]: https://github.com/fernando-terra/arkn/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/fernando-terra/arkn/releases/tag/v0.1.5
+[0.3.1]: https://github.com/fernando-terra/arkn/compare/v0.3.0...v0.3.1
