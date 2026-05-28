@@ -30,8 +30,8 @@ public sealed class ArknHttpResponseHandler
     /// </summary>
     /// <typeparam name="T">Expected response type.</typeparam>
     /// <returns>
-    /// <see cref="Result{T}.Success"/> with the deserialized value,
-    /// or <see cref="Result{T}.Failure"/> with a mapped <see cref="Error"/>.
+    /// <c>Success</c> with the deserialized value,
+    /// or <c>Failure</c> with a mapped <see cref="Error"/>.
     /// </returns>
     public async Task<Result<T>> As<T>()
     {

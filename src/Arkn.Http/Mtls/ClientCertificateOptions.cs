@@ -19,7 +19,9 @@ public sealed class ClientCertificateOptions
 
     /// <summary>Loads a PFX/PKCS#12 file.</summary>
     public static ClientCertificateOptions FromPfx(string path, string? password = null) =>
+        #pragma warning disable SYSLIB0057
         new() { Certificate = new X509Certificate2(path, password) };
+#pragma warning restore SYSLIB0057
 
     /// <summary>Loads from PEM-encoded certificate and private key files (.pem / .crt / .key).</summary>
     public static ClientCertificateOptions FromPem(string certPemPath, string keyPemPath) =>

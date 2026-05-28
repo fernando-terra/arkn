@@ -23,7 +23,7 @@ internal static class Descriptors
     public static readonly DiagnosticDescriptor ARK002_ErrorCodeMustFollowNamingConvention = new(
         id:                 "ARK002",
         title:              "Error code must follow 'Namespace.Reason' pattern",
-        messageFormat:      "Error code '{0}' does not follow the 'Namespace.Reason' naming convention (e.g. 'User.NotFound', 'Order.InvalidState')",
+        messageFormat:      "Error code '{0}' does not follow the 'Namespace.Reason' naming convention (e.g. 'User.NotFound', 'Order.InvalidState').",
         category:           Category,
         defaultSeverity:    DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
@@ -33,7 +33,7 @@ internal static class Descriptors
     public static readonly DiagnosticDescriptor ARK003_ResultMustNotBeSilentlyDiscarded = new(
         id:                 "ARK003",
         title:              "Result must not be silently discarded",
-        messageFormat:      "The Result returned by '{0}' is being discarded. Handle the result or assign it to a variable",
+        messageFormat:      "The Result returned by '{0}' is being discarded. Handle the result or assign it to a variable.",
         category:           Category,
         defaultSeverity:    DiagnosticSeverity.Warning,
         isEnabledByDefault: true,

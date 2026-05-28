@@ -48,7 +48,7 @@ public class SeqSinkTests
     }
 
     [Fact]
-    public void Write_ShouldProduceClefJson()
+    public async Task Write_ShouldProduceClefJson()
     {
         var (sink, requests) = BuildWithFakeHttp();
         sink.Write(MakeEntry(scope: "run-abc"));
@@ -57,7 +57,7 @@ public class SeqSinkTests
         Thread.Sleep(100);
         Assert.Single(requests);
 
-        var body = requests[0].Content!.ReadAsStringAsync().Result;
+        var body = await requests[0].Content!.ReadAsStringAsync();
         Assert.Contains("@t", body);
         Assert.Contains("@mt", body);
         Assert.Contains("@l", body);

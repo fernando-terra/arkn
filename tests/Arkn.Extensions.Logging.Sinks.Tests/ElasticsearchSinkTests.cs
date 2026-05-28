@@ -38,14 +38,14 @@ public class ElasticsearchSinkTests
     }
 
     [Fact]
-    public void Write_ShouldProduceNdJsonWithActionAndDocument()
+    public async Task Write_ShouldProduceNdJsonWithActionAndDocument()
     {
         var (sink, requests) = BuildWithFakeHttp();
         sink.Write(MakeEntry());
         sink.Write(MakeEntry());
 
         Thread.Sleep(100);
-        var body  = requests[0].Content!.ReadAsStringAsync().Result;
+        var body  = await requests[0].Content!.ReadAsStringAsync();
         var lines = body.Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
         // Bulk format: alternating action + document lines
@@ -56,7 +56,7 @@ public class ElasticsearchSinkTests
     }
 
     [Fact]
-    public void IndexPattern_ShouldResolveDate()
+    public async Task IndexPattern_ShouldResolveDate()
     {
         var requests = new List<HttpRequestMessage>();
         var handler  = new FakeHttpHandler(requests);
@@ -66,7 +66,7 @@ public class ElasticsearchSinkTests
         sink.Write(MakeEntry());
         Thread.Sleep(100);
 
-        var body = requests.FirstOrDefault()?.Content?.ReadAsStringAsync().Result ?? "";
+        var body = await (requests.FirstOrDefault()?.Content?.ReadAsStringAsync() ?? Task.FromResult("")) ?? "";
         Assert.Contains($"logs-{DateTimeOffset.UtcNow:yyyy-MM-dd}", body);
     }
 

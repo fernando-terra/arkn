@@ -3,8 +3,8 @@ using System.Net.Http.Headers;
 namespace Arkn.Http.Auth;
 
 /// <summary>
-/// Bearer-token interceptor. Fetches a token via <paramref name="tokenFactory"/>,
-/// caches it in <see cref="IArknTokenStore"/> under <paramref name="storeKey"/>,
+/// Bearer-token interceptor. Fetches a token via the provided factory,
+/// caches it in <see cref="IArknTokenStore"/> under the provided store key,
 /// and attaches it as <c>Authorization: Bearer &lt;token&gt;</c> on every request.
 /// Tokens are cached for 55 minutes by default.
 /// </summary>

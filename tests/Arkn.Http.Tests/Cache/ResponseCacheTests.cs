@@ -86,12 +86,12 @@ public sealed class ResponseCachePipelineTests
         // First request — cache miss, sends request
         var r1 = await http.Request("/users/1").Get().As<UserDto>();
         Assert.True(r1.IsSuccess);
-        Assert.Equal(1, handler.CapturedRequests.Count);
+        Assert.Single(handler.CapturedRequests);
 
         // Second request — cache hit, no new HTTP call
         var r2 = await http.Request("/users/1").Get().As<UserDto>();
         Assert.True(r2.IsSuccess);
-        Assert.Equal(1, handler.CapturedRequests.Count); // still 1
+        Assert.Single(handler.CapturedRequests); // still 1
         Assert.Equal("Alice", r2.Value.Name);
     }
 
@@ -106,7 +106,7 @@ public sealed class ResponseCachePipelineTests
         var result = await http.Request("/users/2").Get().As<UserDto>();
 
         Assert.True(result.IsSuccess);
-        Assert.Equal(1, handler.CapturedRequests.Count);
+        Assert.Single(handler.CapturedRequests);
         Assert.Equal("Bob", result.Value.Name);
     }
 
@@ -127,7 +127,7 @@ public sealed class ResponseCachePipelineTests
 
         var r1 = await http.Request("/users/3").Get().As<UserDto>();
         Assert.Equal("First", r1.Value.Name);
-        Assert.Equal(1, handler.CapturedRequests.Count);
+        Assert.Single(handler.CapturedRequests);
 
         await Task.Delay(100); // let the cache expire
 

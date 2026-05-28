@@ -141,7 +141,7 @@ public sealed class ArknHttpClientTests
 
         Assert.True(result.IsFailure);
         Assert.Equal("Http.BadRequest", result.Error.Code);
-        Assert.Equal(1, handler.CapturedRequests.Count); // only 1 attempt
+        Assert.Single(handler.CapturedRequests); // only 1 attempt
     }
 
     // ── Helpers ────────────────────────────────────────────────────────────────

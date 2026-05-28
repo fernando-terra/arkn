@@ -23,7 +23,7 @@ public class ListArknTypesTests
         var result = AnalysisTools.ListArknTypes([code]);
         var doc    = JsonDocument.Parse(result);
         var jobs   = doc.RootElement.GetProperty("jobs").EnumerateArray().ToList();
-        Assert.True(jobs.Any(j => j.GetProperty("name").GetString() == "InvoiceProcessorJob"));
+        Assert.Contains(jobs, j => j.GetProperty("name").GetString() == "InvoiceProcessorJob");
     }
 
     [Fact]

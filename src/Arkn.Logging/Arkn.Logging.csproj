@@ -4,6 +4,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
     <LangVersion>preview</LangVersion>
     <RootNamespace>Arkn.Logging</RootNamespace>
     <AssemblyName>Arkn.Logging</AssemblyName>

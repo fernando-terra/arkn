@@ -81,14 +81,14 @@ public class InMemoryLogSinkTests
     }
 
     [Fact]
-    public void Write_IsThreadSafe()
+    public async Task Write_IsThreadSafe()
     {
         var sink = new InMemoryLogSink(maxEntries: 10_000);
         var tasks = Enumerable.Range(0, 100)
             .Select(i => Task.Run(() => sink.Write(MakeEntry(ArknLogLevel.Info, $"msg-{i}"))))
             .ToArray();
 
-        Task.WaitAll(tasks);
+        await Task.WhenAll(tasks);
 
         Assert.Equal(100, sink.Count);
     }

@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 namespace Arkn.Http.Cache;
 
 /// <summary>
-/// Thread-safe in-memory HTTP response cache backed by a <see cref="ConcurrentDictionary"/>.
+/// Thread-safe in-memory HTTP response cache backed by a <c>ConcurrentDictionary</c>.
 /// Cache keys are formed from the HTTP method and the full request URI.
 /// Entries expire lazily: they are checked on every read and evicted if past their TTL.
 /// </summary>
