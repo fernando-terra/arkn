@@ -8,7 +8,7 @@
     <Description>dotnet new templates for the Arkn ecosystem — API, Worker and Library starters.</Description>
     <PackageTags>dotnet;templates;arkn;csharp;clean-architecture</PackageTags>
     <RepositoryUrl>https://github.com/fernando-terra/arkn</RepositoryUrl>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
     <IncludeContentInPack>true</IncludeContentInPack>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <ContentTargetFolders>content</ContentTargetFolders>
