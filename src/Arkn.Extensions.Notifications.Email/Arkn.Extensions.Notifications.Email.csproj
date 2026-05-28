@@ -7,7 +7,7 @@
     <LangVersion>preview</LangVersion>
     <RootNamespace>Arkn.Extensions.Notifications.Email</RootNamespace>
     <AssemblyName>Arkn.Extensions.Notifications.Email</AssemblyName>
-    <Version>0.3.0</Version>
+    <Version>0.3.1</Version>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Authors>Fernando Terra</Authors>
     <Description>Email notifier for Arkn.Notifications — SMTP (System.Net.Mail) and SendGrid HTTP. Zero external SDK dependency.</Description>

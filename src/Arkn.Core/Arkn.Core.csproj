@@ -7,7 +7,7 @@
     <LangVersion>preview</LangVersion>
     <RootNamespace>Arkn.Core</RootNamespace>
     <AssemblyName>Arkn.Core</AssemblyName>
-    <Version>0.3.0</Version>
+    <Version>0.3.1</Version>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Authors>Fernando Terra</Authors>
     <Description>Architecture Kernel for modern .NET — core abstractions and primitives. Zero external dependencies.</Description>
