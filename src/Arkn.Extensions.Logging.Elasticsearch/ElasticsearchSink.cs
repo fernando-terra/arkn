@@ -16,7 +16,7 @@ public sealed class ElasticsearchSink : IArknLogSink, IDisposable
     private readonly HttpClient                 _http;
     private readonly ElasticsearchSinkOptions   _options;
     private readonly List<LogEntry>             _buffer = [];
-    private readonly Lock                       _lock   = new();
+    private readonly object _lock = new object();
     private readonly Timer                      _timer;
 
     public ElasticsearchSink(ElasticsearchSinkOptions options) : this(new HttpClient(), options) { }

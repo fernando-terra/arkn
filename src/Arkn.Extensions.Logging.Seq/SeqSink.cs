@@ -17,7 +17,7 @@ public sealed class SeqSink : IArknLogSink, IDisposable
     private readonly HttpClient        _http;
     private readonly SeqSinkOptions    _options;
     private readonly List<LogEntry>    _buffer = [];
-    private readonly Lock              _lock   = new();
+    private readonly object _lock = new object();
     private readonly Timer             _timer;
     private readonly string            _endpoint;
 

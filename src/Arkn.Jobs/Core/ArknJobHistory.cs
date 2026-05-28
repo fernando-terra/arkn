@@ -9,7 +9,7 @@ namespace Arkn.Jobs.Core;
 public sealed class ArknJobHistory
 {
     private readonly Dictionary<string, LinkedList<ArknJobExecution>> _history = new();
-    private readonly Lock _lock = new();
+    private readonly object _lock = new object();
 
     /// <summary>Maximum executions retained per job name.</summary>
     public int MaxRunsPerJob { get; }
