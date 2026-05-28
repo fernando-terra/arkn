@@ -4,7 +4,7 @@ layout: home
 hero:
   name: Arkn
   text: Conventions you can read.
-  tagline: Patterns you can enforce. A composable .NET framework where every failure is explicit, every pattern is enforced at compile time, and AI assistants generate correct code on the first try.
+  tagline: Patterns you can enforce. A zero-dependency .NET framework tailored for Clean Architecture and DDD, where failures are explicit and lock-in is eliminated.
   actions:
     - theme: brand
       text: Get Started
@@ -15,21 +15,21 @@ hero:
 
 features:
   - icon: 🎯
-    title: Result<T> everywhere
-    details: Every operation that can fail returns Result<T>. No hidden nulls, no surprise exceptions, no ambiguous contracts.
+    title: Failures as First-Class
+    details: Stop using exceptions for control flow. Every operation that can fail returns Result<T>. No hidden nulls, no surprise exceptions, no ambiguous contracts.
   - icon: ⚙️
-    title: Zero external dependencies
-    details: Core packages depend only on the .NET BCL. No Polly, no Serilog, no Hangfire. You bring your own tools.
+    title: Zero Vendor Lock-in
+    details: The core packages (Arkn.Core, Arkn.Results) have zero external NuGet dependencies. Your domain remains pure. No MediatR or EFCore in the center.
   - icon: 🔍
-    title: Compile-time enforcement
-    details: ARK001–ARK008 Roslyn analyzers enforce Arkn patterns at build time, before code reaches production.
+    title: Compile-Time Enforcement
+    details: Arkn ships with Roslyn Analyzers (ARK001–ARK008) to enforce architectural patterns at build time, rejecting code smells before they reach production.
   - icon: 🤖
-    title: MCP-native
-    details: The first .NET framework with a native Model Context Protocol server. Claude, Cursor, and Copilot scaffold correct code on the first try.
+    title: AI-Native (MCP)
+    details: The first .NET framework with a native Model Context Protocol server. Claude, Cursor, and Copilot scaffold correct DDD code on the first try, without hallucinations.
   - icon: 🧩
-    title: Composable
-    details: Install only what you need. Every package is independently useful and integrates naturally with the others.
+    title: Composable by Design
+    details: Install only what you need. Need scheduling? Use Arkn.Jobs. Need a typed HTTP client? Use Arkn.Http. You are never forced to adopt the entire ecosystem.
   - icon: 📦
-    title: 16 packages, one ecosystem
-    details: Results, HTTP, Jobs, Logging, Notifications, Analyzers, SourceGen, MCP — all following the same conventions.
+    title: Built for .NET 8 | 9 | 10
+    details: Multi-targeted from the ground up to support the latest modern C# features while maintaining compatibility with your current LTS projects.
 ---

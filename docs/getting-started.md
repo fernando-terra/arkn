@@ -1,47 +1,81 @@
 # Getting Started
 
-> **v0.3.0** — This guide covers the current stable release.
+> **v0.3.1** — This guide covers the current stable release, fully supporting **.NET 8, 9, and 10**.
+
+Welcome to Arkn! This framework was built to solve the most common architectural pains in .NET: **Vendor Lock-in**, **Boilerplate**, and **Hidden Control Flow**. 
+
+Before jumping into the code, understand our core philosophy: **Stop using exceptions to handle business logic.**
+
+## The Arkn Way: Result<T>
+
+In traditional .NET, missing data or validation errors are often handled by throwing exceptions. This hides control flow and makes method signatures lie.
+
+```csharp
+// ❌ Before: The signature says it returns a User, but it might throw!
+public async Task<User> GetUserAsync(Guid id)
+{
+    var user = await _repo.FindAsync(id);
+    if (user is null) throw new NotFoundException($"User {id} not found");
+    return user;
+}
+```
+
+With Arkn, **failures are explicit**:
+
+```csharp
+// ✅ After: The signature tells the truth. It returns a User OR an Error.
+public async Task<Result<User>> GetUserAsync(Guid id)
+{
+    var user = await _repo.FindAsync(id);
+    if (user is null) return UserErrors.NotFound(id);
+    return user;
+}
+```
+
+---
 
 ## Installation
 
-Install only the packages you need:
+Arkn is extremely modular. You only install what you actually need.
+
+### 1. The Core (Zero Dependencies)
+If you are building a Domain Layer or Application Layer, these two packages are all you need. They have no external references.
 
 ```bash
-# Core abstractions (Entity, ValueObject, AggregateRoot)
+# Domain primitives (IEntity, IValueObject, IAggregateRoot)
 dotnet add package Arkn.Core
 
-# Result pattern — explicit success/failure
+# Result pattern and Error types
 dotnet add package Arkn.Results
+```
 
-# Structured logging with pluggable sinks
-dotnet add package Arkn.Logging
+### 2. Infrastructure & Tooling
+For your external layers, choose the capabilities you need:
 
-# Zero-dependency cron job scheduler
-dotnet add package Arkn.Jobs
-
-# Notification abstractions + Slack
-dotnet add package Arkn.Notifications
-dotnet add package Arkn.Extensions.Notifications.Slack
+```bash
+# Compile-time enforcement (ARK001–ARK008 rules)
+dotnet add package Arkn.Analyzers
 
 # Typed HTTP client with retry, OAuth2, mTLS
 dotnet add package Arkn.Http
 
-# Roslyn analyzers — compile-time enforcement (ARK001–ARK008)
-dotnet add package Arkn.Analyzers
+# Zero-dependency cron job scheduler
+dotnet add package Arkn.Jobs
 
-# Source generator — eliminates Error factory boilerplate
-dotnet add package Arkn.SourceGen
-
-# MCP Server — scaffold + validate tools for AI assistants
-dotnet tool install -g Arkn.MCP
+# Structured logging with pluggable sinks
+dotnet add package Arkn.Logging
 ```
 
-## Quick start with Result pattern
+---
+
+## Example: Building a Minimal API
+
+Here is how Arkn connects your domain directly to the edge of your API:
 
 ```csharp
 using Arkn.Results;
 
-// Define errors (manually or via Arkn.SourceGen)
+// 1. Define your errors once
 public static class UserErrors
 {
     public static Error NotFound(Guid id) =>
@@ -51,18 +85,11 @@ public static class UserErrors
         Error.Validation("User.InvalidEmail", "Email address is not valid.");
 }
 
-// Return Result from your domain/application methods
-public async Task<Result<UserDto>> GetUserAsync(Guid id)
-{
-    var user = await _repo.FindAsync(id);
-    if (user is null) return UserErrors.NotFound(id);
-    return new UserDto(user.Id, user.Name, user.Email);
-}
-
-// Handle at the boundary (e.g. Minimal API)
+// 2. Handle at the boundary using .Match()
 app.MapGet("/users/{id:guid}", async (Guid id, IUserService svc) =>
 {
     var result = await svc.GetUserAsync(id);
+    
     return result.Match(
         onSuccess: dto   => Results.Ok(dto),
         onFailure: error => error.Type switch
@@ -74,16 +101,18 @@ app.MapGet("/users/{id:guid}", async (Guid id, IUserService svc) =>
 });
 ```
 
-## AI-assisted development
+---
 
-Arkn ships a **Model Context Protocol server** that integrates with Claude, Cursor and GitHub Copilot, giving your AI assistant direct knowledge of Arkn patterns:
+## AI-Assisted Development (MCP)
+
+Arkn ships a **Model Context Protocol (MCP) server** that integrates directly with Claude, Cursor, and GitHub Copilot. This gives your AI assistant direct knowledge of Arkn patterns so it can generate correct code on the first try.
 
 ```bash
-# Install the MCP tool
+# Install the MCP tool globally
 dotnet tool install -g Arkn.MCP
 ```
 
-Add to your AI client config (example for Claude Desktop):
+Add this to your AI client configuration (e.g., Claude Desktop or Cursor):
 
 ```json
 {
@@ -93,26 +122,26 @@ Add to your AI client config (example for Claude Desktop):
 }
 ```
 
-Once connected, your assistant can:
-- Generate error groups (`scaffold_errors`)
-- Scaffold jobs and HTTP clients
+Once connected, your assistant can natively:
+- Generate Error groups (`scaffold_errors`)
+- Scaffold Background Jobs
 - Validate code against ARK001–ARK008 rules
-- Search Arkn documentation inline
 
 → See the full [MCP Server guide](/mcp) for configuration details.
 
-## Use dotnet new templates
+---
+
+## Scaffolding with dotnet new
+
+Want a working project in 5 seconds? Use our templates.
 
 ```bash
 # Install templates
 dotnet new install Arkn.Templates
 
-# Create a Minimal API project
+# Create a Minimal API project wired with Result<T> end-to-end
 dotnet new arkn-api -n MyApi
 
-# Create a Worker with background jobs
+# Create a Worker service with background jobs
 dotnet new arkn-job -n MyWorker
-
-# Create a class library
-dotnet new arkn-lib -n MyLibrary
 ```
