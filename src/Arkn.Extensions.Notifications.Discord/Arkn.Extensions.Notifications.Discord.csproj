@@ -8,7 +8,7 @@
     <LangVersion>preview</LangVersion>
     <RootNamespace>Arkn.Extensions.Notifications.Discord</RootNamespace>
     <AssemblyName>Arkn.Extensions.Notifications.Discord</AssemblyName>
-    <Version>0.3.1</Version>
+    <Version>0.3.2</Version>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Authors>Fernando Terra</Authors>
     <Description>Discord notifier for Arkn via Webhook Embeds — zero external dependencies.</Description>

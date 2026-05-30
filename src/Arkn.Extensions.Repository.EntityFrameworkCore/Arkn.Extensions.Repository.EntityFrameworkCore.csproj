@@ -8,7 +8,7 @@
     <LangVersion>latest</LangVersion>
     <RootNamespace>Arkn.Extensions.Repository.EntityFrameworkCore</RootNamespace>
     <AssemblyName>Arkn.Extensions.Repository.EntityFrameworkCore</AssemblyName>
-    <Version>0.1.0</Version>
+    <Version>0.3.2</Version>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Authors>Fernando Terra</Authors>
     <Description>EntityFrameworkCore implementation for Arkn.Repository.</Description>

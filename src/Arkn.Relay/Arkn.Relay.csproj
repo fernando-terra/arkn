@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageId>Arkn.Relay</PackageId>
-    <Version>0.1.0-alpha</Version>
+    <Version>0.3.2</Version>
     <Authors>Fernando Terra</Authors>
     <Description>A lightweight, zero-dependency in-memory mediator for the Arkn framework. Built for performance and native Arkn.Results integration.</Description>
     <PackageTags>arkn;mediator;relay;cqrs;result-pattern</PackageTags>

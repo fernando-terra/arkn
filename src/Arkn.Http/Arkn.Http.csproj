@@ -8,7 +8,7 @@
     <LangVersion>preview</LangVersion>
     <RootNamespace>Arkn.Http</RootNamespace>
     <AssemblyName>Arkn.Http</AssemblyName>
-    <Version>0.3.1</Version>
+    <Version>0.3.2</Version>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Authors>Fernando Terra</Authors>
     <Description>Fluent, typed HTTP client for modern .NET — returns Result&lt;T&gt; natively. Zero external dependencies.</Description>
