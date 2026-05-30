@@ -77,6 +77,11 @@ public static class ResultExtensions
     /// Returns a failure with <paramref name="error"/> if the predicate is false;
     /// otherwise propagates the result unchanged.
     /// </summary>
+    /// <typeparam name="T">The success value type.</typeparam>
+    /// <param name="result">The result to validate.</param>
+    /// <param name="predicate">Condition the success value must satisfy.</param>
+    /// <param name="error">Error returned when the predicate fails.</param>
+    /// <returns>The original result, or a failure with <paramref name="error"/>.</returns>
     public static Result<T> Ensure<T>(this Result<T> result, Func<T, bool> predicate, Error error) =>
         result.IsSuccess && !predicate(result.Value) ? Result.Failure<T>(error) : result;
 }

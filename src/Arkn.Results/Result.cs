@@ -65,6 +65,10 @@ public class Result
     /// <summary>
     /// Executes <paramref name="onSuccess"/> or <paramref name="onFailure"/> based on state.
     /// </summary>
+    /// <typeparam name="TOut">The type returned by the selected handler.</typeparam>
+    /// <param name="onSuccess">Invoked when this result is successful.</param>
+    /// <param name="onFailure">Invoked with the error when this result has failed.</param>
+    /// <returns>The value returned by the invoked handler.</returns>
     public TOut Match<TOut>(Func<TOut> onSuccess, Func<Error, TOut> onFailure) =>
         IsSuccess ? onSuccess() : onFailure(Error);
 
@@ -115,6 +119,9 @@ public sealed class Result<T> : Result
     /// Projects the value using <paramref name="mapper"/> if successful;
     /// propagates the error otherwise.
     /// </summary>
+    /// <typeparam name="TOut">The projected value type.</typeparam>
+    /// <param name="mapper">Transforms the success value.</param>
+    /// <returns>A successful result with the mapped value, or the original failure.</returns>
     public Result<TOut> Map<TOut>(Func<T, TOut> mapper)
     {
         ArgumentNullException.ThrowIfNull(mapper);
@@ -125,6 +132,9 @@ public sealed class Result<T> : Result
     /// Chains into another result-returning operation if successful;
     /// propagates the error otherwise.
     /// </summary>
+    /// <typeparam name="TOut">The chained result value type.</typeparam>
+    /// <param name="binder">The next operation to run on the success value.</param>
+    /// <returns>The binder result, or a failure carrying the original error.</returns>
     public Result<TOut> Bind<TOut>(Func<T, Result<TOut>> binder) =>
         IsSuccess ? binder(Value) : Result.Failure<TOut>(Error);
 
@@ -132,6 +142,8 @@ public sealed class Result<T> : Result
     /// Chains into a non-value result-returning operation if successful;
     /// propagates the error otherwise.
     /// </summary>
+    /// <param name="binder">The next operation to run on the success value.</param>
+    /// <returns>The binder result, or a failure carrying the original error.</returns>
     public Result Bind(Func<T, Result> binder) =>
         IsSuccess ? binder(Value) : Result.Failure(Error);
 
@@ -144,6 +156,10 @@ public sealed class Result<T> : Result
     /// <summary>
     /// Executes <paramref name="onSuccess"/> or <paramref name="onFailure"/> based on state.
     /// </summary>
+    /// <typeparam name="TOut">The type returned by the selected handler.</typeparam>
+    /// <param name="onSuccess">Invoked with the value when this result is successful.</param>
+    /// <param name="onFailure">Invoked with the error when this result has failed.</param>
+    /// <returns>The value returned by the invoked handler.</returns>
     public TOut Match<TOut>(Func<T, TOut> onSuccess, Func<Error, TOut> onFailure) =>
         IsSuccess ? onSuccess(Value) : onFailure(Error);
 
@@ -151,6 +167,8 @@ public sealed class Result<T> : Result
     /// Executes a side-effect <paramref name="action"/> if successful.
     /// Returns this result unchanged.
     /// </summary>
+    /// <param name="action">Side effect to run with the success value.</param>
+    /// <returns>This result, unchanged.</returns>
     public Result<T> Tap(Action<T> action)
     {
         if (IsSuccess) action(Value);
