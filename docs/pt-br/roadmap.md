@@ -11,13 +11,13 @@ Implementação genérica do padrão Repository com suporte a EF Core e Dapper, 
 - Extensões para EF Core (`Arkn.Extensions.Repository.EfCore`)
 - Extensões para Dapper (`Arkn.Extensions.Repository.Dapper`)
 
-### Arkn.Relay <Badge type="info" text="em desenvolvimento" />
+### Arkn.Relay <Badge type="tip" text="lançado v0.1.0-alpha" />
 
-Mediator leve para o padrão CQRS, sem dependências externas e focado em performance.
+Mediator leve para o padrão CQRS, sem dependências externas e focado em performance extrema.
 
 - `IRequest<TResult>` com retorno nativo de `Result<T>`
-- Pipeline de behaviors composáveis
-- Despacho otimizado para .NET 10
+- Pipeline de behaviors composáveis (Logging, Validation, etc.)
+- Despacho **Zero-Reflection** via Source Generators
 
 ---
 
