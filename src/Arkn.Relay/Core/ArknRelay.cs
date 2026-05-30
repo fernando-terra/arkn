@@ -23,18 +23,41 @@ public sealed class ArknRelay : IRelay
     {
         var requestType = request.GetType();
         var handlerType = typeof(IRequestHandler<,>).MakeGenericType(requestType, typeof(TResponse));
+        var behaviorType = typeof(IPipelineBehavior<,>).MakeGenericType(requestType, typeof(TResponse));
 
         var handler = _serviceProvider.GetRequiredService(handlerType);
+        var behaviors = _serviceProvider.GetServices(behaviorType).Cast<object>().ToList();
 
-        // We use dynamic or reflection here for the alpha, but 
-        // the plan is to move this to a Source Generated dispatcher.
-        var method = handlerType.GetMethod("HandleAsync");
-        
-        if (method == null)
+        RequestHandlerDelegate<TResponse> handlerDelegate = () =>
         {
-            throw new InvalidOperationException($"HandleAsync method not found for {handlerType.Name}");
+            var method = handlerType.GetMethod("HandleAsync");
+            if (method == null)
+            {
+                throw new InvalidOperationException($"HandleAsync method not found for {handlerType.Name}");
+            }
+            return (Task<TResponse>)method.Invoke(handler, new object[] { request, cancellationToken })!;
+        };
+
+        if (behaviors.Count == 0)
+        {
+            return await handlerDelegate();
         }
 
-        return await (Task<TResponse>)method.Invoke(handler, new object[] { request, cancellationToken })!;
+        return await behaviors
+            .Reverse<object>()
+            .Aggregate(handlerDelegate, (next, behavior) =>
+            {
+                return () =>
+                {
+                    var behaviorInterface = behavior.GetType().GetInterface(behaviorType.Name) 
+                                           ?? behavior.GetType();
+                    var handleMethod = behaviorInterface.GetMethod("HandleAsync");
+                    if (handleMethod == null)
+                    {
+                        throw new InvalidOperationException($"HandleAsync method not found for {behavior.GetType().Name}");
+                    }
+                    return (Task<TResponse>)handleMethod.Invoke(behavior, new object[] { request, next, cancellationToken })!;
+                };
+            })();
     }
 }

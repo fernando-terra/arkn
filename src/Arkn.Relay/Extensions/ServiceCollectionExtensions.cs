@@ -28,4 +28,25 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRequestHandler<TRequest, TResponse>, THandler>();
         return services;
     }
+
+    /// <summary>
+    /// Registers a pipeline behavior for all requests or specific requests.
+    /// </summary>
+    public static IServiceCollection AddArknBehavior(this IServiceCollection services, Type behaviorType)
+    {
+        services.AddScoped(typeof(IPipelineBehavior<,>), behaviorType);
+        return services;
+    }
+
+    /// <summary>
+    /// Registers a pipeline behavior for a specific request.
+    /// </summary>
+    public static IServiceCollection AddArknBehavior<TRequest, TResponse, TBehavior>(this IServiceCollection services)
+        where TRequest : IRequest<TResponse>
+        where TResponse : IResult
+        where TBehavior : class, IPipelineBehavior<TRequest, TResponse>
+    {
+        services.AddScoped<IPipelineBehavior<TRequest, TResponse>, TBehavior>();
+        return services;
+    }
 }
