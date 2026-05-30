@@ -19,6 +19,11 @@
     <Project Path="src/Arkn.Results/Arkn.Results.csproj" />
     <Project Path="src/Arkn.MCP/Arkn.MCP.csproj" />
     <Project Path="src/Arkn.SourceGen/Arkn.SourceGen.csproj" />
+    <Project Path="src/Arkn.Repository/Arkn.Repository.csproj" />
+    <Project Path="src/Arkn.Extensions.Repository.EntityFrameworkCore/Arkn.Extensions.Repository.EntityFrameworkCore.csproj" />
+    <Project Path="src/Arkn.Extensions.Repository.PostgreSql/Arkn.Extensions.Repository.PostgreSql.csproj" />
+    <Project Path="src/Arkn.Extensions.Repository.MySql/Arkn.Extensions.Repository.MySql.csproj" />
+    <Project Path="src/Arkn.Relay/Arkn.Relay.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Arkn.Analyzers.Tests/Arkn.Analyzers.Tests.csproj" />
@@ -34,6 +39,7 @@
     <Project Path="tests/Arkn.Extensions.Logging.Sinks.Tests/Arkn.Extensions.Logging.Sinks.Tests.csproj" />
     <Project Path="tests/Arkn.MCP.Tests/Arkn.MCP.Tests.csproj" />
     <Project Path="tests/Arkn.SourceGen.Tests/Arkn.SourceGen.Tests.csproj" />
+    <Project Path="tests/Arkn.Repository.Tests/Arkn.Repository.Tests.csproj" />
   </Folder>
   <Folder Name="/templates/">
     <Project Path="templates/Arkn.Templates.csproj" />
