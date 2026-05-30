@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageId>Arkn.Relay</PackageId>
+    <Version>0.1.0-alpha</Version>
+    <Authors>Fernando Terra</Authors>
+    <Description>A lightweight, zero-dependency in-memory mediator for the Arkn framework. Built for performance and native Arkn.Results integration.</Description>
+    <PackageTags>arkn;mediator;relay;cqrs;result-pattern</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Arkn.Core\Arkn.Core.csproj" />
+    <ProjectReference Include="..\Arkn.Results\Arkn.Results.csproj" />
+  </ItemGroup>
+
+</Project>

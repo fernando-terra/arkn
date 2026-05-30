@@ -51,6 +51,7 @@ const enSidebar = [
         ]
       },
       { text: 'Arkn.Jobs', link: '/packages/jobs' },
+      { text: 'Arkn.Relay', link: '/packages/relay' },
       {
         text: 'Arkn.Notifications',
         link: '/packages/notifications',
@@ -94,6 +95,7 @@ const ptBrSidebar = [
         ]
       },
       { text: 'Arkn.Jobs', link: '/pt-br/packages/jobs' },
+      { text: 'Arkn.Relay', link: '/pt-br/packages/relay' },
       {
         text: 'Arkn.Notifications',
         link: '/pt-br/packages/notifications',
