@@ -17,6 +17,9 @@ features:
   - icon: 🎯
     title: Failures as First-Class
     details: Stop using exceptions for control flow. Every operation that can fail returns Result<T>. No hidden nulls, no surprise exceptions, no ambiguous contracts.
+  - icon: 🧩
+    title: Agnostic Repositories
+    details: Arkn.Repository provides a clean contract for your domain. Plug in EFCore, Dapper, or MongoDB via extensions without leaking infrastructure details into your business logic.
   - icon: ⚙️
     title: Zero Vendor Lock-in
     details: The core packages (Arkn.Core, Arkn.Results) have zero external NuGet dependencies. Your domain remains pure. No MediatR or EFCore in the center.

@@ -17,6 +17,9 @@ features:
   - icon: 🎯
     title: Result<T> em todo lugar
     details: Toda operação que pode falhar retorna Result<T>. Sem nulls escondidos, sem exceções surpresa, sem contratos ambíguos.
+  - icon: 🧩
+    title: Repositórios Agnósticos
+    details: Defina contratos limpos no seu domínio com Arkn.Repository. Acople EFCore, Dapper ou MongoDB via extensões sem vazar detalhes de infraestrutura para sua lógica.
   - icon: ⚙️
     title: Zero dependências externas
     details: Os pacotes principais dependem apenas do .NET BCL. Sem Polly, sem Serilog, sem Hangfire. Você escolhe suas ferramentas.
@@ -30,6 +33,6 @@ features:
     title: Composável
     details: Instale apenas o que precisar. Cada pacote é útil de forma independente e se integra naturalmente com os demais.
   - icon: 📦
-    title: 16 pacotes, um ecossistema
+    title: 20 pacotes, um ecossistema
     details: Results, HTTP, Jobs, Logging, Notifications, Analyzers, SourceGen, MCP — todos seguindo as mesmas convenções.
 ---

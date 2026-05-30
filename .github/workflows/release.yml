@@ -35,6 +35,10 @@ jobs:
         run: |
           dotnet pack src/Arkn.Core/Arkn.Core.csproj                                                                         --configuration Release --no-build -o ./artifacts
           dotnet pack src/Arkn.Results/Arkn.Results.csproj                                                                   --configuration Release --no-build -o ./artifacts
+          dotnet pack src/Arkn.Repository/Arkn.Repository.csproj                                                             --configuration Release --no-build -o ./artifacts
+          dotnet pack src/Arkn.Extensions.Repository.EntityFrameworkCore/Arkn.Extensions.Repository.EntityFrameworkCore.csproj --configuration Release --no-build -o ./artifacts
+          dotnet pack src/Arkn.Extensions.Repository.PostgreSql/Arkn.Extensions.Repository.PostgreSql.csproj                 --configuration Release --no-build -o ./artifacts
+          dotnet pack src/Arkn.Extensions.Repository.MySql/Arkn.Extensions.Repository.MySql.csproj                             --configuration Release --no-build -o ./artifacts
           dotnet pack src/Arkn.Http/Arkn.Http.csproj                                                                         --configuration Release --no-build -o ./artifacts
           dotnet pack src/Arkn.Logging/Arkn.Logging.csproj                                                                   --configuration Release --no-build -o ./artifacts
           dotnet pack src/Arkn.Jobs/Arkn.Jobs.csproj                                                                         --configuration Release --no-build -o ./artifacts
