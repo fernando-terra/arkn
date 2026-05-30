@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>Arkn.Repository</RootNamespace>
+    <AssemblyName>Arkn.Repository</AssemblyName>
+    <Version>0.1.0-alpha</Version>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <Authors>Fernando Terra</Authors>
+    <Description>Advanced repository patterns and specifications for Arkn. Agnostic data access abstractions.</Description>
+    <PackageTags>dotnet;csharp;architecture;ddd;repository;specification</PackageTags>
+    <RepositoryUrl>https://github.com/fernando-terra/arkn</RepositoryUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Arkn.Core\Arkn.Core.csproj" />
+    <ProjectReference Include="..\Arkn.Results\Arkn.Results.csproj" />
+  </ItemGroup>
+</Project>

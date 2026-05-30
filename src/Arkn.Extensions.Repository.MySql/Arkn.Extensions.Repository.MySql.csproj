@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>Arkn.Extensions.Repository.MySql</RootNamespace>
+    <AssemblyName>Arkn.Extensions.Repository.MySql</AssemblyName>
+    <Version>0.1.0-alpha</Version>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <Authors>Fernando Terra</Authors>
+    <Description>MySql extension for Arkn Repository (EntityFrameworkCore).</Description>
+    <PackageTags>dotnet;csharp;architecture;ddd;repository;efcore;mysql;pomelo</PackageTags>
+    <RepositoryUrl>https://github.com/fernando-terra/arkn</RepositoryUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Arkn.Extensions.Repository.EntityFrameworkCore\Arkn.Extensions.Repository.EntityFrameworkCore.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0-preview.2.efcore.9.0.0" />
+  </ItemGroup>
+</Project>
